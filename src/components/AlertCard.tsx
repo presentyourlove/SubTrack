@@ -1,15 +1,23 @@
+import { useState, useEffect } from 'react';
 import { View, Text, StyleSheet } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useTheme } from '../context/ThemeContext';
 import { useDatabase } from '../context/DatabaseContext';
-import { getUpcomingSubscriptions } from '../services';
+import { getDaysUntil } from '../utils/dateHelper';
 
 export default function AlertCard() {
     const { colors } = useTheme();
-    const { database } = useDatabase();
+    const { subscriptions } = useDatabase();
+    const [upcomingCount, setUpcomingCount] = useState(0);
 
-    // 取得3天內即將到期的訂閱
-    const upcomingCount = database ? getUpcomingSubscriptions(database, 3).length : 0;
+    // 計算3天內即將到期的訂閱數量
+    useEffect(() => {
+        const upcoming = subscriptions.filter(sub => {
+            const days = getDaysUntil(sub.nextBillingDate);
+            return days >= 0 && days <= 3;
+        });
+        setUpcomingCount(upcoming.length);
+    }, [subscriptions]);
 
     // 根據數量決定樣式
     const hasUpcoming = upcomingCount > 0;
