@@ -10,16 +10,16 @@
 - [x] 建立基本路由結構 (tabs: 訂閱/預算/設定)
 - [x] 設定主題系統
 
-## Phase 2: 資料層
+## Phase 2: 資料層 ✅
 
-- [ ] 建立 SQLite 資料庫 (Native)
-- [ ] 建立 localStorage 實作 (Web)
-- [ ] 設定 Firebase (Authentication + Firestore)
-- [ ] 實作 CRUD 操作
-- [ ] 建立雲端同步邏輯
-- [ ] 建立日期計算工具
-- [ ] 建立幣別轉換工具
-- [ ] 建立圖表資料處理工具
+- [x] 建立 SQLite 資料庫 (Native)
+- [x] 建立 localStorage 實作 (Web)
+- [x] 設定 Firebase (Authentication + Firestore)
+- [x] 實作 CRUD 操作
+- [x] 建立雲端同步邏輯
+- [x] 建立日期計算工具
+- [x] 建立幣別轉換工具
+- [x] 建立圖表資料處理工具
 
 ## Phase 3: UI 元件
 
@@ -57,21 +57,14 @@
 - [ ] 匯率設定
 - [ ] 自動幣別轉換顯示
 
-## Phase 5: 雲端同步功能
-
-- [ ] Firebase 使用者登入/註冊
-- [ ] 自動同步至雲端
-- [ ] 跨裝置資料同步
-- [ ] 衝突解決機制
-
-## Phase 6: 進階功能 (可選)
+## Phase 5: 進階功能 (可選)
 
 - [ ] 加到日曆
 - [ ] 通知提醒
 - [ ] 匯出資料
 - [ ] 主題切換
 
-## Phase 7: 測試與優化
+## Phase 6: 測試與優化
 
 - [ ] 功能測試
 - [ ] 同步測試 (多裝置)
@@ -86,4 +79,14 @@
 **進度統計**:
 
 - Phase 1: 7/7 (100%) ✅
-- 總體: 7/62 (11.3%)
+- Phase 2: 8/8 (100%) ✅
+- Phase 3: 0/7 (0%)
+- 總體: 15/59 (25.4%)
+
+**Phase 2 完成項目**:
+
+- ✅ SQLite + localStorage 資料庫
+- ✅ Firebase Authentication (Email/Password)
+- ✅ Firestore 雲端同步
+- ✅ 自動同步邏輯
+- ✅ 完整工具函式庫

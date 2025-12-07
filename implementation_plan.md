@@ -260,15 +260,14 @@ const DEFAULT_CURRENCY_SETTINGS: UserSettings = {
 - [x] 建立基本路由結構
 - [x] 設定主題系統
 
-### Phase 2: 資料層
+### Phase 2: 資料層 ✅
 
 - [x] 建立 SQLite 資料庫 (Native)
 - [x] 建立 localStorage 實作 (Web)
-- [ ] 設定 Firebase (Authentication + Firestore)
-- [ ] 實作 CRUD 操作
-- [ ] 建立雲端同步邏輯
+- [x] 設定 Firebase (Authentication + Firestore)
+- [x] 實作 CRUD 操作
+- [x] 建立雲端同步邏輯
 - [x] 建立日期計算工具
-
 - [x] 建立幣別轉換工具
 - [x] 建立圖表資料處理工具
 
