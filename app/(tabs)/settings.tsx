@@ -16,14 +16,16 @@ import { useDatabase } from '../../src/context/DatabaseContext';
 import { login, register, logout } from '../../src/services/authService';
 import { DEFAULT_EXCHANGE_RATES } from '../../src/types';
 
+type ModalType = 'sync' | 'currency' | 'theme' | 'exchangeRate' | 'auth' | null;
+
 export default function SettingsScreen() {
     const { colors, theme, toggleTheme } = useTheme();
     const { user, isAuthenticated } = useAuth();
     const { settings, updateSettings, syncToCloud, syncFromCloud } = useDatabase();
 
+    const [activeModal, setActiveModal] = useState<ModalType>(null);
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
-    const [showExchangeRateModal, setShowExchangeRateModal] = useState(false);
     const [editingRates, setEditingRates] = useState<{ [key: string]: string }>({});
 
     // 處理登入
@@ -33,6 +35,7 @@ export default function SettingsScreen() {
             Alert.alert('成功', '登入成功！');
             setEmail('');
             setPassword('');
+            setActiveModal(null);
         } catch (error: any) {
             Alert.alert('錯誤', error.message);
         }
@@ -45,6 +48,7 @@ export default function SettingsScreen() {
             Alert.alert('成功', '註冊成功！');
             setEmail('');
             setPassword('');
+            setActiveModal(null);
         } catch (error: any) {
             Alert.alert('錯誤', error.message);
         }
@@ -90,20 +94,18 @@ export default function SettingsScreen() {
             ? JSON.parse(settings.exchangeRates)
             : DEFAULT_EXCHANGE_RATES;
 
-        // 轉換為字串格式以便編輯
         const ratesAsStrings: { [key: string]: string } = {};
         Object.keys(currentRates).forEach(key => {
             ratesAsStrings[key] = currentRates[key].toString();
         });
 
         setEditingRates(ratesAsStrings);
-        setShowExchangeRateModal(true);
+        setActiveModal('exchangeRate');
     };
 
     // 儲存匯率
     const handleSaveExchangeRates = async () => {
         try {
-            // 轉換回數字格式
             const ratesAsNumbers: { [key: string]: number } = {};
             Object.keys(editingRates).forEach(key => {
                 const value = parseFloat(editingRates[key]);
@@ -117,7 +119,7 @@ export default function SettingsScreen() {
                 exchangeRates: JSON.stringify(ratesAsNumbers)
             });
 
-            setShowExchangeRateModal(false);
+            setActiveModal(null);
             Alert.alert('成功', '匯率已更新');
         } catch (error: any) {
             Alert.alert('錯誤', error.message);
@@ -145,175 +147,284 @@ export default function SettingsScreen() {
     ];
 
     return (
-        <ScrollView style={[styles.container, { backgroundColor: colors.background }]}>
-            {/* 帳號管理 */}
-            <View style={styles.section}>
-                <Text style={[styles.sectionTitle, { color: colors.text }]}>帳號管理</Text>
+        <View style={[styles.container, { backgroundColor: colors.background }]}>
+            <ScrollView style={styles.scrollView}>
+                {/* 設定列表 */}
+                <View style={styles.settingsList}>
+                    {/* 同步管理 */}
+                    <TouchableOpacity
+                        style={[styles.settingItem, { backgroundColor: colors.card, borderColor: colors.borderColor }]}
+                        onPress={() => setActiveModal('sync')}
+                    >
+                        <View style={styles.settingIcon}>
+                            <Ionicons name="cloud" size={24} color={colors.accent} />
+                        </View>
+                        <View style={styles.settingContent}>
+                            <Text style={[styles.settingTitle, { color: colors.text }]}>同步管理</Text>
+                            <Text style={[styles.settingSubtitle, { color: colors.subtleText }]}>
+                                {isAuthenticated ? `已登入: ${user?.email}` : '登入以啟用雲端同步'}
+                            </Text>
+                        </View>
+                        <Ionicons name="chevron-forward" size={20} color={colors.subtleText} />
+                    </TouchableOpacity>
 
-                {!isAuthenticated ? (
-                    <>
-                        <TextInput
-                            style={[styles.input, { backgroundColor: colors.card, color: colors.text }]}
-                            placeholder="Email"
-                            placeholderTextColor={colors.subtleText}
-                            value={email}
-                            onChangeText={setEmail}
-                            keyboardType="email-address"
-                            autoCapitalize="none"
-                        />
-                        <TextInput
-                            style={[styles.input, { backgroundColor: colors.card, color: colors.text }]}
-                            placeholder="密碼"
-                            placeholderTextColor={colors.subtleText}
-                            value={password}
-                            onChangeText={setPassword}
-                            secureTextEntry
-                        />
-                        <View style={styles.buttonRow}>
-                            <TouchableOpacity
-                                style={[styles.button, { backgroundColor: colors.accent }]}
-                                onPress={handleLogin}
-                            >
-                                <Text style={styles.buttonText}>登入</Text>
-                            </TouchableOpacity>
-                            <TouchableOpacity
-                                style={[styles.button, { backgroundColor: colors.accent }]}
-                                onPress={handleRegister}
-                            >
-                                <Text style={styles.buttonText}>註冊</Text>
+                    {/* 幣別管理 */}
+                    <TouchableOpacity
+                        style={[styles.settingItem, { backgroundColor: colors.card, borderColor: colors.borderColor }]}
+                        onPress={() => setActiveModal('currency')}
+                    >
+                        <View style={styles.settingIcon}>
+                            <Ionicons name="cash" size={24} color={colors.accent} />
+                        </View>
+                        <View style={styles.settingContent}>
+                            <Text style={[styles.settingTitle, { color: colors.text }]}>幣別管理</Text>
+                            <Text style={[styles.settingSubtitle, { color: colors.subtleText }]}>
+                                主要幣別: {settings?.mainCurrency || 'TWD'}
+                            </Text>
+                        </View>
+                        <Ionicons name="chevron-forward" size={20} color={colors.subtleText} />
+                    </TouchableOpacity>
+
+                    {/* 主題管理 */}
+                    <TouchableOpacity
+                        style={[styles.settingItem, { backgroundColor: colors.card, borderColor: colors.borderColor }]}
+                        onPress={() => setActiveModal('theme')}
+                    >
+                        <View style={styles.settingIcon}>
+                            <Ionicons name={theme === 'dark' ? 'moon' : 'sunny'} size={24} color={colors.accent} />
+                        </View>
+                        <View style={styles.settingContent}>
+                            <Text style={[styles.settingTitle, { color: colors.text }]}>主題管理</Text>
+                            <Text style={[styles.settingSubtitle, { color: colors.subtleText }]}>
+                                {theme === 'dark' ? '深色模式' : '淺色模式'}
+                            </Text>
+                        </View>
+                        <Ionicons name="chevron-forward" size={20} color={colors.subtleText} />
+                    </TouchableOpacity>
+                </View>
+
+                {/* 關於 */}
+                <View style={styles.aboutSection}>
+                    <Text style={[styles.aboutTitle, { color: colors.subtleText }]}>關於</Text>
+                    <Text style={[styles.aboutText, { color: colors.subtleText }]}>SubTrack v1.0.0</Text>
+                    <Text style={[styles.aboutText, { color: colors.subtleText }]}>訂閱管理應用程式</Text>
+                </View>
+            </ScrollView>
+
+            {/* 同步管理 Modal */}
+            <Modal
+                visible={activeModal === 'sync'}
+                animationType="slide"
+                transparent={true}
+                onRequestClose={() => setActiveModal(null)}
+            >
+                <View style={styles.modalOverlay}>
+                    <View style={[styles.modalContainer, { backgroundColor: colors.background }]}>
+                        <View style={styles.modalHeader}>
+                            <Text style={[styles.modalTitle, { color: colors.text }]}>同步管理</Text>
+                            <TouchableOpacity onPress={() => setActiveModal(null)}>
+                                <Ionicons name="close" size={24} color={colors.text} />
                             </TouchableOpacity>
                         </View>
-                    </>
-                ) : (
-                    <>
-                        <Text style={[styles.userInfo, { color: colors.text }]}>
-                            已登入: {user?.email}
-                        </Text>
-                        <TouchableOpacity
-                            style={[styles.button, { backgroundColor: colors.expense }]}
-                            onPress={handleLogout}
-                        >
-                            <Text style={styles.buttonText}>登出</Text>
-                        </TouchableOpacity>
-                    </>
-                )}
-            </View>
 
-            {/* 雲端同步 */}
-            {isAuthenticated && (
-                <View style={styles.section}>
-                    <Text style={[styles.sectionTitle, { color: colors.text }]}>雲端同步</Text>
-                    <View style={styles.buttonRow}>
-                        <TouchableOpacity
-                            style={[styles.button, { backgroundColor: colors.accent }]}
-                            onPress={handleSyncToCloud}
-                        >
-                            <Ionicons name="cloud-upload" size={20} color="#fff" />
-                            <Text style={styles.buttonText}>上傳</Text>
-                        </TouchableOpacity>
-                        <TouchableOpacity
-                            style={[styles.button, { backgroundColor: colors.accent }]}
-                            onPress={handleSyncFromCloud}
-                        >
-                            <Ionicons name="cloud-download" size={20} color="#fff" />
-                            <Text style={styles.buttonText}>下載</Text>
-                        </TouchableOpacity>
+                        <ScrollView style={styles.modalContent}>
+                            {!isAuthenticated ? (
+                                <View>
+                                    <Text style={[styles.modalSectionTitle, { color: colors.text }]}>登入或註冊</Text>
+                                    <TextInput
+                                        style={[styles.input, { backgroundColor: colors.card, color: colors.text, borderColor: colors.borderColor }]}
+                                        placeholder="Email"
+                                        placeholderTextColor={colors.subtleText}
+                                        value={email}
+                                        onChangeText={setEmail}
+                                        keyboardType="email-address"
+                                        autoCapitalize="none"
+                                    />
+                                    <TextInput
+                                        style={[styles.input, { backgroundColor: colors.card, color: colors.text, borderColor: colors.borderColor }]}
+                                        placeholder="密碼"
+                                        placeholderTextColor={colors.subtleText}
+                                        value={password}
+                                        onChangeText={setPassword}
+                                        secureTextEntry
+                                    />
+                                    <View style={styles.buttonRow}>
+                                        <TouchableOpacity
+                                            style={[styles.button, { backgroundColor: colors.accent }]}
+                                            onPress={handleLogin}
+                                        >
+                                            <Text style={styles.buttonText}>登入</Text>
+                                        </TouchableOpacity>
+                                        <TouchableOpacity
+                                            style={[styles.button, { backgroundColor: colors.accent }]}
+                                            onPress={handleRegister}
+                                        >
+                                            <Text style={styles.buttonText}>註冊</Text>
+                                        </TouchableOpacity>
+                                    </View>
+                                </View>
+                            ) : (
+                                <View>
+                                    <Text style={[styles.userInfo, { color: colors.text }]}>
+                                        已登入: {user?.email}
+                                    </Text>
+
+                                    <Text style={[styles.modalSectionTitle, { color: colors.text }]}>雲端同步</Text>
+                                    <View style={styles.buttonRow}>
+                                        <TouchableOpacity
+                                            style={[styles.button, { backgroundColor: colors.accent }]}
+                                            onPress={handleSyncToCloud}
+                                        >
+                                            <Ionicons name="cloud-upload" size={20} color="#fff" />
+                                            <Text style={styles.buttonText}>上傳</Text>
+                                        </TouchableOpacity>
+                                        <TouchableOpacity
+                                            style={[styles.button, { backgroundColor: colors.accent }]}
+                                            onPress={handleSyncFromCloud}
+                                        >
+                                            <Ionicons name="cloud-download" size={20} color="#fff" />
+                                            <Text style={styles.buttonText}>下載</Text>
+                                        </TouchableOpacity>
+                                    </View>
+
+                                    <TouchableOpacity
+                                        style={[styles.button, styles.logoutButton, { backgroundColor: colors.expense }]}
+                                        onPress={handleLogout}
+                                    >
+                                        <Text style={styles.buttonText}>登出</Text>
+                                    </TouchableOpacity>
+                                </View>
+                            )}
+                        </ScrollView>
                     </View>
                 </View>
-            )}
+            </Modal>
 
-            {/* 幣別設定 */}
-            <View style={styles.section}>
-                <Text style={[styles.sectionTitle, { color: colors.text }]}>主要幣別</Text>
-                <View style={styles.currencyGrid}>
-                    {currencies.map((currency) => (
-                        <TouchableOpacity
-                            key={currency.code}
-                            style={[
-                                styles.currencyButton,
-                                { backgroundColor: colors.card, borderColor: colors.borderColor },
-                                settings?.mainCurrency === currency.code && {
-                                    backgroundColor: colors.accent,
-                                    borderColor: colors.accent,
-                                },
-                            ]}
-                            onPress={() => handleCurrencyChange(currency.code)}
-                        >
-                            <Text
-                                style={[
-                                    styles.currencyCode,
-                                    { color: colors.text },
-                                    settings?.mainCurrency === currency.code && { color: '#ffffff' },
-                                ]}
+            {/* 幣別管理 Modal */}
+            <Modal
+                visible={activeModal === 'currency'}
+                animationType="slide"
+                transparent={true}
+                onRequestClose={() => setActiveModal(null)}
+            >
+                <View style={styles.modalOverlay}>
+                    <View style={[styles.modalContainer, { backgroundColor: colors.background }]}>
+                        <View style={styles.modalHeader}>
+                            <Text style={[styles.modalTitle, { color: colors.text }]}>幣別管理</Text>
+                            <TouchableOpacity onPress={() => setActiveModal(null)}>
+                                <Ionicons name="close" size={24} color={colors.text} />
+                            </TouchableOpacity>
+                        </View>
+
+                        <ScrollView style={styles.modalContent}>
+                            <Text style={[styles.modalSectionTitle, { color: colors.text }]}>主要幣別</Text>
+                            <View style={styles.currencyGrid}>
+                                {currencies.map((currency) => (
+                                    <TouchableOpacity
+                                        key={currency.code}
+                                        style={[
+                                            styles.currencyButton,
+                                            { backgroundColor: colors.card, borderColor: colors.borderColor },
+                                            settings?.mainCurrency === currency.code && {
+                                                backgroundColor: colors.accent,
+                                                borderColor: colors.accent,
+                                            },
+                                        ]}
+                                        onPress={() => handleCurrencyChange(currency.code)}
+                                    >
+                                        <Text
+                                            style={[
+                                                styles.currencyCode,
+                                                { color: colors.text },
+                                                settings?.mainCurrency === currency.code && { color: '#ffffff' },
+                                            ]}
+                                        >
+                                            {currency.code}
+                                        </Text>
+                                        <Text
+                                            style={[
+                                                styles.currencyName,
+                                                { color: colors.subtleText },
+                                                settings?.mainCurrency === currency.code && { color: 'rgba(255,255,255,0.8)' },
+                                            ]}
+                                        >
+                                            {currency.name}
+                                        </Text>
+                                    </TouchableOpacity>
+                                ))}
+                            </View>
+
+                            <TouchableOpacity
+                                style={[styles.exchangeRateButton, { backgroundColor: colors.card, borderColor: colors.borderColor }]}
+                                onPress={handleOpenExchangeRateEditor}
                             >
-                                {currency.code}
-                            </Text>
-                            <Text
-                                style={[
-                                    styles.currencyName,
-                                    { color: colors.subtleText },
-                                    settings?.mainCurrency === currency.code && { color: 'rgba(255,255,255,0.8)' },
-                                ]}
-                            >
-                                {currency.name}
-                            </Text>
-                        </TouchableOpacity>
-                    ))}
+                                <Ionicons name="swap-horizontal" size={20} color={colors.accent} />
+                                <Text style={[styles.exchangeRateButtonText, { color: colors.text }]}>
+                                    編輯匯率
+                                </Text>
+                            </TouchableOpacity>
+                        </ScrollView>
+                    </View>
                 </View>
+            </Modal>
 
-                {/* 匯率編輯按鈕 */}
-                <TouchableOpacity
-                    style={[styles.exchangeRateButton, { backgroundColor: colors.card, borderColor: colors.borderColor }]}
-                    onPress={handleOpenExchangeRateEditor}
-                >
-                    <Ionicons name="swap-horizontal" size={20} color={colors.accent} />
-                    <Text style={[styles.exchangeRateButtonText, { color: colors.text }]}>
-                        編輯匯率
-                    </Text>
-                </TouchableOpacity>
-            </View>
+            {/* 主題管理 Modal */}
+            <Modal
+                visible={activeModal === 'theme'}
+                animationType="slide"
+                transparent={true}
+                onRequestClose={() => setActiveModal(null)}
+            >
+                <View style={styles.modalOverlay}>
+                    <View style={[styles.modalContainer, { backgroundColor: colors.background }]}>
+                        <View style={styles.modalHeader}>
+                            <Text style={[styles.modalTitle, { color: colors.text }]}>主題管理</Text>
+                            <TouchableOpacity onPress={() => setActiveModal(null)}>
+                                <Ionicons name="close" size={24} color={colors.text} />
+                            </TouchableOpacity>
+                        </View>
 
-            {/* 主題設定 */}
-            <View style={styles.section}>
-                <Text style={[styles.sectionTitle, { color: colors.text }]}>主題</Text>
-                <TouchableOpacity
-                    style={[styles.themeButton, { backgroundColor: colors.card }]}
-                    onPress={toggleTheme}
-                >
-                    <Ionicons
-                        name={theme === 'dark' ? 'moon' : 'sunny'}
-                        size={20}
-                        color={colors.accent}
-                    />
-                    <Text style={[styles.themeButtonText, { color: colors.text }]}>
-                        {theme === 'dark' ? '深色模式' : '淺色模式'}
-                    </Text>
-                </TouchableOpacity>
-            </View>
+                        <View style={styles.modalContent}>
+                            <TouchableOpacity
+                                style={[styles.themeOption, { backgroundColor: colors.card, borderColor: colors.borderColor }]}
+                                onPress={() => {
+                                    if (theme === 'dark') toggleTheme();
+                                    setActiveModal(null);
+                                }}
+                            >
+                                <Ionicons name="sunny" size={24} color={theme === 'light' ? colors.accent : colors.subtleText} />
+                                <Text style={[styles.themeOptionText, { color: colors.text }]}>淺色模式</Text>
+                                {theme === 'light' && <Ionicons name="checkmark" size={24} color={colors.accent} />}
+                            </TouchableOpacity>
 
-            {/* 應用程式資訊 */}
-            <View style={styles.section}>
-                <Text style={[styles.sectionTitle, { color: colors.text }]}>關於</Text>
-                <Text style={[styles.infoText, { color: colors.subtleText }]}>
-                    SubTrack v1.0.0
-                </Text>
-                <Text style={[styles.infoText, { color: colors.subtleText }]}>
-                    訂閱管理應用程式
-                </Text>
-            </View>
+                            <TouchableOpacity
+                                style={[styles.themeOption, { backgroundColor: colors.card, borderColor: colors.borderColor }]}
+                                onPress={() => {
+                                    if (theme === 'light') toggleTheme();
+                                    setActiveModal(null);
+                                }}
+                            >
+                                <Ionicons name="moon" size={24} color={theme === 'dark' ? colors.accent : colors.subtleText} />
+                                <Text style={[styles.themeOptionText, { color: colors.text }]}>深色模式</Text>
+                                {theme === 'dark' && <Ionicons name="checkmark" size={24} color={colors.accent} />}
+                            </TouchableOpacity>
+                        </View>
+                    </View>
+                </View>
+            </Modal>
 
             {/* 匯率編輯 Modal */}
             <Modal
-                visible={showExchangeRateModal}
+                visible={activeModal === 'exchangeRate'}
                 animationType="slide"
                 transparent={true}
-                onRequestClose={() => setShowExchangeRateModal(false)}
+                onRequestClose={() => setActiveModal(null)}
             >
                 <View style={styles.modalOverlay}>
                     <View style={[styles.modalContainer, { backgroundColor: colors.background }]}>
                         <View style={styles.modalHeader}>
                             <Text style={[styles.modalTitle, { color: colors.text }]}>編輯匯率</Text>
-                            <TouchableOpacity onPress={() => setShowExchangeRateModal(false)}>
+                            <TouchableOpacity onPress={() => setActiveModal(null)}>
                                 <Ionicons name="close" size={24} color={colors.text} />
                             </TouchableOpacity>
                         </View>
@@ -369,32 +480,105 @@ export default function SettingsScreen() {
                     </View>
                 </View>
             </Modal>
-        </ScrollView>
+        </View>
     );
 }
 
 const styles = StyleSheet.create({
     container: {
         flex: 1,
+    },
+    scrollView: {
+        flex: 1,
         padding: 16,
     },
-    section: {
-        marginBottom: 24,
+    settingsList: {
+        gap: 12,
+        marginBottom: 32,
     },
-    sectionTitle: {
-        fontSize: 18,
+    settingItem: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        padding: 16,
+        borderRadius: 12,
+        borderWidth: 1,
+    },
+    settingIcon: {
+        width: 40,
+        height: 40,
+        borderRadius: 20,
+        backgroundColor: 'rgba(99, 102, 241, 0.1)',
+        justifyContent: 'center',
+        alignItems: 'center',
+        marginRight: 12,
+    },
+    settingContent: {
+        flex: 1,
+    },
+    settingTitle: {
+        fontSize: 16,
+        fontWeight: '600',
+        marginBottom: 2,
+    },
+    settingSubtitle: {
+        fontSize: 13,
+    },
+    aboutSection: {
+        padding: 16,
+        alignItems: 'center',
+    },
+    aboutTitle: {
+        fontSize: 12,
+        fontWeight: '600',
+        marginBottom: 8,
+        textTransform: 'uppercase',
+    },
+    aboutText: {
+        fontSize: 13,
+        marginBottom: 4,
+    },
+    modalOverlay: {
+        flex: 1,
+        backgroundColor: 'rgba(0,0,0,0.5)',
+        justifyContent: 'flex-end',
+    },
+    modalContainer: {
+        borderTopLeftRadius: 20,
+        borderTopRightRadius: 20,
+        maxHeight: '80%',
+    },
+    modalHeader: {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+        padding: 20,
+        borderBottomWidth: 1,
+        borderBottomColor: '#e5e7eb',
+    },
+    modalTitle: {
+        fontSize: 20,
+        fontWeight: 'bold',
+    },
+    modalContent: {
+        padding: 20,
+    },
+    modalSectionTitle: {
+        fontSize: 16,
         fontWeight: '600',
         marginBottom: 12,
+        marginTop: 8,
     },
     input: {
         borderRadius: 8,
         padding: 12,
         marginBottom: 12,
         fontSize: 16,
+        borderWidth: 1,
     },
     buttonRow: {
         flexDirection: 'row',
         gap: 12,
+        marginBottom: 12,
     },
     button: {
         flex: 1,
@@ -405,6 +589,9 @@ const styles = StyleSheet.create({
         borderRadius: 8,
         gap: 8,
     },
+    logoutButton: {
+        marginTop: 12,
+    },
     buttonText: {
         color: '#ffffff',
         fontSize: 16,
@@ -412,13 +599,13 @@ const styles = StyleSheet.create({
     },
     userInfo: {
         fontSize: 14,
-        marginBottom: 12,
+        marginBottom: 16,
     },
     currencyGrid: {
         flexDirection: 'row',
         flexWrap: 'wrap',
         gap: 8,
-        marginBottom: 12,
+        marginBottom: 16,
     },
     currencyButton: {
         width: '48%',
@@ -448,44 +635,19 @@ const styles = StyleSheet.create({
         fontSize: 16,
         fontWeight: '500',
     },
-    themeButton: {
+    themeOption: {
         flexDirection: 'row',
         alignItems: 'center',
-        padding: 12,
-        borderRadius: 8,
+        padding: 16,
+        borderRadius: 12,
+        borderWidth: 1,
+        marginBottom: 12,
         gap: 12,
     },
-    themeButtonText: {
-        fontSize: 16,
-    },
-    infoText: {
-        fontSize: 14,
-        marginBottom: 4,
-    },
-    modalOverlay: {
+    themeOptionText: {
         flex: 1,
-        backgroundColor: 'rgba(0,0,0,0.5)',
-        justifyContent: 'flex-end',
-    },
-    modalContainer: {
-        borderTopLeftRadius: 20,
-        borderTopRightRadius: 20,
-        maxHeight: '80%',
-    },
-    modalHeader: {
-        flexDirection: 'row',
-        justifyContent: 'space-between',
-        alignItems: 'center',
-        padding: 20,
-        borderBottomWidth: 1,
-        borderBottomColor: '#e5e7eb',
-    },
-    modalTitle: {
-        fontSize: 20,
-        fontWeight: 'bold',
-    },
-    modalContent: {
-        padding: 20,
+        fontSize: 16,
+        fontWeight: '500',
     },
     modalHint: {
         fontSize: 14,
