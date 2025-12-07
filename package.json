@@ -11,9 +11,13 @@
   "dependencies": {
     "@expo/vector-icons": "^14.0.4",
     "expo": "~54.0.27",
+    "expo-calendar": "^15.0.8",
     "expo-constants": "~18.0.3",
+    "expo-file-system": "^19.0.20",
     "expo-linking": "~8.0.1",
+    "expo-notifications": "^0.32.14",
     "expo-router": "~4.0.0",
+    "expo-sharing": "^14.0.8",
     "expo-sqlite": "~15.0.4",
     "expo-status-bar": "~3.0.9",
     "firebase": "^11.0.2",
