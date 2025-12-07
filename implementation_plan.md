@@ -267,7 +267,10 @@ const DEFAULT_CURRENCY_SETTINGS: UserSettings = {
 - [ ] 設定 Firebase (Authentication + Firestore)
 - [ ] 實作 CRUD 操作
 - [ ] 建立雲端同步邏輯
-- [ ] 建立日期計算工具
+- [x] 建立日期計算工具
+
+- [x] 建立幣別轉換工具
+- [x] 建立圖表資料處理工具
 
 ### Phase 3: UI 元件
 

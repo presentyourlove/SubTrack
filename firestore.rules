@@ -1,0 +1,26 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // 使用者資料 - 只有登入的使用者可以存取自己的資料
+    match /users/{userId} {
+      // 只允許使用者存取自己的文件
+      allow read, write: if request.auth != null && request.auth.uid == userId;
+      
+      // 使用者的訂閱資料
+      match /subscriptions/{subscriptionId} {
+        allow read, write: if request.auth != null && request.auth.uid == userId;
+      }
+      
+      // 使用者的設定
+      match /settings/{settingId} {
+        allow read, write: if request.auth != null && request.auth.uid == userId;
+      }
+    }
+    
+    // 拒絕所有其他存取
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}
