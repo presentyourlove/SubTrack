@@ -238,10 +238,10 @@ export default function AddSubscriptionModal({
                     {/* Footer */}
                     <View style={styles.footer}>
                         <TouchableOpacity
-                            style={[styles.button, styles.cancelButton, { borderColor: colors.borderColor }]}
+                            style={[styles.button, styles.cancelButton, { backgroundColor: colors.expense, borderColor: colors.expense }]}
                             onPress={onClose}
                         >
-                            <Text style={[styles.buttonText, { color: colors.text }]}>取消</Text>
+                            <Text style={[styles.buttonText, { color: '#ffffff' }]}>取消</Text>
                         </TouchableOpacity>
                         <TouchableOpacity
                             style={[styles.button, styles.submitButton, { backgroundColor: colors.accent }]}
