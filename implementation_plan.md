@@ -262,7 +262,7 @@ const DEFAULT_CURRENCY_SETTINGS: UserSettings = {
 
 ### Phase 2: 資料層
 
-- [ ] 建立 SQLite 資料庫 (Native)
+- [x] 建立 SQLite 資料庫 (Native)
 - [ ] 建立 localStorage 實作 (Web)
 - [ ] 設定 Firebase (Authentication + Firestore)
 - [ ] 實作 CRUD 操作
