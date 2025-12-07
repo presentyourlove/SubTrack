@@ -72,7 +72,8 @@ export default function AddSubscriptionModal({
     const categories: { value: SubscriptionCategory; label: string }[] = [
         { value: 'entertainment', label: '娛樂' },
         { value: 'productivity', label: '生產力' },
-        { value: 'lifestyle', label: '生活/其他' },
+        { value: 'lifestyle', label: '生活' },
+        { value: 'other', label: '其他' },
     ];
 
     return (

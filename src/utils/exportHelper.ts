@@ -121,7 +121,8 @@ function getCategoryName(category: string): string {
     const names: { [key: string]: string } = {
         entertainment: '娛樂',
         productivity: '生產力',
-        lifestyle: '生活/其他',
+        lifestyle: '生活',
+        other: '其他',
     };
     return names[category] || category;
 }
