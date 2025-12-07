@@ -1,17 +1,46 @@
+import { useState, useEffect } from 'react';
 import { View, Text, StyleSheet } from 'react-native';
 import { useTheme } from '../context/ThemeContext';
 import { useDatabase } from '../context/DatabaseContext';
 import { formatCurrency } from '../utils/currencyHelper';
-import { getMonthlyTotal, getYearlyTotal } from '../services';
+import { convertCurrency } from '../utils/currencyHelper';
 
 export default function SummaryCard() {
     const { colors } = useTheme();
-    const { subscriptions, settings, database } = useDatabase();
+    const { subscriptions, settings } = useDatabase();
+    const [monthlyTotal, setMonthlyTotal] = useState(0);
+    const [yearlyTotal, setYearlyTotal] = useState(0);
+
+    const mainCurrency = settings?.mainCurrency || 'TWD';
+    const exchangeRates = settings?.exchangeRates
+        ? JSON.parse(settings.exchangeRates)
+        : {};
 
     // 計算總金額
-    const mainCurrency = settings?.mainCurrency || 'TWD';
-    const monthlyTotal = database ? getMonthlyTotal(database, mainCurrency) : 0;
-    const yearlyTotal = monthlyTotal * 12;
+    useEffect(() => {
+        let monthly = 0;
+
+        subscriptions.forEach(sub => {
+            // 轉換為主要幣別
+            const convertedPrice = convertCurrency(
+                sub.price,
+                sub.currency,
+                mainCurrency,
+                exchangeRates
+            );
+
+            // 計算月費用
+            if (sub.billingCycle === 'monthly') {
+                monthly += convertedPrice;
+            } else if (sub.billingCycle === 'yearly') {
+                monthly += convertedPrice / 12;
+            }
+        });
+
+        setMonthlyTotal(monthly);
+        setYearlyTotal(monthly * 12);
+    }, [subscriptions, mainCurrency, exchangeRates]);
+
     const activeCount = subscriptions.length;
 
     return (
