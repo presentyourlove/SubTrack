@@ -1,14 +1,14 @@
 # SubTrack 專案任務清單
 
-## Phase 1: 專案初始化
+## Phase 1: 專案初始化 ✅
 
 - [x] 建立 Expo 專案
 - [x] 設定 TypeScript
 - [x] 建立 GitHub Repository
 - [x] 設定 .gitignore
 - [x] 首次 commit 並 push 至 GitHub
-- [ ] 建立基本路由結構 (tabs: 訂閱/預算/設定)
-- [ ] 設定主題系統
+- [x] 建立基本路由結構 (tabs: 訂閱/預算/設定)
+- [x] 設定主題系統
 
 ## Phase 2: 資料層
 
@@ -80,3 +80,10 @@
 - [ ] 效能優化
 - [ ] 打包發布
 - [ ] 更新 GitHub README
+
+---
+
+**進度統計**:
+
+- Phase 1: 7/7 (100%) ✅
+- 總體: 7/62 (11.3%)

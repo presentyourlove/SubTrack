@@ -257,8 +257,8 @@ const DEFAULT_CURRENCY_SETTINGS: UserSettings = {
 - [x] 建立 GitHub Repository
 - [x] 設定 .gitignore (忽略 node_modules, .expo, dist 等)
 - [x] 首次 commit 並 push 至 GitHub
-- [ ] 建立基本路由結構
-- [ ] 設定主題系統
+- [x] 建立基本路由結構
+- [x] 設定主題系統
 
 ### Phase 2: 資料層
 
