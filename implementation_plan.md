@@ -271,15 +271,15 @@ const DEFAULT_CURRENCY_SETTINGS: UserSettings = {
 - [x] 建立幣別轉換工具
 - [x] 建立圖表資料處理工具
 
-### Phase 3: UI 元件
+### Phase 3: UI 元件 ✅
 
-- [ ] SummaryCard (總覽卡片)
-- [ ] AlertCard (提醒卡片)
-- [ ] SubscriptionCard (訂閱卡片)
-- [ ] AddSubscriptionModal (新增彈窗)
-- [ ] 分類標籤列
-- [ ] BudgetChart (預算圖表元件)
-- [ ] CategoryBreakdown (分類明細元件)
+- [x] SummaryCard (總覽卡片)
+- [x] AlertCard (提醒卡片)
+- [x] SubscriptionCard (訂閱卡片)
+- [x] AddSubscriptionModal (新增彈窗)
+- [x] 分類標籤列
+- [x] BudgetChart (預算圖表元件)
+- [x] CategoryBreakdown (分類明細元件)
 
 ### Phase 4: 核心功能
 
