@@ -18,7 +18,7 @@ export default function SubscriptionsScreen() {
 
     const [selectedCategory, setSelectedCategory] = useState<'all' | SubscriptionCategory>('all');
     const [modalVisible, setModalVisible] = useState(false);
-    const [editingSubscription, setEditingSubscription] = useState<number | null>(null);
+    const [editingId, setEditingId] = useState<number | null>(null);
     const [refreshing, setRefreshing] = useState(false);
 
     // 篩選訂閱
@@ -26,22 +26,36 @@ export default function SubscriptionsScreen() {
         ? subscriptions
         : subscriptions.filter(sub => sub.category === selectedCategory);
 
-    // 處理新增訂閱
-    const handleAddSubscription = async (data: any) => {
+    const activeSubscription = editingId
+        ? subscriptions.find(s => s.id === editingId)
+        : null;
+
+    // 處理提交 (新增或更新)
+    const handleSubmitSubscription = async (data: any) => {
         try {
-            await addSubscription(data);
+            if (editingId) {
+                await updateSubscription(editingId, data);
+            } else {
+                await addSubscription(data);
+            }
             setModalVisible(false);
+            setEditingId(null);
         } catch (error) {
-            console.error('Failed to add subscription:', error);
-            alert('新增訂閱失敗，請稍後再試');
+            console.error('Failed to save subscription:', error);
+            alert('儲存失敗，請稍後再試');
         }
     };
 
     // 處理編輯訂閱
     const handleEditSubscription = (id: number) => {
-        setEditingSubscription(id);
-        // TODO: 實作編輯功能
-        alert('編輯功能即將推出');
+        setEditingId(id);
+        setModalVisible(true);
+    };
+
+    // 處理新增按鈕點擊
+    const handleAddPress = () => {
+        setEditingId(null);
+        setModalVisible(true);
     };
 
     // 處理刪除訂閱
@@ -68,7 +82,7 @@ export default function SubscriptionsScreen() {
                 <Text style={[styles.headerTitle, { color: colors.text }]}>訂閱管理</Text>
                 <TouchableOpacity
                     style={[styles.addButton, { backgroundColor: colors.accent }]}
-                    onPress={() => setModalVisible(true)}
+                    onPress={handleAddPress}
                 >
                     <Ionicons name="add" size={24} color="#ffffff" />
                 </TouchableOpacity>
@@ -101,7 +115,7 @@ export default function SubscriptionsScreen() {
                         </Text>
                         <TouchableOpacity
                             style={[styles.emptyButton, { backgroundColor: colors.accent }]}
-                            onPress={() => setModalVisible(true)}
+                            onPress={handleAddPress}
                         >
                             <Text style={styles.emptyButtonText}>新增第一筆訂閱</Text>
                         </TouchableOpacity>
@@ -120,11 +134,15 @@ export default function SubscriptionsScreen() {
                 )}
             </ScrollView>
 
-            {/* 新增訂閱彈窗 */}
+            {/* 新增/編輯訂閱彈窗 */}
             <AddSubscriptionModal
                 visible={modalVisible}
-                onClose={() => setModalVisible(false)}
-                onSubmit={handleAddSubscription}
+                onClose={() => {
+                    setModalVisible(false);
+                    setEditingId(null);
+                }}
+                onSubmit={handleSubmitSubscription}
+                initialData={activeSubscription}
             />
         </View>
     );

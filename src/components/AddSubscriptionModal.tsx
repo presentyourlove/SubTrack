@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import {
     View,
     Text,
@@ -8,14 +8,18 @@ import {
     TouchableOpacity,
     ScrollView,
     Platform,
+    FlatList,
+    Switch,
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
+import DateTimePicker from '@react-native-community/datetimepicker';
 import { useTheme } from '../context/ThemeContext';
-import { SubscriptionCategory, BillingCycle } from '../types';
+import { SubscriptionCategory, BillingCycle, DEFAULT_EXCHANGE_RATES, Subscription } from '../types';
 
 type AddSubscriptionModalProps = {
     visible: boolean;
     onClose: () => void;
+    initialData?: Subscription | null;
     onSubmit: (data: {
         name: string;
         icon: string;
@@ -23,13 +27,17 @@ type AddSubscriptionModalProps = {
         price: number;
         currency: string;
         billingCycle: BillingCycle;
-        nextBillingDate: string;
+        startDate: string;
+        reminderEnabled: boolean;
+        reminderTime?: string;
+        reminderDays?: number;
     }) => void;
 };
 
 export default function AddSubscriptionModal({
     visible,
     onClose,
+    initialData,
     onSubmit,
 }: AddSubscriptionModalProps) {
     const { colors } = useTheme();
@@ -40,13 +48,70 @@ export default function AddSubscriptionModal({
     const [price, setPrice] = useState('');
     const [currency, setCurrency] = useState('TWD');
     const [billingCycle, setBillingCycle] = useState<BillingCycle>('monthly');
-    const [nextBillingDate, setNextBillingDate] = useState('');
+    const [startDate, setStartDate] = useState(new Date().toISOString().split('T')[0]);
+    const [reminderEnabled, setReminderEnabled] = useState(false);
+    const [reminderTime, setReminderTime] = useState(new Date());
+    const [reminderDays, setReminderDays] = useState(0);
+
+    // Initialize/Reset form when modal opens or initialData changes
+    useEffect(() => {
+        if (visible) {
+            if (initialData) {
+                // Editing existing subscription
+                setName(initialData.name);
+                setIcon(initialData.icon);
+                setCategory(initialData.category);
+                setPrice(initialData.price.toString());
+                setCurrency(initialData.currency);
+                setBillingCycle(initialData.billingCycle);
+                setStartDate(initialData.startDate);
+                setReminderEnabled(initialData.reminderEnabled);
+
+                if (initialData.reminderTime) {
+                    const [hours, minutes] = initialData.reminderTime.split(':');
+                    const timeDate = new Date();
+                    timeDate.setHours(parseInt(hours, 10), parseInt(minutes, 10));
+                    setReminderTime(timeDate);
+                } else {
+                    setReminderTime(new Date());
+                }
+
+                setReminderDays(initialData.reminderDays || 0);
+            } else {
+                // Adding new subscription
+                setName('');
+                setIcon('📱');
+                setCategory('entertainment');
+                setPrice('');
+                setCurrency('TWD');
+                setBillingCycle('monthly');
+                setStartDate(new Date().toISOString().split('T')[0]);
+                setReminderEnabled(false);
+                setReminderTime(new Date());
+                setReminderDays(0);
+            }
+        }
+    }, [visible, initialData]);
+
+    // UI State
+    const [currencyModalVisible, setCurrencyModalVisible] = useState(false);
+    const [showTimePicker, setShowTimePicker] = useState(false);
+    const [showDaysPicker, setShowDaysPicker] = useState(false);
+
+    const SUPPORTED_CURRENCIES = Object.keys(DEFAULT_EXCHANGE_RATES);
+    const REMINDER_DAYS_OPTIONS = Array.from({ length: 15 }, (_, i) => i); // 0-14 days
 
     const handleSubmit = () => {
-        if (!name || !price || !nextBillingDate) {
+        if (!name || !price || !startDate) {
             alert('請填寫所有必填欄位');
             return;
         }
+
+        const formattedTime = reminderTime.toLocaleTimeString('en-US', {
+            hour12: false,
+            hour: '2-digit',
+            minute: '2-digit'
+        });
 
         onSubmit({
             name,
@@ -55,17 +120,28 @@ export default function AddSubscriptionModal({
             price: parseFloat(price),
             currency,
             billingCycle,
-            nextBillingDate,
+            startDate,
+            reminderEnabled,
+            reminderTime: reminderEnabled ? formattedTime : undefined,
+            reminderDays: reminderEnabled ? reminderDays : undefined,
         });
 
-        // 重置表單
+        // Reset form
         setName('');
         setIcon('📱');
         setCategory('entertainment');
         setPrice('');
         setCurrency('TWD');
         setBillingCycle('monthly');
-        setNextBillingDate('');
+        setStartDate(new Date().toISOString().split('T')[0]);
+        setReminderEnabled(false);
+        setReminderDays(0);
+    };
+
+    const onTimeChange = (event: any, selectedDate?: Date) => {
+        const currentDate = selectedDate || reminderTime;
+        setShowTimePicker(Platform.OS === 'ios');
+        setReminderTime(currentDate);
     };
 
     const commonIcons = ['📱', '🎬', '🎵', '📺', '💼', '📚', '🏋️', '🍔', '☁️', '🎮'];
@@ -87,7 +163,9 @@ export default function AddSubscriptionModal({
                 <View style={[styles.container, { backgroundColor: colors.background }]}>
                     {/* Header */}
                     <View style={styles.header}>
-                        <Text style={[styles.title, { color: colors.text }]}>新增訂閱</Text>
+                        <Text style={[styles.title, { color: colors.text }]}>
+                            {initialData ? '編輯訂閱' : '新增訂閱'}
+                        </Text>
                         <TouchableOpacity onPress={onClose}>
                             <Ionicons name="close" size={24} color={colors.text} />
                         </TouchableOpacity>
@@ -166,20 +244,20 @@ export default function AddSubscriptionModal({
                                     placeholderTextColor={colors.subtleText}
                                     keyboardType="numeric"
                                 />
-                                <TextInput
-                                    style={[styles.input, styles.currencyInput, { backgroundColor: colors.inputBackground, color: colors.text }]}
-                                    value={currency}
-                                    onChangeText={setCurrency}
-                                    placeholder="TWD"
-                                    placeholderTextColor={colors.subtleText}
-                                />
+                                <TouchableOpacity
+                                    style={[styles.currencyButton, { backgroundColor: colors.inputBackground }]}
+                                    onPress={() => setCurrencyModalVisible(true)}
+                                >
+                                    <Text style={[styles.currencyText, { color: colors.text }]}>{currency}</Text>
+                                    <Ionicons name="chevron-down" size={16} color={colors.text} />
+                                </TouchableOpacity>
                             </View>
                         </View>
 
                         {/* 扣款週期 */}
                         <View style={styles.field}>
                             <Text style={[styles.label, { color: colors.text }]}>扣款週期 *</Text>
-                            <View style={styles.row}>
+                            <View style={styles.cycleContainer}>
                                 <TouchableOpacity
                                     style={[
                                         styles.cycleButton,
@@ -202,6 +280,24 @@ export default function AddSubscriptionModal({
                                     style={[
                                         styles.cycleButton,
                                         { backgroundColor: colors.inputBackground, borderColor: colors.borderColor },
+                                        billingCycle === 'quarterly' && { backgroundColor: colors.accent, borderColor: colors.accent },
+                                    ]}
+                                    onPress={() => setBillingCycle('quarterly')}
+                                >
+                                    <Text
+                                        style={[
+                                            styles.cycleText,
+                                            { color: colors.text },
+                                            billingCycle === 'quarterly' && { color: '#ffffff' },
+                                        ]}
+                                    >
+                                        每季
+                                    </Text>
+                                </TouchableOpacity>
+                                <TouchableOpacity
+                                    style={[
+                                        styles.cycleButton,
+                                        { backgroundColor: colors.inputBackground, borderColor: colors.borderColor },
                                         billingCycle === 'yearly' && { backgroundColor: colors.accent, borderColor: colors.accent },
                                     ]}
                                     onPress={() => setBillingCycle('yearly')}
@@ -216,29 +312,147 @@ export default function AddSubscriptionModal({
                                         每年
                                     </Text>
                                 </TouchableOpacity>
+                                <TouchableOpacity
+                                    style={[
+                                        styles.cycleButton,
+                                        { backgroundColor: colors.inputBackground, borderColor: colors.borderColor },
+                                        billingCycle === 'weekly' && { backgroundColor: colors.accent, borderColor: colors.accent },
+                                    ]}
+                                    onPress={() => setBillingCycle('weekly')}
+                                >
+                                    <Text
+                                        style={[
+                                            styles.cycleText,
+                                            { color: colors.text },
+                                            billingCycle === 'weekly' && { color: '#ffffff' },
+                                        ]}
+                                    >
+                                        每週
+                                    </Text>
+                                </TouchableOpacity>
                             </View>
                         </View>
 
-                        {/* 下次扣款日期 */}
+                        {/* 訂閱開始日期 */}
                         <View style={styles.field}>
-                            <Text style={[styles.label, { color: colors.text }]}>下次扣款日期 *</Text>
-                            <TextInput
-                                style={[styles.input, { backgroundColor: colors.inputBackground, color: colors.text }]}
-                                value={nextBillingDate}
-                                onChangeText={setNextBillingDate}
-                                placeholder="2025-12-15"
-                                placeholderTextColor={colors.subtleText}
-                            />
-                            <Text style={[styles.hint, { color: colors.subtleText }]}>
-                                格式: YYYY-MM-DD
-                            </Text>
+                            <Text style={[styles.label, { color: colors.text }]}>訂閱開始日期 *</Text>
+                            {Platform.OS === 'web' ? (
+                                <input
+                                    type="date"
+                                    value={startDate}
+                                    onChange={(e) => setStartDate(e.target.value)}
+                                    style={{
+                                        height: 50,
+                                        borderRadius: 12,
+                                        paddingLeft: 16,
+                                        paddingRight: 16,
+                                        fontSize: 16,
+                                        backgroundColor: colors.inputBackground,
+                                        color: colors.text,
+                                        border: 'none',
+                                        width: '100%',
+                                        boxSizing: 'border-box',
+                                        fontFamily: 'system-ui'
+                                    }}
+                                />
+                            ) : (
+                                <TextInput
+                                    style={[styles.input, { backgroundColor: colors.inputBackground, color: colors.text }]}
+                                    value={startDate}
+                                    onChangeText={setStartDate}
+                                    placeholder="YYYY-MM-DD"
+                                    placeholderTextColor={colors.subtleText}
+                                />
+                            )}
                         </View>
+
+                        {/* 通知設定 */}
+                        <View style={styles.field}>
+                            <View style={styles.switchContainer}>
+                                <Text style={[styles.label, { color: colors.text, marginBottom: 0 }]}>啟用通知</Text>
+                                <Switch
+                                    value={reminderEnabled}
+                                    onValueChange={setReminderEnabled}
+                                    trackColor={{ false: colors.borderColor, true: colors.accent }}
+                                    thumbColor={'#ffffff'}
+                                />
+                            </View>
+
+                            {reminderEnabled && (
+                                <View style={styles.reminderContainer}>
+                                    <View style={styles.row}>
+                                        <View style={{ flex: 1 }}>
+                                            <Text style={[styles.subLabel, { color: colors.subtleText }]}>通知時間</Text>
+                                            {Platform.OS === 'web' ? (
+                                                <input
+                                                    type="time"
+                                                    value={reminderTime.toLocaleTimeString('en-US', { hour12: false, hour: '2-digit', minute: '2-digit' })}
+                                                    onChange={(e) => {
+                                                        const [hours, minutes] = e.target.value.split(':');
+                                                        const newDate = new Date(reminderTime);
+                                                        newDate.setHours(parseInt(hours, 10));
+                                                        newDate.setMinutes(parseInt(minutes, 10));
+                                                        setReminderTime(newDate);
+                                                    }}
+                                                    style={{
+                                                        height: 50,
+                                                        borderRadius: 12,
+                                                        paddingLeft: 16,
+                                                        paddingRight: 16,
+                                                        fontSize: 16,
+                                                        backgroundColor: colors.inputBackground,
+                                                        color: colors.text,
+                                                        border: 'none',
+                                                        width: '100%',
+                                                        boxSizing: 'border-box',
+                                                        fontFamily: 'system-ui'
+                                                    }}
+                                                />
+                                            ) : (
+                                                <TouchableOpacity
+                                                    style={[styles.input, { backgroundColor: colors.inputBackground }]}
+                                                    onPress={() => setShowTimePicker(true)}
+                                                >
+                                                    <Text style={{ color: colors.text }}>
+                                                        {reminderTime.toLocaleTimeString('zh-TW', { hour: '2-digit', minute: '2-digit', hour12: false })}
+                                                    </Text>
+                                                </TouchableOpacity>
+                                            )}
+                                        </View>
+                                        <View style={{ flex: 1 }}>
+                                            <Text style={[styles.subLabel, { color: colors.subtleText }]}>提前提醒 (天)</Text>
+                                            <TouchableOpacity
+                                                style={[styles.input, { backgroundColor: colors.inputBackground }]}
+                                                onPress={() => setShowDaysPicker(true)}
+                                            >
+                                                <Text style={{ color: colors.text }}>{reminderDays} 天</Text>
+                                            </TouchableOpacity>
+                                        </View>
+                                    </View>
+                                </View>
+                            )}
+                        </View>
+
+                        {Platform.OS !== 'web' && showTimePicker && (
+                            <DateTimePicker
+                                testID="dateTimePicker"
+                                value={reminderTime}
+                                mode="time"
+                                is24Hour={true}
+                                display="default"
+                                onChange={onTimeChange}
+                            />
+                        )}
                     </ScrollView>
 
                     {/* Footer */}
-                    <View style={styles.footer}>
+                    <View style={[styles.footer, { borderTopColor: colors.borderColor }]}>
                         <TouchableOpacity
-                            style={[styles.button, styles.cancelButton, { backgroundColor: colors.expense, borderColor: colors.expense }]}
+                            style={[
+                                styles.button,
+                                styles.cancelButton,
+                                { backgroundColor: '#FF3B30', borderColor: '#FF3B30' }
+                            ]}
                             onPress={onClose}
                         >
                             <Text style={[styles.buttonText, { color: '#ffffff' }]}>取消</Text>
@@ -247,11 +461,107 @@ export default function AddSubscriptionModal({
                             style={[styles.button, styles.submitButton, { backgroundColor: colors.accent }]}
                             onPress={handleSubmit}
                         >
-                            <Text style={[styles.buttonText, { color: '#ffffff' }]}>新增</Text>
+                            <Text style={[styles.buttonText, { color: '#ffffff' }]}>
+                                {initialData ? '更新' : '新增'}
+                            </Text>
                         </TouchableOpacity>
                     </View>
                 </View>
             </View>
+
+            {/* Currency Modal */}
+            <Modal
+                visible={currencyModalVisible}
+                animationType="fade"
+                transparent={true}
+                onRequestClose={() => setCurrencyModalVisible(false)}
+            >
+                <TouchableOpacity
+                    style={styles.modalOverlay}
+                    activeOpacity={1}
+                    onPress={() => setCurrencyModalVisible(false)}
+                >
+                    <View style={[styles.modalContent, { backgroundColor: colors.background }]}>
+                        <Text style={[styles.modalTitle, { color: colors.text }]}>選擇幣別</Text>
+                        <FlatList
+                            data={SUPPORTED_CURRENCIES}
+                            keyExtractor={(item) => item}
+                            renderItem={({ item }) => (
+                                <TouchableOpacity
+                                    style={[
+                                        styles.currencyOption,
+                                        item === currency && { backgroundColor: colors.inputBackground }
+                                    ]}
+                                    onPress={() => {
+                                        setCurrency(item);
+                                        setCurrencyModalVisible(false);
+                                    }}
+                                >
+                                    <Text
+                                        style={[
+                                            styles.currencyOptionText,
+                                            { color: colors.text },
+                                            item === currency && { color: colors.accent, fontWeight: 'bold' }
+                                        ]}
+                                    >
+                                        {item}
+                                    </Text>
+                                    {item === currency && (
+                                        <Ionicons name="checkmark" size={20} color={colors.accent} />
+                                    )}
+                                </TouchableOpacity>
+                            )}
+                        />
+                    </View>
+                </TouchableOpacity>
+            </Modal>
+
+            {/* Days Picker Modal */}
+            <Modal
+                visible={showDaysPicker}
+                animationType="fade"
+                transparent={true}
+                onRequestClose={() => setShowDaysPicker(false)}
+            >
+                <TouchableOpacity
+                    style={styles.modalOverlay}
+                    activeOpacity={1}
+                    onPress={() => setShowDaysPicker(false)}
+                >
+                    <View style={[styles.modalContent, { backgroundColor: colors.background }]}>
+                        <Text style={[styles.modalTitle, { color: colors.text }]}>選擇提前天數</Text>
+                        <FlatList
+                            data={REMINDER_DAYS_OPTIONS}
+                            keyExtractor={(item) => item.toString()}
+                            renderItem={({ item }) => (
+                                <TouchableOpacity
+                                    style={[
+                                        styles.currencyOption, // Reusing similar style
+                                        item === reminderDays && { backgroundColor: colors.inputBackground }
+                                    ]}
+                                    onPress={() => {
+                                        setReminderDays(item);
+                                        setShowDaysPicker(false);
+                                    }}
+                                >
+                                    <Text
+                                        style={[
+                                            styles.currencyOptionText,
+                                            { color: colors.text },
+                                            item === reminderDays && { color: colors.accent, fontWeight: 'bold' }
+                                        ]}
+                                    >
+                                        {item} 天前
+                                    </Text>
+                                    {item === reminderDays && (
+                                        <Ionicons name="checkmark" size={20} color={colors.accent} />
+                                    )}
+                                </TouchableOpacity>
+                            )}
+                        />
+                    </View>
+                </TouchableOpacity>
+            </Modal>
         </Modal>
     );
 }
@@ -263,51 +573,48 @@ const styles = StyleSheet.create({
         justifyContent: 'flex-end',
     },
     container: {
+        height: '90%',
         borderTopLeftRadius: 20,
         borderTopRightRadius: 20,
-        maxHeight: '90%',
+        padding: 20,
     },
     header: {
         flexDirection: 'row',
         justifyContent: 'space-between',
         alignItems: 'center',
-        padding: 20,
-        borderBottomWidth: 1,
-        borderBottomColor: '#e5e7eb',
+        marginBottom: 20,
     },
     title: {
         fontSize: 20,
         fontWeight: 'bold',
     },
     content: {
-        padding: 20,
+        flex: 1,
     },
     field: {
         marginBottom: 20,
     },
     label: {
-        fontSize: 14,
-        fontWeight: '600',
+        fontSize: 16,
         marginBottom: 8,
+        fontWeight: '500',
     },
     input: {
-        borderRadius: 8,
-        padding: 12,
+        height: 50,
+        borderRadius: 12,
+        paddingHorizontal: 16,
         fontSize: 16,
-    },
-    hint: {
-        fontSize: 12,
-        marginTop: 4,
+        justifyContent: 'center',
     },
     iconGrid: {
         flexDirection: 'row',
         flexWrap: 'wrap',
-        gap: 8,
+        gap: 10,
     },
     iconButton: {
-        width: 48,
-        height: 48,
-        borderRadius: 8,
+        width: 44,
+        height: 44,
+        borderRadius: 22,
         justifyContent: 'center',
         alignItems: 'center',
     },
@@ -316,59 +623,120 @@ const styles = StyleSheet.create({
     },
     categoryButtons: {
         flexDirection: 'row',
+        flexWrap: 'wrap',
         gap: 8,
     },
     categoryButton: {
-        flex: 1,
-        paddingVertical: 12,
-        borderRadius: 8,
+        paddingHorizontal: 16,
+        paddingVertical: 8,
+        borderRadius: 20,
         borderWidth: 1,
-        alignItems: 'center',
     },
     categoryText: {
         fontSize: 14,
-        fontWeight: '500',
     },
     row: {
         flexDirection: 'row',
-        gap: 8,
+        gap: 10,
     },
     priceInput: {
-        flex: 2,
-    },
-    currencyInput: {
         flex: 1,
+    },
+    currencyButton: {
+        width: 100,
+        height: 50,
+        borderRadius: 12,
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+        paddingHorizontal: 12,
+    },
+    currencyText: {
+        fontSize: 16,
+        fontWeight: 'bold',
+    },
+    cycleContainer: {
+        flexDirection: 'row',
+        gap: 8,
     },
     cycleButton: {
         flex: 1,
-        paddingVertical: 12,
-        borderRadius: 8,
-        borderWidth: 1,
+        height: 40,
+        justifyContent: 'center',
         alignItems: 'center',
+        borderRadius: 20,
+        borderWidth: 1,
     },
     cycleText: {
         fontSize: 14,
-        fontWeight: '500',
     },
     footer: {
         flexDirection: 'row',
-        padding: 20,
         gap: 12,
+        paddingTop: 20,
         borderTopWidth: 1,
-        borderTopColor: '#e5e7eb',
     },
     button: {
         flex: 1,
-        paddingVertical: 14,
-        borderRadius: 8,
+        height: 50,
+        borderRadius: 25,
+        justifyContent: 'center',
         alignItems: 'center',
     },
     cancelButton: {
         borderWidth: 1,
     },
-    submitButton: {},
+    submitButton: {
+    },
     buttonText: {
         fontSize: 16,
-        fontWeight: '600',
+        fontWeight: 'bold',
+    },
+    hint: {
+        fontSize: 12,
+        marginTop: 4,
+    },
+    modalOverlay: {
+        flex: 1,
+        backgroundColor: 'rgba(0,0,0,0.5)',
+        justifyContent: 'center',
+        alignItems: 'center',
+    },
+    modalContent: {
+        width: '80%',
+        maxHeight: '60%',
+        borderRadius: 12,
+        padding: 20,
+    },
+    modalTitle: {
+        fontSize: 18,
+        fontWeight: 'bold',
+        marginBottom: 16,
+        textAlign: 'center',
+    },
+    currencyOption: {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+        paddingVertical: 12,
+        paddingHorizontal: 8,
+        borderBottomWidth: StyleSheet.hairlineWidth,
+        borderBottomColor: '#ccc',
+    },
+    currencyOptionText: {
+        fontSize: 16,
+    },
+    switchContainer: {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+        marginBottom: 12,
+    },
+    reminderContainer: {
+        gap: 12,
+    },
+    subLabel: {
+        fontSize: 12,
+        marginBottom: 4,
     },
 });

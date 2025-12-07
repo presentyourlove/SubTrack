@@ -62,7 +62,7 @@ export default function SubscriptionCard({
                     {formatCurrency(subscription.price, subscription.currency)} / {subscription.billingCycle === 'monthly' ? '月' : '年'}
                 </Text>
                 <Text style={[styles.date, { color: colors.subtleText }]}>
-                    下次扣款: {formatDateLocale(subscription.nextBillingDate)}
+                    下次扣款: {subscription.nextBillingDate ? formatDateLocale(subscription.nextBillingDate) : '未設定'}
                 </Text>
             </View>
 

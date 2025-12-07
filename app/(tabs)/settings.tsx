@@ -13,8 +13,9 @@ import { Ionicons } from '@expo/vector-icons';
 import { useTheme } from '../../src/context/ThemeContext';
 import { useAuth } from '../../src/context/AuthContext';
 import { useDatabase } from '../../src/context/DatabaseContext';
-import { login, register, logout } from '../../src/services/authService';
+import { loginUser as login, registerUser as register, logoutUser as logout } from '../../src/services/authService';
 import { DEFAULT_EXCHANGE_RATES } from '../../src/types';
+import { useToast } from '../../src/context/ToastContext';
 
 type ModalType = 'sync' | 'currency' | 'theme' | 'exchangeRate' | 'auth' | null;
 
@@ -22,22 +23,25 @@ export default function SettingsScreen() {
     const { colors, theme, toggleTheme } = useTheme();
     const { user, isAuthenticated } = useAuth();
     const { settings, updateSettings, syncToCloud, syncFromCloud } = useDatabase();
+    const { showToast } = useToast();
 
     const [activeModal, setActiveModal] = useState<ModalType>(null);
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [editingRates, setEditingRates] = useState<{ [key: string]: string }>({});
+    const [newCurrencyCode, setNewCurrencyCode] = useState('');
+    const [newCurrencyRate, setNewCurrencyRate] = useState('');
 
     // 處理登入
     const handleLogin = async () => {
         try {
             await login(email, password);
-            Alert.alert('成功', '登入成功！');
+            showToast('登入成功！', 'success');
             setEmail('');
             setPassword('');
             setActiveModal(null);
         } catch (error: any) {
-            Alert.alert('錯誤', error.message);
+            showToast(error.message, 'error');
         }
     };
 
@@ -45,12 +49,12 @@ export default function SettingsScreen() {
     const handleRegister = async () => {
         try {
             await register(email, password);
-            Alert.alert('成功', '註冊成功！');
+            showToast('註冊成功！', 'success');
             setEmail('');
             setPassword('');
             setActiveModal(null);
         } catch (error: any) {
-            Alert.alert('錯誤', error.message);
+            showToast(error.message, 'error');
         }
     };
 
@@ -58,9 +62,9 @@ export default function SettingsScreen() {
     const handleLogout = async () => {
         try {
             await logout();
-            Alert.alert('成功', '已登出');
+            showToast('已登出', 'success');
         } catch (error: any) {
-            Alert.alert('錯誤', error.message);
+            showToast(error.message, 'error');
         }
     };
 
@@ -68,18 +72,18 @@ export default function SettingsScreen() {
     const handleSyncToCloud = async () => {
         try {
             await syncToCloud();
-            Alert.alert('成功', '資料已上傳到雲端');
+            showToast('資料已上傳到雲端', 'success');
         } catch (error: any) {
-            Alert.alert('錯誤', error.message);
+            showToast(error.message, 'error');
         }
     };
 
     const handleSyncFromCloud = async () => {
         try {
             await syncFromCloud();
-            Alert.alert('成功', '資料已從雲端下載');
+            showToast('資料已從雲端下載', 'success');
         } catch (error: any) {
-            Alert.alert('錯誤', error.message);
+            showToast(error.message, 'error');
         }
     };
 
@@ -90,13 +94,16 @@ export default function SettingsScreen() {
 
     // 開啟匯率編輯器
     const handleOpenExchangeRateEditor = () => {
-        const currentRates = settings?.exchangeRates
+        const storedRates = settings?.exchangeRates
             ? JSON.parse(settings.exchangeRates)
-            : DEFAULT_EXCHANGE_RATES;
+            : {};
+
+        // 合併預設匯率與儲存的匯率
+        const mergedRates = { ...DEFAULT_EXCHANGE_RATES, ...storedRates };
 
         const ratesAsStrings: { [key: string]: string } = {};
-        Object.keys(currentRates).forEach(key => {
-            ratesAsStrings[key] = currentRates[key].toString();
+        Object.keys(mergedRates).forEach(key => {
+            ratesAsStrings[key] = (mergedRates as any)[key].toString();
         });
 
         setEditingRates(ratesAsStrings);
@@ -120,9 +127,9 @@ export default function SettingsScreen() {
             });
 
             setActiveModal(null);
-            Alert.alert('成功', '匯率已更新');
+            showToast('匯率已更新', 'success');
         } catch (error: any) {
-            Alert.alert('錯誤', error.message);
+            showToast(error.message, 'error');
         }
     };
 
@@ -130,21 +137,46 @@ export default function SettingsScreen() {
     const handleResetExchangeRates = () => {
         const ratesAsStrings: { [key: string]: string } = {};
         Object.keys(DEFAULT_EXCHANGE_RATES).forEach(key => {
-            ratesAsStrings[key] = DEFAULT_EXCHANGE_RATES[key].toString();
+            ratesAsStrings[key] = (DEFAULT_EXCHANGE_RATES as any)[key].toString();
         });
         setEditingRates(ratesAsStrings);
     };
 
-    const currencies = [
-        { code: 'TWD', name: '新台幣' },
-        { code: 'USD', name: '美金' },
-        { code: 'JPY', name: '日圓' },
-        { code: 'CNY', name: '人民幣' },
-        { code: 'HKD', name: '港幣' },
-        { code: 'MOP', name: '澳門幣' },
-        { code: 'GBP', name: '英鎊' },
-        { code: 'KRW', name: '韓元' },
-    ];
+    // 新增自訂幣別
+    const handleAddCurrency = () => {
+        if (!newCurrencyCode || !newCurrencyRate) {
+            showToast('請輸入幣別代碼與匯率', 'error');
+            return;
+        }
+
+        const code = newCurrencyCode.toUpperCase();
+        if (editingRates[code]) {
+            showToast('此幣別已存在', 'error');
+            return;
+        }
+
+        setEditingRates(prev => ({
+            ...prev,
+            [code]: newCurrencyRate
+        }));
+        setNewCurrencyCode('');
+        setNewCurrencyRate('');
+        showToast(`已新增 ${code}`, 'success');
+    };
+
+    // 取得所有可用幣別列表 (包含自訂)
+    const getAvailableCurrencies = () => {
+        const storedRates = settings?.exchangeRates
+            ? JSON.parse(settings.exchangeRates)
+            : {};
+
+        // 合併預設匯率與儲存的匯率，確保新加入的預設幣別也會顯示
+        const mergedRates = { ...DEFAULT_EXCHANGE_RATES, ...storedRates };
+
+        return Object.keys(mergedRates).sort();
+    };
+
+    const availableCurrencies = getAvailableCurrencies();
 
     return (
         <View style={[styles.container, { backgroundColor: colors.background }]}>
@@ -256,10 +288,17 @@ export default function SettingsScreen() {
                                             <Text style={styles.buttonText}>登入</Text>
                                         </TouchableOpacity>
                                         <TouchableOpacity
-                                            style={[styles.button, { backgroundColor: colors.accent }]}
+                                            style={[
+                                                styles.button,
+                                                {
+                                                    backgroundColor: 'transparent',
+                                                    borderWidth: 1,
+                                                    borderColor: colors.accent
+                                                }
+                                            ]}
                                             onPress={handleRegister}
                                         >
-                                            <Text style={styles.buttonText}>註冊</Text>
+                                            <Text style={[styles.buttonText, { color: colors.accent }]}>註冊</Text>
                                         </TouchableOpacity>
                                     </View>
                                 </View>
@@ -319,36 +358,27 @@ export default function SettingsScreen() {
                         <ScrollView style={styles.modalContent}>
                             <Text style={[styles.modalSectionTitle, { color: colors.text }]}>主要幣別</Text>
                             <View style={styles.currencyGrid}>
-                                {currencies.map((currency) => (
+                                {availableCurrencies.map((code) => (
                                     <TouchableOpacity
-                                        key={currency.code}
+                                        key={code}
                                         style={[
                                             styles.currencyButton,
                                             { backgroundColor: colors.card, borderColor: colors.borderColor },
-                                            settings?.mainCurrency === currency.code && {
+                                            settings?.mainCurrency === code && {
                                                 backgroundColor: colors.accent,
                                                 borderColor: colors.accent,
                                             },
                                         ]}
-                                        onPress={() => handleCurrencyChange(currency.code)}
+                                        onPress={() => handleCurrencyChange(code)}
                                     >
                                         <Text
                                             style={[
                                                 styles.currencyCode,
                                                 { color: colors.text },
-                                                settings?.mainCurrency === currency.code && { color: '#ffffff' },
+                                                settings?.mainCurrency === code && { color: '#ffffff' },
                                             ]}
                                         >
-                                            {currency.code}
-                                        </Text>
-                                        <Text
-                                            style={[
-                                                styles.currencyName,
-                                                { color: colors.subtleText },
-                                                settings?.mainCurrency === currency.code && { color: 'rgba(255,255,255,0.8)' },
-                                            ]}
-                                        >
-                                            {currency.name}
+                                            {code}
                                         </Text>
                                     </TouchableOpacity>
                                 ))}
@@ -360,7 +390,7 @@ export default function SettingsScreen() {
                             >
                                 <Ionicons name="swap-horizontal" size={20} color={colors.accent} />
                                 <Text style={[styles.exchangeRateButtonText, { color: colors.text }]}>
-                                    編輯匯率
+                                    編輯匯率與新增幣別
                                 </Text>
                             </TouchableOpacity>
                         </ScrollView>
@@ -434,22 +464,50 @@ export default function SettingsScreen() {
                                 匯率相對於 TWD (新台幣 = 1)
                             </Text>
 
-                            {currencies.map((currency) => (
-                                <View key={currency.code} style={styles.rateRow}>
+                            {/* 新增幣別區塊 */}
+                            <View style={[styles.addCurrencySection, { borderColor: colors.borderColor, backgroundColor: colors.card }]}>
+                                <Text style={[styles.sectionSubtitle, { color: colors.text }]}>新增幣別</Text>
+                                <View style={styles.addCurrencyRow}>
+                                    <TextInput
+                                        style={[styles.smallInput, { color: colors.text, borderColor: colors.borderColor }]}
+                                        placeholder="代碼 (Ex: EUR)"
+                                        placeholderTextColor={colors.subtleText}
+                                        value={newCurrencyCode}
+                                        onChangeText={setNewCurrencyCode}
+                                        autoCapitalize="characters"
+                                        maxLength={3}
+                                    />
+                                    <TextInput
+                                        style={[styles.smallInput, { color: colors.text, borderColor: colors.borderColor }]}
+                                        placeholder="匯率"
+                                        placeholderTextColor={colors.subtleText}
+                                        value={newCurrencyRate}
+                                        onChangeText={setNewCurrencyRate}
+                                        keyboardType="decimal-pad"
+                                    />
+                                    <TouchableOpacity
+                                        style={[styles.addButton, { backgroundColor: colors.accent }]}
+                                        onPress={handleAddCurrency}
+                                    >
+                                        <Ionicons name="add" size={24} color="#fff" />
+                                    </TouchableOpacity>
+                                </View>
+                            </View>
+
+                            <Text style={[styles.sectionSubtitle, { color: colors.text, marginTop: 16, marginBottom: 8 }]}>現有匯率</Text>
+                            {Object.keys(editingRates).sort().map((code) => (
+                                <View key={code} style={styles.rateRow}>
                                     <View style={styles.rateLabel}>
                                         <Text style={[styles.rateCurrency, { color: colors.text }]}>
-                                            {currency.code}
-                                        </Text>
-                                        <Text style={[styles.rateName, { color: colors.subtleText }]}>
-                                            {currency.name}
+                                            {code}
                                         </Text>
                                     </View>
                                     <TextInput
                                         style={[styles.rateInput, { backgroundColor: colors.card, color: colors.text, borderColor: colors.borderColor }]}
-                                        value={editingRates[currency.code] || ''}
+                                        value={editingRates[code] || ''}
                                         onChangeText={(text) => setEditingRates({
                                             ...editingRates,
-                                            [currency.code]: text,
+                                            [code]: text,
                                         })}
                                         keyboardType="decimal-pad"
                                         placeholder="0.00"
@@ -698,5 +756,36 @@ const styles = StyleSheet.create({
     modalButtonText: {
         fontSize: 16,
         fontWeight: '600',
+    },
+    addCurrencySection: {
+        padding: 12,
+        borderRadius: 8,
+        borderWidth: 1,
+        marginBottom: 8,
+    },
+    addCurrencyRow: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        gap: 8,
+        marginTop: 8,
+    },
+    smallInput: {
+        flex: 1,
+        height: 40,
+        borderRadius: 8,
+        borderWidth: 1,
+        paddingHorizontal: 12,
+        fontSize: 14,
+    },
+    addButton: {
+        width: 40,
+        height: 40,
+        borderRadius: 20,
+        alignItems: 'center',
+        justifyContent: 'center',
+    },
+    sectionSubtitle: {
+        fontSize: 14,
+        fontWeight: 'bold',
     },
 });

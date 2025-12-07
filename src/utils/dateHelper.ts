@@ -30,14 +30,24 @@ export function getDaysBetween(date1: Date | string, date2: Date | string): numb
 }
 
 // 計算距離今天還有幾天
-export function getDaysUntil(date: Date | string): number {
-    const targetDate = typeof date === 'string' ? new Date(date) : date;
-    const today = new Date();
-    today.setHours(0, 0, 0, 0);
-    targetDate.setHours(0, 0, 0, 0);
+export function getDaysUntil(date: Date | string | undefined | null): number {
+    if (!date) return 0;
 
-    const diffTime = targetDate.getTime() - today.getTime();
-    return Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+    try {
+        const targetDate = typeof date === 'string' ? new Date(date) : date;
+        // Check for invalid date
+        if (isNaN(targetDate.getTime())) return 0;
+
+        const today = new Date();
+        today.setHours(0, 0, 0, 0);
+        targetDate.setHours(0, 0, 0, 0);
+
+        const diffTime = targetDate.getTime() - today.getTime();
+        return Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+    } catch (e) {
+        console.warn('Error calculating days until:', e);
+        return 0;
+    }
 }
 
 // 判斷日期是否在指定天數內
@@ -49,17 +59,63 @@ export function isWithinDays(date: Date | string, days: number): boolean {
 // 取得下一個扣款日期 (根據週期)
 export function getNextBillingDate(
     currentDate: Date | string,
-    cycle: 'monthly' | 'yearly'
+    cycle: 'weekly' | 'monthly' | 'quarterly' | 'yearly'
 ): string {
     const date = typeof currentDate === 'string' ? new Date(currentDate) : new Date(currentDate);
 
-    if (cycle === 'monthly') {
+    if (cycle === 'weekly') {
+        date.setDate(date.getDate() + 7);
+    } else if (cycle === 'monthly') {
         date.setMonth(date.getMonth() + 1);
+    } else if (cycle === 'quarterly') {
+        date.setMonth(date.getMonth() + 3);
     } else {
         date.setFullYear(date.getFullYear() + 1);
     }
 
     return date.toISOString();
+}
+
+// 計算下一次有效的扣款日期 (相對於今天)
+export function calculateNextBillingDate(
+    startDate: Date | string,
+    cycle: 'weekly' | 'monthly' | 'quarterly' | 'yearly'
+): string {
+    let date: Date;
+
+    if (typeof startDate === 'string') {
+        // Parse "YYYY-MM-DD" as local time [YYYY, MM-1, DD]
+        const [year, month, day] = startDate.split('-').map(Number);
+        date = new Date(year, month - 1, day);
+    } else {
+        date = new Date(startDate);
+        date.setHours(0, 0, 0, 0);
+    }
+
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+
+    // 如果開始日期是未來 (> Today)，則直接返回開始日期
+    if (date.getTime() > today.getTime()) {
+        return formatDate(date); // Return YYYY-MM-DD string
+    }
+
+    // 否則，持續增加週期直到日期在今天之後
+    // Loop while date <= today
+    while (date.getTime() <= today.getTime()) {
+        if (cycle === 'weekly') {
+            date.setDate(date.getDate() + 7);
+        } else if (cycle === 'monthly') {
+            date.setMonth(date.getMonth() + 1);
+        } else if (cycle === 'quarterly') {
+            date.setMonth(date.getMonth() + 3);
+        } else {
+            date.setFullYear(date.getFullYear() + 1);
+        }
+    }
+
+    // Normalized return
+    return formatDate(date);
 }
 
 // 取得本週的開始和結束日期

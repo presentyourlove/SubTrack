@@ -10,6 +10,7 @@ import {
     syncUserSettingsToFirestore,
     deleteSubscriptionFromFirestore,
 } from '../services/syncService';
+import { calculateNextBillingDate } from '../utils/dateHelper';
 
 type DatabaseContextType = {
     database: Database | null;
@@ -83,16 +84,30 @@ export function DatabaseProvider({ children }: { children: ReactNode }) {
     ) {
         if (!database) throw new Error('Database not initialized');
 
-        const id = await db.addSubscription(database, subscription);
-        await refreshData();
+        // Ensure nextBillingDate is present and correctly calculated
+        const calculatedNextBillingDate = calculateNextBillingDate(
+            subscription.startDate,
+            subscription.billingCycle
+        );
+
+        const subData = {
+            ...subscription,
+            nextBillingDate: subscription.nextBillingDate || calculatedNextBillingDate
+        };
+
+        const id = await db.addSubscription(database, subData);
 
         // 如果已登入，同步到雲端
         if (isAuthenticated && user) {
-            const newSub = subscriptions.find(s => s.id === id);
+            // 重新讀取以確保取得最新的完整資料 (包含 DB 產生的欄位)
+            const allSubs = await db.getAllSubscriptions(database);
+            const newSub = allSubs.find(s => s.id === id);
             if (newSub) {
                 await syncSubscriptionToFirestore(user.uid, newSub);
             }
         }
+
+        await refreshData();
     }
 
     // 更新訂閱
@@ -102,16 +117,30 @@ export function DatabaseProvider({ children }: { children: ReactNode }) {
     ) {
         if (!database) throw new Error('Database not initialized');
 
-        await db.updateSubscription(database, id, updates);
-        await refreshData();
+        // Check if we need to recalculate nextBillingDate
+        let finalUpdates = { ...updates };
+        if (updates.startDate || updates.billingCycle) {
+            const currentSub = subscriptions.find(s => s.id === id);
+            if (currentSub) {
+                const startDate = updates.startDate || currentSub.startDate;
+                const cycle = updates.billingCycle || currentSub.billingCycle;
+                finalUpdates.nextBillingDate = calculateNextBillingDate(startDate, cycle);
+            }
+        }
+
+        await db.updateSubscription(database, id, finalUpdates);
 
         // 如果已登入，同步到雲端
         if (isAuthenticated && user) {
-            const updatedSub = subscriptions.find(s => s.id === id);
+            // 取得最新資料以同步
+            const allSubs = await db.getAllSubscriptions(database);
+            const updatedSub = allSubs.find(s => s.id === id);
             if (updatedSub) {
                 await syncSubscriptionToFirestore(user.uid, updatedSub);
             }
         }
+
+        await refreshData();
     }
 
     // 刪除訂閱
@@ -119,12 +148,13 @@ export function DatabaseProvider({ children }: { children: ReactNode }) {
         if (!database) throw new Error('Database not initialized');
 
         await db.deleteSubscription(database, id);
-        await refreshData();
 
         // 如果已登入，從雲端刪除
         if (isAuthenticated && user) {
             await deleteSubscriptionFromFirestore(user.uid, id);
         }
+
+        await refreshData();
     }
 
     // 更新設定
@@ -134,12 +164,16 @@ export function DatabaseProvider({ children }: { children: ReactNode }) {
         if (!database) throw new Error('Database not initialized');
 
         await db.updateUserSettings(database, updates);
-        await refreshData();
 
         // 如果已登入，同步到雲端
-        if (isAuthenticated && user && settings) {
-            await syncUserSettingsToFirestore(user.uid, settings);
+        if (isAuthenticated && user) {
+            const newSettings = await db.getUserSettings(database);
+            if (newSettings) {
+                await syncUserSettingsToFirestore(user.uid, newSettings);
+            }
         }
+
+        await refreshData();
     }
 
     // 同步到雲端

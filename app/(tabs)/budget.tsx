@@ -2,26 +2,24 @@ import { useState } from 'react';
 import { View, Text, StyleSheet, ScrollView, TouchableOpacity } from 'react-native';
 import { useTheme } from '../../src/context/ThemeContext';
 import { useDatabase } from '../../src/context/DatabaseContext';
-import { BudgetChart, CategoryBreakdown } from '../../src/components';
-
-type TimeRange = 'week' | 'month' | 'year';
+import { BudgetChart, CategoryBreakdown, CategoryTabs } from '../../src/components';
+import { SubscriptionCategory } from '../../src/types';
 
 export default function BudgetScreen() {
     const { colors } = useTheme();
     const { subscriptions, settings } = useDatabase();
-    const [timeRange, setTimeRange] = useState<TimeRange>('month');
     const [chartType, setChartType] = useState<'category' | 'timeline'>('timeline');
+    const [selectedCategory, setSelectedCategory] = useState<'all' | SubscriptionCategory>('all');
 
     const mainCurrency = settings?.mainCurrency || 'TWD';
     const exchangeRates = settings?.exchangeRates
         ? JSON.parse(settings.exchangeRates)
         : {};
 
-    const timeRanges: { value: TimeRange; label: string }[] = [
-        { value: 'week', label: '週' },
-        { value: 'month', label: '月' },
-        { value: 'year', label: '年' },
-    ];
+    // 篩選訂閱資料
+    const filteredSubscriptions = selectedCategory === 'all'
+        ? subscriptions
+        : subscriptions.filter(sub => sub.category === selectedCategory);
 
     return (
         <View style={[styles.container, { backgroundColor: colors.background }]}>
@@ -31,33 +29,6 @@ export default function BudgetScreen() {
             </View>
 
             <ScrollView style={styles.content}>
-                {/* 時間範圍切換 */}
-                <View style={styles.timeRangeContainer}>
-                    {timeRanges.map((range) => (
-                        <TouchableOpacity
-                            key={range.value}
-                            style={[
-                                styles.timeRangeButton,
-                                { backgroundColor: colors.card, borderColor: colors.borderColor },
-                                timeRange === range.value && {
-                                    backgroundColor: colors.accent,
-                                    borderColor: colors.accent,
-                                },
-                            ]}
-                            onPress={() => setTimeRange(range.value)}
-                        >
-                            <Text
-                                style={[
-                                    styles.timeRangeText,
-                                    { color: colors.text },
-                                    timeRange === range.value && { color: '#ffffff' },
-                                ]}
-                            >
-                                {range.label}
-                            </Text>
-                        </TouchableOpacity>
-                    ))}
-                </View>
 
                 {/* 圖表類型切換 */}
                 <View style={styles.chartTypeContainer}>
@@ -79,7 +50,7 @@ export default function BudgetScreen() {
                                 chartType === 'timeline' && { color: '#ffffff' },
                             ]}
                         >
-                            趨勢圖
+                            趨勢統計
                         </Text>
                     </TouchableOpacity>
 
@@ -106,18 +77,27 @@ export default function BudgetScreen() {
                     </TouchableOpacity>
                 </View>
 
+                {/* 分類篩選 (僅在統計圖模式且非圓餅圖時顯示，或是都顯示？使用者需求是「可以選不同分類的統計表」，所以應該都要顯示) */}
+                {/* 實際上圓餅圖本身就是分類占比，篩選後圓餅圖只會剩下一個顏色，有點怪，但邏輯上正確 */}
+                {/* 為了使用者體驗，我們可以讓圓餅圖模式隱藏篩選器，或者讓篩選器只作用於長條圖 */}
+                {/* 根據需求：「訂閱明細會按照選擇的表顯示不同分類」，這意味著篩選器應該是全域的 */}
+                <CategoryTabs
+                    selectedCategory={selectedCategory}
+                    onSelectCategory={setSelectedCategory}
+                />
+
                 {/* 圖表 */}
                 <BudgetChart
-                    subscriptions={subscriptions}
+                    subscriptions={filteredSubscriptions}
                     chartType={chartType}
-                    timeRange={timeRange}
+                    selectedCategory={selectedCategory}
                     currency={mainCurrency}
                     exchangeRates={exchangeRates}
                 />
 
                 {/* 分類明細 */}
                 <CategoryBreakdown
-                    subscriptions={subscriptions}
+                    subscriptions={filteredSubscriptions}
                     currency={mainCurrency}
                     exchangeRates={exchangeRates}
                 />
@@ -142,22 +122,6 @@ const styles = StyleSheet.create({
     content: {
         flex: 1,
         paddingHorizontal: 20,
-    },
-    timeRangeContainer: {
-        flexDirection: 'row',
-        gap: 8,
-        marginBottom: 16,
-    },
-    timeRangeButton: {
-        flex: 1,
-        paddingVertical: 12,
-        borderRadius: 8,
-        borderWidth: 1,
-        alignItems: 'center',
-    },
-    timeRangeText: {
-        fontSize: 14,
-        fontWeight: '500',
     },
     chartTypeContainer: {
         flexDirection: 'row',

@@ -2,7 +2,8 @@
 export type SubscriptionCategory = 'entertainment' | 'productivity' | 'lifestyle' | 'other';
 
 // 扣款週期
-export type BillingCycle = 'monthly' | 'yearly';
+// 扣款週期
+export type BillingCycle = 'weekly' | 'monthly' | 'quarterly' | 'yearly';
 
 // 訂閱資料
 export interface Subscription {
@@ -13,7 +14,11 @@ export interface Subscription {
     price: number;             // 價格
     currency: string;          // 幣別 (TWD, USD, JPY...)
     billingCycle: BillingCycle;
-    nextBillingDate: string;   // ISO 日期格式
+    startDate: string;         // 訂閱開始日期 (YYYY-MM-DD)
+    reminderEnabled: boolean;  // 是否啟用通知
+    reminderTime?: string;     // 通知時間 (HH:mm)
+    reminderDays?: number;     // 提前天數 (0-14)
+    nextBillingDate: string;   // ISO 日期格式 (保留為計算欄位)
     createdAt: string;
     updatedAt: string;
 }
@@ -37,5 +42,9 @@ export const DEFAULT_EXCHANGE_RATES = {
     'HKD': 0.24801,     // 港幣
     'MOP': 0.255819,    // 澳門幣
     'GBP': 0.024070,    // 英鎊
-    'KRW': 46.75543     // 韓元
+    'KRW': 46.75543,    // 韓元
+    'TRY': 1.36131,     // 土耳其里拉
+    'PKR': 8.97426,     // 巴基斯坦盧比
+    'IDR': 534.25365,   // 印尼盾
+    'NGN': 46.41891     // 奈及利亞奈拉
 };

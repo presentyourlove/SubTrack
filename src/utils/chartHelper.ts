@@ -11,6 +11,7 @@ export interface ChartDataPoint {
     label: string;
     value: number;
     color?: string;
+    breakdown?: { color: string; value: number }[];
 }
 
 // 分類顏色對應
@@ -18,6 +19,7 @@ export const CATEGORY_COLORS: { [key in SubscriptionCategory]: string } = {
     entertainment: '#ef4444',  // 紅色
     productivity: '#3b82f6',   // 藍色
     lifestyle: '#10b981',      // 綠色
+    other: '#eab308',          // 黃色
 };
 
 // 取得分類名稱
@@ -25,9 +27,10 @@ export function getCategoryName(category: SubscriptionCategory): string {
     const names: { [key in SubscriptionCategory]: string } = {
         entertainment: '娛樂',
         productivity: '生產力',
-        lifestyle: '生活/其他',
+        lifestyle: '生活',
+        other: '其他',
     };
-    return names[category];
+    return names[category] || '其他';
 }
 
 // 計算訂閱的月費用
@@ -123,7 +126,7 @@ export function getStatsByApp(
     }).sort((a, b) => b.monthlyAmount - a.monthlyAmount);
 }
 
-// 按時間範圍統計 (長條圖資料)
+// 按時間範圍統計 (長條圖資料 - 僅供測試或舊有功能參考，已由 getExpenseStatistics 取代顯示)
 export function getStatsByTimeRange(
     subscriptions: Subscription[],
     rangeType: 'week' | 'month' | 'year',
@@ -133,7 +136,6 @@ export function getStatsByTimeRange(
     const range = getDateRange(rangeType);
 
     if (rangeType === 'week') {
-        // 按每天統計
         const days = ['日', '一', '二', '三', '四', '五', '六'];
         return days.map((day, index) => {
             const date = new Date(range.start);
@@ -161,7 +163,6 @@ export function getStatsByTimeRange(
             };
         });
     } else if (rangeType === 'month') {
-        // 按每週統計
         const weeks = ['第1週', '第2週', '第3週', '第4週'];
         return weeks.map((week, index) => {
             const weekStart = new Date(range.start);
@@ -190,7 +191,6 @@ export function getStatsByTimeRange(
             };
         });
     } else {
-        // 按每月統計
         const months = ['1月', '2月', '3月', '4月', '5月', '6月', '7月', '8月', '9月', '10月', '11月', '12月'];
         return months.map((month, index) => {
             const monthStart = new Date(range.start.getFullYear(), index, 1);
@@ -247,4 +247,67 @@ export function getTotalSummary(
         count: subscriptions.length,
         avgMonthly: subscriptions.length > 0 ? monthly / subscriptions.length : 0,
     };
+}
+
+// 取得費用統計 (每週/每月/每年)，包含分類佔比 breakdown
+export function getExpenseStatistics(
+    subscriptions: Subscription[],
+    targetCurrency: string = 'TWD',
+    exchangeRates: { [key: string]: number }
+): ChartDataPoint[] {
+    // 計算各分類的月費
+    const categoryMonthlyTotals: { [key: string]: number } = {};
+    let totalMonthly = 0;
+
+    subscriptions.forEach(sub => {
+        const monthlyAmount = getMonthlyAmount(sub);
+        const converted = convertCurrency(
+            monthlyAmount,
+            sub.currency,
+            targetCurrency,
+            exchangeRates
+        );
+
+        if (!categoryMonthlyTotals[sub.category]) {
+            categoryMonthlyTotals[sub.category] = 0;
+        }
+        categoryMonthlyTotals[sub.category] += converted;
+        totalMonthly += converted;
+    });
+
+    const totalYearly = totalMonthly * 12;
+    const totalWeekly = totalYearly / 52;
+
+    // 建構 breakdown 資料
+    const getBreakdown = (multiplier: number) => {
+        return Object.entries(categoryMonthlyTotals)
+            .map(([category, value]) => ({
+                color: CATEGORY_COLORS[category as SubscriptionCategory] || '#eab308',
+                value: value * multiplier
+            }))
+            // 排序: 值大的在下(堆疊圖通常由下往上)，或值大的在前(由左往右/由上往下)?
+            // 為了視覺一致性，通常排序一下比較好看
+            .sort((a, b) => b.value - a.value);
+    };
+
+    return [
+        {
+            label: '每週',
+            value: totalWeekly,
+            color: '#3b82f6',
+            breakdown: getBreakdown(12 / 52)
+        },
+        {
+            label: '每月',
+            value: totalMonthly,
+            color: '#10b981',
+            breakdown: getBreakdown(1)
+        },
+        {
+            label: '每年',
+            value: totalYearly,
+            color: '#f59e0b',
+            breakdown: getBreakdown(12)
+        },
+    ];
 }
