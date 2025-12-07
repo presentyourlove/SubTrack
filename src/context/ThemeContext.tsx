@@ -6,6 +6,7 @@ type ThemeContextType = {
     theme: ColorScheme;
     colors: ThemeColors;
     setTheme: (theme: ColorScheme) => void;
+    toggleTheme: () => void;
 };
 
 const ThemeContext = createContext<ThemeContextType | undefined>(undefined);
@@ -27,10 +28,14 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
         // 可以在這裡儲存到 AsyncStorage
     };
 
+    const toggleTheme = () => {
+        setThemeState(prev => prev === 'light' ? 'dark' : 'light');
+    };
+
     const colors = Colors[theme];
 
     return (
-        <ThemeContext.Provider value={{ theme, colors, setTheme }}>
+        <ThemeContext.Provider value={{ theme, colors, setTheme, toggleTheme }}>
             {children}
         </ThemeContext.Provider>
     );
