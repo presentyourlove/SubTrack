@@ -252,11 +252,11 @@ const DEFAULT_CURRENCY_SETTINGS: UserSettings = {
 
 ### Phase 1: 專案初始化
 
-- [ ] 建立 Expo 專案
-- [ ] 設定 TypeScript
-- [ ] 建立 GitHub Repository
-- [ ] 設定 .gitignore (忽略 node_modules, .expo, dist 等)
-- [ ] 首次 commit 並 push 至 GitHub
+- [x] 建立 Expo 專案
+- [x] 設定 TypeScript
+- [x] 建立 GitHub Repository
+- [x] 設定 .gitignore (忽略 node_modules, .expo, dist 等)
+- [x] 首次 commit 並 push 至 GitHub
 - [ ] 建立基本路由結構
 - [ ] 設定主題系統
 

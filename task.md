@@ -2,11 +2,11 @@
 
 ## Phase 1: 專案初始化
 
-- [ ] 建立 Expo 專案
-- [ ] 設定 TypeScript
-- [ ] 建立 GitHub Repository
-- [ ] 設定 .gitignore
-- [ ] 首次 commit 並 push 至 GitHub
+- [x] 建立 Expo 專案
+- [x] 設定 TypeScript
+- [x] 建立 GitHub Repository
+- [x] 設定 .gitignore
+- [x] 首次 commit 並 push 至 GitHub
 - [ ] 建立基本路由結構 (tabs: 訂閱/預算/設定)
 - [ ] 設定主題系統
 
