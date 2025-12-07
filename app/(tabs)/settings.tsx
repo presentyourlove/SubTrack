@@ -151,18 +151,18 @@ export default function SettingsScreen() {
             <ScrollView style={styles.scrollView}>
                 {/* 設定列表 */}
                 <View style={styles.settingsList}>
-                    {/* 同步管理 */}
+                    {/* 主題管理 */}
                     <TouchableOpacity
                         style={[styles.settingItem, { backgroundColor: colors.card, borderColor: colors.borderColor }]}
-                        onPress={() => setActiveModal('sync')}
+                        onPress={() => setActiveModal('theme')}
                     >
                         <View style={styles.settingIcon}>
-                            <Ionicons name="cloud" size={24} color={colors.accent} />
+                            <Ionicons name={theme === 'dark' ? 'moon' : 'sunny'} size={24} color={colors.accent} />
                         </View>
                         <View style={styles.settingContent}>
-                            <Text style={[styles.settingTitle, { color: colors.text }]}>同步管理</Text>
+                            <Text style={[styles.settingTitle, { color: colors.text }]}>主題管理</Text>
                             <Text style={[styles.settingSubtitle, { color: colors.subtleText }]}>
-                                {isAuthenticated ? `已登入: ${user?.email}` : '登入以啟用雲端同步'}
+                                {theme === 'dark' ? '深色模式' : '淺色模式'}
                             </Text>
                         </View>
                         <Ionicons name="chevron-forward" size={20} color={colors.subtleText} />
@@ -185,18 +185,18 @@ export default function SettingsScreen() {
                         <Ionicons name="chevron-forward" size={20} color={colors.subtleText} />
                     </TouchableOpacity>
 
-                    {/* 主題管理 */}
+                    {/* 同步管理 */}
                     <TouchableOpacity
                         style={[styles.settingItem, { backgroundColor: colors.card, borderColor: colors.borderColor }]}
-                        onPress={() => setActiveModal('theme')}
+                        onPress={() => setActiveModal('sync')}
                     >
                         <View style={styles.settingIcon}>
-                            <Ionicons name={theme === 'dark' ? 'moon' : 'sunny'} size={24} color={colors.accent} />
+                            <Ionicons name="cloud" size={24} color={colors.accent} />
                         </View>
                         <View style={styles.settingContent}>
-                            <Text style={[styles.settingTitle, { color: colors.text }]}>主題管理</Text>
+                            <Text style={[styles.settingTitle, { color: colors.text }]}>同步管理</Text>
                             <Text style={[styles.settingSubtitle, { color: colors.subtleText }]}>
-                                {theme === 'dark' ? '深色模式' : '淺色模式'}
+                                {isAuthenticated ? `已登入: ${user?.email}` : '登入以啟用雲端同步'}
                             </Text>
                         </View>
                         <Ionicons name="chevron-forward" size={20} color={colors.subtleText} />
