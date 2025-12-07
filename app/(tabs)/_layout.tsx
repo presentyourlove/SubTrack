@@ -8,16 +8,13 @@ export default function TabLayout() {
     return (
         <Tabs
             screenOptions={{
+                headerShown: false, // 隱藏頂部標題
                 tabBarActiveTintColor: colors.tabIconSelected,
                 tabBarInactiveTintColor: colors.tabIconDefault,
                 tabBarStyle: {
                     backgroundColor: colors.card,
                     borderTopColor: colors.borderColor,
                 },
-                headerStyle: {
-                    backgroundColor: colors.card,
-                },
-                headerTintColor: colors.text,
             }}
         >
             <Tabs.Screen
