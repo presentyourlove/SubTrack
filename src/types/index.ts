@@ -1,5 +1,5 @@
 // 訂閱分類
-export type SubscriptionCategory = 'entertainment' | 'productivity' | 'lifestyle';
+export type SubscriptionCategory = 'entertainment' | 'productivity' | 'lifestyle' | 'other';
 
 // 扣款週期
 export type BillingCycle = 'monthly' | 'yearly';
