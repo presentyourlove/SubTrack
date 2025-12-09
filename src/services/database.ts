@@ -17,7 +17,11 @@ export async function initDatabase(): Promise<SQLite.SQLiteDatabase> {
       price REAL NOT NULL,
       currency TEXT NOT NULL,
       billingCycle TEXT NOT NULL,
+      startDate TEXT NOT NULL,
       nextBillingDate TEXT NOT NULL,
+      reminderEnabled INTEGER NOT NULL DEFAULT 0,
+      reminderTime TEXT,
+      reminderDays INTEGER,
       calendarEventId TEXT,
       createdAt TEXT NOT NULL,
       updatedAt TEXT NOT NULL
@@ -76,10 +80,42 @@ export async function initDatabase(): Promise<SQLite.SQLiteDatabase> {
         }
     }
 
-    // 遷移邏輯:為 subscriptions 表添加 calendarEventId 欄位
+    // 遷移邏輯:為 subscriptions 表添加缺少的欄位
     try {
         await db.execAsync(`
             ALTER TABLE subscriptions ADD COLUMN calendarEventId TEXT;
+        `);
+    } catch (e) {
+        // 欄位已存在,忽略錯誤
+    }
+
+    try {
+        await db.execAsync(`
+            ALTER TABLE subscriptions ADD COLUMN startDate TEXT NOT NULL DEFAULT '2024-01-01';
+        `);
+    } catch (e) {
+        // 欄位已存在,忽略錯誤
+    }
+
+    try {
+        await db.execAsync(`
+            ALTER TABLE subscriptions ADD COLUMN reminderEnabled INTEGER NOT NULL DEFAULT 0;
+        `);
+    } catch (e) {
+        // 欄位已存在,忽略錯誤
+    }
+
+    try {
+        await db.execAsync(`
+            ALTER TABLE subscriptions ADD COLUMN reminderTime TEXT;
+        `);
+    } catch (e) {
+        // 欄位已存在,忽略錯誤
+    }
+
+    try {
+        await db.execAsync(`
+            ALTER TABLE subscriptions ADD COLUMN reminderDays INTEGER;
         `);
     } catch (e) {
         // 欄位已存在,忽略錯誤
@@ -117,8 +153,8 @@ export async function addSubscription(
 ): Promise<number> {
     const now = new Date().toISOString();
     const result = await db.runAsync(
-        `INSERT INTO subscriptions (name, icon, category, price, currency, billingCycle, nextBillingDate, createdAt, updatedAt)
-     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+        `INSERT INTO subscriptions (name, icon, category, price, currency, billingCycle, startDate, nextBillingDate, reminderEnabled, reminderTime, reminderDays, createdAt, updatedAt)
+     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
         [
             subscription.name,
             subscription.icon,
@@ -126,7 +162,11 @@ export async function addSubscription(
             subscription.price,
             subscription.currency,
             subscription.billingCycle,
+            subscription.startDate,
             subscription.nextBillingDate,
+            subscription.reminderEnabled ? 1 : 0,
+            subscription.reminderTime || null,
+            subscription.reminderDays ?? null,
             now,
             now
         ]
@@ -187,7 +227,16 @@ export async function updateUserSettings(
 
     Object.entries(settings).forEach(([key, value]) => {
         fields.push(`${key} = ?`);
-        values.push(typeof value === 'object' ? JSON.stringify(value) : value);
+        // 處理不同類型的值
+        if (typeof value === 'boolean') {
+            // boolean 轉換為 INTEGER (0 或 1)
+            values.push(value ? 1 : 0);
+        } else if (typeof value === 'object') {
+            // 物件轉換為 JSON 字串
+            values.push(JSON.stringify(value));
+        } else {
+            values.push(value);
+        }
     });
 
     fields.push('updatedAt = ?');

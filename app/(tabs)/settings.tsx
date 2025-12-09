@@ -28,7 +28,7 @@ type ModalType = 'sync' | 'currency' | 'theme' | 'exchangeRate' | 'auth' | 'noti
 export default function SettingsScreen() {
     const { colors, theme, toggleTheme } = useTheme();
     const { user, isAuthenticated } = useAuth();
-    const { settings, updateSettings, syncToCloud, syncFromCloud } = useDatabase();
+    const { settings, updateSettings, syncToCloud, syncFromCloud, subscriptions, updateSubscription } = useDatabase();
     const { showToast } = useToast();
 
     const [activeModal, setActiveModal] = useState<ModalType>(null);
@@ -71,6 +71,19 @@ export default function SettingsScreen() {
             showToast(error.message, 'error');
         }
     };
+
+    // 處理訂閱通知開關
+    const handleToggleSubscriptionNotification = async (id: number, enabled: boolean) => {
+        try {
+            await updateSubscription(id, { reminderEnabled: enabled });
+            showToast(enabled ? '通知已開啟' : '通知已關閉', 'success');
+        } catch (error: any) {
+            showToast('更新失敗', 'error');
+        }
+    };
+
+    // 篩選已開啟通知的訂閱
+    const notificationEnabledSubscriptions = subscriptions.filter(sub => sub.reminderEnabled);
 
     // 處理登入
     const handleLogin = async () => {
@@ -676,12 +689,51 @@ export default function SettingsScreen() {
                                     <Text style={[styles.switchHint, { color: colors.subtleText }]}>關閉後將不會收到任何訂閱提醒</Text>
                                 </View>
                                 <Switch
-                                    value={settings?.notificationsEnabled !== false}
+                                    value={!!settings?.notificationsEnabled}
                                     onValueChange={(value) => updateSettings({ notificationsEnabled: value })}
                                     trackColor={{ false: colors.borderColor, true: colors.accent }}
                                     thumbColor={'#ffffff'}
                                 />
                             </View>
+
+                            {/* 訂閱通知管理 */}
+                            <Text style={[styles.modalSectionTitle, { color: colors.text, marginTop: 24 }]}>訂閱通知管理</Text>
+                            {notificationEnabledSubscriptions.length === 0 ? (
+                                <View style={[styles.emptyNotificationCard, { backgroundColor: colors.card, borderColor: colors.borderColor }]}>
+                                    <Ionicons name="notifications-off-outline" size={48} color={colors.subtleText} />
+                                    <Text style={[styles.emptyNotificationText, { color: colors.subtleText }]}>
+                                        目前沒有訂閱開啟通知
+                                    </Text>
+                                    <Text style={[styles.emptyNotificationHint, { color: colors.subtleText }]}>
+                                        在主頁編輯訂閱以開啟通知
+                                    </Text>
+                                </View>
+                            ) : (
+                                <View style={styles.subscriptionNotificationList}>
+                                    {notificationEnabledSubscriptions.map(sub => (
+                                        <View
+                                            key={sub.id}
+                                            style={[styles.subscriptionNotificationCard, { backgroundColor: colors.card, borderColor: colors.borderColor }]}
+                                        >
+                                            <View style={styles.subscriptionInfo}>
+                                                <Text style={styles.subscriptionIcon}>{sub.icon}</Text>
+                                                <View style={{ flex: 1, marginLeft: 12 }}>
+                                                    <Text style={[styles.subscriptionName, { color: colors.text }]}>{sub.name}</Text>
+                                                    <Text style={[styles.subscriptionNotificationTime, { color: colors.subtleText }]}>
+                                                        {sub.reminderTime || '未設定'} · 提前 {sub.reminderDays ?? 0} 天
+                                                    </Text>
+                                                </View>
+                                            </View>
+                                            <Switch
+                                                value={true}
+                                                onValueChange={(value) => handleToggleSubscriptionNotification(sub.id, value)}
+                                                trackColor={{ false: colors.borderColor, true: colors.accent }}
+                                                thumbColor={'#ffffff'}
+                                            />
+                                        </View>
+                                    ))}
+                                </View>
+                            )}
                         </ScrollView>
                     </View>
                 </View>
@@ -775,7 +827,6 @@ const styles = StyleSheet.create({
         marginTop: 8,
     },
     input: {
-        borderRadius: 8,
         padding: 12,
         marginBottom: 12,
         borderRadius: 8,
@@ -980,5 +1031,48 @@ const styles = StyleSheet.create({
     switchHint: {
         fontSize: 12,
         marginTop: 4,
+    },
+    subscriptionNotificationList: {
+        gap: 12,
+    },
+    subscriptionNotificationCard: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'space-between',
+        padding: 16,
+        borderRadius: 12,
+        borderWidth: 1,
+    },
+    subscriptionInfo: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        flex: 1,
+    },
+    subscriptionIcon: {
+        fontSize: 32,
+    },
+    subscriptionName: {
+        fontSize: 16,
+        fontWeight: '600',
+        marginBottom: 4,
+    },
+    subscriptionNotificationTime: {
+        fontSize: 12,
+    },
+    emptyNotificationCard: {
+        padding: 32,
+        borderRadius: 12,
+        borderWidth: 1,
+        alignItems: 'center',
+        gap: 12,
+    },
+    emptyNotificationText: {
+        fontSize: 16,
+        fontWeight: '600',
+        textAlign: 'center',
+    },
+    emptyNotificationHint: {
+        fontSize: 13,
+        textAlign: 'center',
     },
 });

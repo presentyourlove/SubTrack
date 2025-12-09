@@ -1,8 +1,7 @@
 import { initializeApp } from 'firebase/app';
-// @ts-ignore - getReactNativePersistence 在 Firebase v11 中存在,但類型定義可能不完整
-import { initializeAuth, getReactNativePersistence } from 'firebase/auth';
+import { initializeAuth, browserLocalPersistence } from 'firebase/auth';
 import { getFirestore } from 'firebase/firestore';
-import AsyncStorage from '@react-native-async-storage/async-storage';
+import { Platform } from 'react-native';
 
 const firebaseConfig = {
     apiKey: process.env.EXPO_PUBLIC_FIREBASE_API_KEY,
@@ -16,10 +15,24 @@ const firebaseConfig = {
 // 初始化 Firebase
 const app = initializeApp(firebaseConfig);
 
-// 初始化 Auth 並使用 AsyncStorage 持久化
-export const auth = initializeAuth(app, {
-    persistence: getReactNativePersistence(AsyncStorage)
-});
+// 初始化 Auth 並根據平台使用不同的持久化策略
+let auth;
+if (Platform.OS === 'web') {
+    // Web 平台使用 browserLocalPersistence
+    auth = initializeAuth(app, {
+        persistence: browserLocalPersistence
+    });
+} else {
+    // React Native 平台使用 getReactNativePersistence
+    // @ts-ignore - 動態導入在 React Native 環境中可用
+    const { getReactNativePersistence } = require('firebase/auth');
+    const AsyncStorage = require('@react-native-async-storage/async-storage').default;
+    auth = initializeAuth(app, {
+        persistence: getReactNativePersistence(AsyncStorage)
+    });
+}
+
+export { auth };
 
 // 初始化 Firestore
 export const db = getFirestore(app);

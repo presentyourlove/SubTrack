@@ -51,7 +51,11 @@ export default function AddSubscriptionModal({
     const [startDate, setStartDate] = useState(new Date());
     const [showDatePicker, setShowDatePicker] = useState(false);
     const [reminderEnabled, setReminderEnabled] = useState(false);
-    const [reminderTime, setReminderTime] = useState(new Date());
+    const [reminderTime, setReminderTime] = useState(() => {
+        const defaultTime = new Date();
+        defaultTime.setHours(9, 0, 0, 0); // 預設 09:00
+        return defaultTime;
+    });
     const [reminderDays, setReminderDays] = useState(0);
 
     // Initialize/Reset form when modal opens or initialData changes
@@ -69,10 +73,20 @@ export default function AddSubscriptionModal({
                 setReminderEnabled(initialData.reminderEnabled);
 
                 if (initialData.reminderTime) {
-                    const [hours, minutes] = initialData.reminderTime.split(':');
-                    const timeDate = new Date();
-                    timeDate.setHours(parseInt(hours, 10), parseInt(minutes, 10));
-                    setReminderTime(timeDate);
+                    try {
+                        const [hours, minutes] = initialData.reminderTime.split(':');
+                        const timeDate = new Date();
+                        timeDate.setHours(parseInt(hours, 10) || 0, parseInt(minutes, 10) || 0);
+                        // 確保創建的 Date 是有效的
+                        if (!isNaN(timeDate.getTime())) {
+                            setReminderTime(timeDate);
+                        } else {
+                            setReminderTime(new Date());
+                        }
+                    } catch (error) {
+                        console.warn('Failed to parse reminderTime:', initialData.reminderTime);
+                        setReminderTime(new Date());
+                    }
                 } else {
                     setReminderTime(new Date());
                 }
@@ -86,7 +100,7 @@ export default function AddSubscriptionModal({
                 setPrice('');
                 setCurrency('TWD');
                 setBillingCycle('monthly');
-                setStartDate(new Date().toISOString().split('T')[0]);
+                setStartDate(new Date());
                 setReminderEnabled(false);
                 setReminderTime(new Date());
                 setReminderDays(0);
@@ -134,7 +148,7 @@ export default function AddSubscriptionModal({
         setPrice('');
         setCurrency('TWD');
         setBillingCycle('monthly');
-        setStartDate(new Date().toISOString().split('T')[0]);
+        setStartDate(new Date());
         setReminderEnabled(false);
         setReminderDays(0);
     };
@@ -162,7 +176,6 @@ export default function AddSubscriptionModal({
         >
             <View style={styles.overlay}>
                 <View style={[styles.container, { backgroundColor: colors.background }]}>
-                    {/* Header */}
                     <View style={styles.header}>
                         <Text style={[styles.title, { color: colors.text }]}>
                             {initialData ? '編輯訂閱' : '新增訂閱'}
@@ -173,7 +186,6 @@ export default function AddSubscriptionModal({
                     </View>
 
                     <ScrollView style={styles.content}>
-                        {/* 訂閱名稱 */}
                         <View style={styles.field}>
                             <Text style={[styles.label, { color: colors.text }]}>訂閱名稱 *</Text>
                             <TextInput
@@ -185,7 +197,6 @@ export default function AddSubscriptionModal({
                             />
                         </View>
 
-                        {/* 圖示選擇 */}
                         <View style={styles.field}>
                             <Text style={[styles.label, { color: colors.text }]}>圖示</Text>
                             <View style={styles.iconGrid}>
@@ -205,7 +216,6 @@ export default function AddSubscriptionModal({
                             </View>
                         </View>
 
-                        {/* 分類 */}
                         <View style={styles.field}>
                             <Text style={[styles.label, { color: colors.text }]}>分類 *</Text>
                             <View style={styles.categoryButtons}>
@@ -233,7 +243,6 @@ export default function AddSubscriptionModal({
                             </View>
                         </View>
 
-                        {/* 價格 */}
                         <View style={styles.field}>
                             <Text style={[styles.label, { color: colors.text }]}>價格 *</Text>
                             <View style={styles.row}>
@@ -249,13 +258,12 @@ export default function AddSubscriptionModal({
                                     style={[styles.currencyButton, { backgroundColor: colors.inputBackground }]}
                                     onPress={() => setCurrencyModalVisible(true)}
                                 >
-                                    <Text style={[styles.currencyText, { color: colors.text }]}>{currency}</Text>
+                                    <Text style={[styles.currencyText, { color: colors.text }]}>{String(currency || 'TWD')}</Text>
                                     <Ionicons name="chevron-down" size={16} color={colors.text} />
                                 </TouchableOpacity>
                             </View>
                         </View>
 
-                        {/* 扣款週期 */}
                         <View style={styles.field}>
                             <Text style={[styles.label, { color: colors.text }]}>扣款週期 *</Text>
                             <View style={styles.cycleContainer}>
@@ -334,7 +342,6 @@ export default function AddSubscriptionModal({
                             </View>
                         </View>
 
-                        {/* 訂閱開始日期 */}
                         <View style={styles.field}>
                             <Text style={[styles.label, { color: colors.text }]}>訂閱開始日期 *</Text>
                             {Platform.OS === 'web' ? (
@@ -363,7 +370,7 @@ export default function AddSubscriptionModal({
                                         onPress={() => setShowDatePicker(true)}
                                     >
                                         <Text style={{ color: colors.text, fontSize: 16 }}>
-                                            {(typeof startDate === 'string' ? new Date(startDate) : startDate).toLocaleDateString('zh-TW')}
+                                            {String((typeof startDate === 'string' ? new Date(startDate) : startDate).toLocaleDateString('zh-TW'))}
                                         </Text>
                                     </TouchableOpacity>
                                     {showDatePicker && (
@@ -383,7 +390,10 @@ export default function AddSubscriptionModal({
                             )}
                         </View>
 
-                        {/* 通知設定 */}
+
+
+
+
                         <View style={styles.field}>
                             <View style={styles.switchContainer}>
                                 <Text style={[styles.label, { color: colors.text, marginBottom: 0 }]}>啟用通知</Text>
@@ -394,8 +404,7 @@ export default function AddSubscriptionModal({
                                     thumbColor={'#ffffff'}
                                 />
                             </View>
-
-                            {reminderEnabled && (
+                            {reminderEnabled ? (
                                 <View style={styles.reminderContainer}>
                                     <View style={styles.row}>
                                         <View style={{ flex: 1 }}>
@@ -403,66 +412,47 @@ export default function AddSubscriptionModal({
                                             {Platform.OS === 'web' ? (
                                                 <input
                                                     type="time"
-                                                    value={reminderTime.toLocaleTimeString('en-US', { hour12: false, hour: '2-digit', minute: '2-digit' })}
+                                                    value={reminderTime instanceof Date && !isNaN(reminderTime.getTime()) ? reminderTime.toLocaleTimeString('en-US', { hour12: false, hour: '2-digit', minute: '2-digit' }) : '09:00'}
                                                     onChange={(e) => {
                                                         const [hours, minutes] = e.target.value.split(':');
-                                                        const newDate = new Date(reminderTime);
+                                                        const newDate = new Date();
                                                         newDate.setHours(parseInt(hours, 10));
                                                         newDate.setMinutes(parseInt(minutes, 10));
                                                         setReminderTime(newDate);
                                                     }}
-                                                    style={{
-                                                        height: 50,
-                                                        borderRadius: 12,
-                                                        paddingLeft: 16,
-                                                        paddingRight: 16,
-                                                        fontSize: 16,
-                                                        backgroundColor: colors.inputBackground,
-                                                        color: colors.text,
-                                                        border: 'none',
-                                                        width: '100%',
-                                                        boxSizing: 'border-box',
-                                                        fontFamily: 'system-ui'
-                                                    }}
+                                                    style={{ height: 50, borderRadius: 12, paddingLeft: 16, paddingRight: 16, fontSize: 16, backgroundColor: colors.inputBackground, color: colors.text, border: 'none', width: '100%', boxSizing: 'border-box', fontFamily: 'system-ui' }}
                                                 />
                                             ) : (
-                                                <TouchableOpacity
-                                                    style={[styles.input, { backgroundColor: colors.inputBackground }]}
-                                                    onPress={() => setShowTimePicker(true)}
-                                                >
+                                                <TouchableOpacity style={[styles.input, { backgroundColor: colors.inputBackground }]} onPress={() => setShowTimePicker(true)}>
                                                     <Text style={{ color: colors.text }}>
-                                                        {reminderTime.toLocaleTimeString('zh-TW', { hour: '2-digit', minute: '2-digit', hour12: false })}
+                                                        {reminderTime instanceof Date && !isNaN(reminderTime.getTime()) ? `${String(reminderTime.getHours()).padStart(2, '0')}:${String(reminderTime.getMinutes()).padStart(2, '0')}` : '09:00'}
                                                     </Text>
                                                 </TouchableOpacity>
                                             )}
                                         </View>
                                         <View style={{ flex: 1 }}>
                                             <Text style={[styles.subLabel, { color: colors.subtleText }]}>提前提醒 (天)</Text>
-                                            <TouchableOpacity
-                                                style={[styles.input, { backgroundColor: colors.inputBackground }]}
-                                                onPress={() => setShowDaysPicker(true)}
-                                            >
-                                                <Text style={{ color: colors.text }}>{reminderDays} 天</Text>
+                                            <TouchableOpacity style={[styles.input, { backgroundColor: colors.inputBackground }]} onPress={() => setShowDaysPicker(true)}>
+                                                <Text style={{ color: colors.text }}>{String(reminderDays)} 天</Text>
                                             </TouchableOpacity>
                                         </View>
                                     </View>
                                 </View>
-                            )}
+                            ) : null}
                         </View>
-
-                        {Platform.OS !== 'web' && showTimePicker && (
-                            <DateTimePicker
-                                testID="dateTimePicker"
-                                value={reminderTime}
-                                mode="time"
-                                is24Hour={true}
-                                display="default"
-                                onChange={onTimeChange}
-                            />
-                        )}
                     </ScrollView>
 
-                    {/* Footer */}
+                    {Platform.OS !== 'web' && showTimePicker && (
+                        <DateTimePicker
+                            testID="dateTimePicker"
+                            value={reminderTime instanceof Date && !isNaN(reminderTime.getTime()) ? reminderTime : new Date()}
+                            mode="time"
+                            is24Hour={true}
+                            display="default"
+                            onChange={onTimeChange}
+                        />
+                    )}
+
                     <View style={[styles.footer, { borderTopColor: colors.borderColor }]}>
                         <TouchableOpacity
                             style={[
@@ -485,8 +475,6 @@ export default function AddSubscriptionModal({
                     </View>
                 </View>
             </View>
-
-            {/* Currency Modal */}
             <Modal
                 visible={currencyModalVisible}
                 animationType="fade"
@@ -533,7 +521,6 @@ export default function AddSubscriptionModal({
                 </TouchableOpacity>
             </Modal>
 
-            {/* Days Picker Modal */}
             <Modal
                 visible={showDaysPicker}
                 animationType="fade"
@@ -568,7 +555,7 @@ export default function AddSubscriptionModal({
                                             item === reminderDays && { color: colors.accent, fontWeight: 'bold' }
                                         ]}
                                     >
-                                        {item} 天前
+                                        {String(item)} 天前
                                     </Text>
                                     {item === reminderDays && (
                                         <Ionicons name="checkmark" size={20} color={colors.accent} />
