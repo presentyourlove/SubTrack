@@ -1,4 +1,5 @@
-import { createContext, useContext, useState, useEffect, ReactNode } from 'react';
+import { createContext, useContext, useState, useEffect, ReactNode, useRef } from 'react';
+import NetInfo from '@react-native-community/netinfo';
 import { initializeDatabase, Database } from '../services';
 import { Subscription, UserSettings } from '../types';
 import * as db from '../services';
@@ -17,6 +18,9 @@ type DatabaseContextType = {
     subscriptions: Subscription[];
     settings: UserSettings | null;
     loading: boolean;
+    isOnline: boolean;
+    isSyncing: boolean;
+    lastSyncTime: Date | null;
     refreshData: () => Promise<void>;
     addSubscription: (subscription: Omit<Subscription, 'id' | 'createdAt' | 'updatedAt'>) => Promise<void>;
     updateSubscription: (id: number, updates: Partial<Omit<Subscription, 'id' | 'createdAt' | 'updatedAt'>>) => Promise<void>;
@@ -34,6 +38,12 @@ export function DatabaseProvider({ children }: { children: ReactNode }) {
     const [subscriptions, setSubscriptions] = useState<Subscription[]>([]);
     const [settings, setSettings] = useState<UserSettings | null>(null);
     const [loading, setLoading] = useState(true);
+    const [isOnline, setIsOnline] = useState(true);
+    const [isSyncing, setIsSyncing] = useState(false);
+    const [lastSyncTime, setLastSyncTime] = useState<Date | null>(null);
+    const [needsSync, setNeedsSync] = useState(false);
+    const syncTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+    const dailySyncIntervalRef = useRef<NodeJS.Timeout | null>(null);
 
     // 初始化資料庫
     useEffect(() => {
@@ -50,6 +60,81 @@ export function DatabaseProvider({ children }: { children: ReactNode }) {
         }
         init();
     }, []);
+
+    // 網路狀態監聽
+    useEffect(() => {
+        const unsubscribe = NetInfo.addEventListener(state => {
+            const online = state.isConnected === true;
+            setIsOnline(online);
+
+            // 當網路恢復且有待同步資料時,觸發自動同步
+            if (online && needsSync && isAuthenticated && user) {
+                scheduleAutoSync();
+            }
+        });
+
+        return () => unsubscribe();
+    }, [needsSync, isAuthenticated, user]);
+
+    // 每日定時同步 (每天 00:00)
+    useEffect(() => {
+        if (!isAuthenticated || !user) return;
+
+        const scheduleDailySync = () => {
+            const now = new Date();
+            const tomorrow = new Date(now);
+            tomorrow.setDate(tomorrow.getDate() + 1);
+            tomorrow.setHours(0, 0, 0, 0);
+
+            const msUntilMidnight = tomorrow.getTime() - now.getTime();
+
+            // 設定在午夜執行同步
+            dailySyncIntervalRef.current = setTimeout(() => {
+                if (isOnline && isAuthenticated && user) {
+                    autoSync();
+                }
+                // 設定下一次同步
+                scheduleDailySync();
+            }, msUntilMidnight);
+        };
+
+        scheduleDailySync();
+
+        return () => {
+            if (dailySyncIntervalRef.current) {
+                clearTimeout(dailySyncIntervalRef.current);
+            }
+        };
+    }, [isAuthenticated, user, isOnline]);
+
+    // 自動同步函式 (防抖 2 秒)
+    const scheduleAutoSync = () => {
+        if (syncTimeoutRef.current) {
+            clearTimeout(syncTimeoutRef.current);
+        }
+
+        syncTimeoutRef.current = setTimeout(() => {
+            autoSync();
+        }, 2000);
+    };
+
+    // 執行自動同步
+    const autoSync = async () => {
+        if (!isAuthenticated || !user || !database || isSyncing) return;
+
+        try {
+            setIsSyncing(true);
+            await uploadLocalDataToFirestore(user.uid, subscriptions, settings!);
+            setNeedsSync(false);
+            setLastSyncTime(new Date());
+            console.log('自動同步成功');
+        } catch (error) {
+            console.error('自動同步失敗:', error);
+            // 保持 needsSync 狀態,稍後重試
+        } finally {
+            setIsSyncing(false);
+        }
+    };
 
     // 當使用者登入時，同步雲端資料
     useEffect(() => {
@@ -108,6 +193,12 @@ export function DatabaseProvider({ children }: { children: ReactNode }) {
         }
 
         await refreshData();
+        setNeedsSync(true); // 標記需要同步
+
+        // 如果在線,觸發自動同步
+        if (isOnline && isAuthenticated && user) {
+            scheduleAutoSync();
+        }
     }
 
     // 更新訂閱
@@ -141,6 +232,12 @@ export function DatabaseProvider({ children }: { children: ReactNode }) {
         }
 
         await refreshData();
+        setNeedsSync(true); // 標記需要同步
+
+        // 如果在線,觸發自動同步
+        if (isOnline && isAuthenticated && user) {
+            scheduleAutoSync();
+        }
     }
 
     // 刪除訂閱
@@ -155,6 +252,12 @@ export function DatabaseProvider({ children }: { children: ReactNode }) {
         }
 
         await refreshData();
+        setNeedsSync(true); // 標記需要同步
+
+        // 如果在線,觸發自動同步
+        if (isOnline && isAuthenticated && user) {
+            scheduleAutoSync();
+        }
     }
 
     // 更新設定
@@ -174,6 +277,12 @@ export function DatabaseProvider({ children }: { children: ReactNode }) {
         }
 
         await refreshData();
+        setNeedsSync(true); // 標記需要同步
+
+        // 如果在線,觸發自動同步
+        if (isOnline && isAuthenticated && user) {
+            scheduleAutoSync();
+        }
     }
 
     // 同步到雲端
@@ -216,6 +325,9 @@ export function DatabaseProvider({ children }: { children: ReactNode }) {
         subscriptions,
         settings,
         loading,
+        isOnline,
+        isSyncing,
+        lastSyncTime,
         refreshData,
         addSubscription,
         updateSubscription,

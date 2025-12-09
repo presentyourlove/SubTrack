@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import {
     View,
     Text,
@@ -8,16 +8,22 @@ import {
     TextInput,
     Modal,
     Alert,
+    Switch,
+    Linking,
+    Platform,
 } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
+import * as Notifications from 'expo-notifications';
 import { useTheme } from '../../src/context/ThemeContext';
 import { useAuth } from '../../src/context/AuthContext';
 import { useDatabase } from '../../src/context/DatabaseContext';
 import { loginUser as login, registerUser as register, logoutUser as logout } from '../../src/services/authService';
 import { DEFAULT_EXCHANGE_RATES } from '../../src/types';
 import { useToast } from '../../src/context/ToastContext';
+import { sendTestNotification } from '../../src/utils/notificationHelper';
 
-type ModalType = 'sync' | 'currency' | 'theme' | 'exchangeRate' | 'auth' | null;
+type ModalType = 'sync' | 'currency' | 'theme' | 'exchangeRate' | 'auth' | 'notification' | null;
 
 export default function SettingsScreen() {
     const { colors, theme, toggleTheme } = useTheme();
@@ -31,6 +37,40 @@ export default function SettingsScreen() {
     const [editingRates, setEditingRates] = useState<{ [key: string]: string }>({});
     const [newCurrencyCode, setNewCurrencyCode] = useState('');
     const [newCurrencyRate, setNewCurrencyRate] = useState('');
+    const [notificationPermission, setNotificationPermission] = useState<string>('undetermined');
+
+    // 檢查通知權限
+    useEffect(() => {
+        checkNotificationPermission();
+    }, []);
+
+    const checkNotificationPermission = async () => {
+        if (Platform.OS === 'web') {
+            setNotificationPermission('unsupported');
+            return;
+        }
+        const { status } = await Notifications.getPermissionsAsync();
+        setNotificationPermission(status);
+    };
+
+    // 開啟系統設定
+    const openSettings = () => {
+        if (Platform.OS === 'ios') {
+            Linking.openURL('app-settings:');
+        } else if (Platform.OS === 'android') {
+            Linking.openSettings();
+        }
+    };
+
+    // 發送測試通知
+    const handleSendTestNotification = async () => {
+        try {
+            await sendTestNotification();
+            showToast('測試通知已發送！', 'success');
+        } catch (error: any) {
+            showToast(error.message, 'error');
+        }
+    };
 
     // 處理登入
     const handleLogin = async () => {
@@ -164,6 +204,20 @@ export default function SettingsScreen() {
         showToast(`已新增 ${code}`, 'success');
     };
 
+    // 刪除幣別
+    const handleDeleteCurrency = (code: string) => {
+        // 不允許刪除預設幣別
+        if (DEFAULT_EXCHANGE_RATES.hasOwnProperty(code)) {
+            showToast('無法刪除預設幣別', 'error');
+            return;
+        }
+
+        const newRates = { ...editingRates };
+        delete newRates[code];
+        setEditingRates(newRates);
+        showToast(`已刪除 ${code}`, 'success');
+    };
+
     // 取得所有可用幣別列表 (包含自訂)
     const getAvailableCurrencies = () => {
         const storedRates = settings?.exchangeRates
@@ -179,7 +233,7 @@ export default function SettingsScreen() {
     const availableCurrencies = getAvailableCurrencies();
 
     return (
-        <View style={[styles.container, { backgroundColor: colors.background }]}>
+        <SafeAreaView style={[styles.container, { backgroundColor: colors.background }]} edges={['top', 'left', 'right']}>
             <ScrollView style={styles.scrollView}>
                 {/* 設定列表 */}
                 <View style={styles.settingsList}>
@@ -212,6 +266,23 @@ export default function SettingsScreen() {
                             <Text style={[styles.settingTitle, { color: colors.text }]}>幣別管理</Text>
                             <Text style={[styles.settingSubtitle, { color: colors.subtleText }]}>
                                 主要幣別: {settings?.mainCurrency || 'TWD'}
+                            </Text>
+                        </View>
+                        <Ionicons name="chevron-forward" size={20} color={colors.subtleText} />
+                    </TouchableOpacity>
+
+                    {/* 通知設定 */}
+                    <TouchableOpacity
+                        style={[styles.settingItem, { backgroundColor: colors.card, borderColor: colors.borderColor }]}
+                        onPress={() => setActiveModal('notification')}
+                    >
+                        <View style={styles.settingIcon}>
+                            <Ionicons name="notifications" size={24} color={colors.accent} />
+                        </View>
+                        <View style={styles.settingContent}>
+                            <Text style={[styles.settingTitle, { color: colors.text }]}>通知設定</Text>
+                            <Text style={[styles.settingSubtitle, { color: colors.subtleText }]}>
+                                管理訂閱提醒與通知
                             </Text>
                         </View>
                         <Ionicons name="chevron-forward" size={20} color={colors.subtleText} />
@@ -280,26 +351,27 @@ export default function SettingsScreen() {
                                         onChangeText={setPassword}
                                         secureTextEntry
                                     />
-                                    <View style={styles.buttonRow}>
-                                        <TouchableOpacity
-                                            style={[styles.button, { backgroundColor: colors.accent }]}
-                                            onPress={handleLogin}
-                                        >
-                                            <Text style={styles.buttonText}>登入</Text>
-                                        </TouchableOpacity>
+                                    <View style={{ gap: 16, marginTop: 8 }}>
                                         <TouchableOpacity
                                             style={[
                                                 styles.button,
                                                 {
-                                                    backgroundColor: 'transparent',
-                                                    borderWidth: 1,
-                                                    borderColor: colors.accent
+                                                    backgroundColor: colors.accent,
+                                                    width: '100%',
+                                                    // Flat style for all platforms
                                                 }
                                             ]}
-                                            onPress={handleRegister}
+                                            onPress={handleLogin}
                                         >
-                                            <Text style={[styles.buttonText, { color: colors.accent }]}>註冊</Text>
+                                            <Text style={styles.buttonText}>登入</Text>
                                         </TouchableOpacity>
+
+                                        <View style={{ flexDirection: 'row', justifyContent: 'center', alignItems: 'center' }}>
+                                            <Text style={{ color: colors.subtleText, fontSize: 14 }}>還沒有帳號？ </Text>
+                                            <TouchableOpacity onPress={handleRegister}>
+                                                <Text style={{ color: colors.accent, fontWeight: 'bold', fontSize: 14 }}>立即註冊</Text>
+                                            </TouchableOpacity>
+                                        </View>
                                     </View>
                                 </View>
                             ) : (
@@ -396,7 +468,7 @@ export default function SettingsScreen() {
                         </ScrollView>
                     </View>
                 </View>
-            </Modal>
+            </Modal >
 
             {/* 主題管理 Modal */}
             <Modal
@@ -501,6 +573,11 @@ export default function SettingsScreen() {
                                         <Text style={[styles.rateCurrency, { color: colors.text }]}>
                                             {code}
                                         </Text>
+                                        {!DEFAULT_EXCHANGE_RATES.hasOwnProperty(code) && (
+                                            <Text style={[styles.customBadge, { color: colors.accent }]}>
+                                                自訂
+                                            </Text>
+                                        )}
                                     </View>
                                     <TextInput
                                         style={[styles.rateInput, { backgroundColor: colors.card, color: colors.text, borderColor: colors.borderColor }]}
@@ -513,6 +590,14 @@ export default function SettingsScreen() {
                                         placeholder="0.00"
                                         placeholderTextColor={colors.subtleText}
                                     />
+                                    {!DEFAULT_EXCHANGE_RATES.hasOwnProperty(code) && (
+                                        <TouchableOpacity
+                                            style={[styles.deleteButton, { backgroundColor: colors.expense }]}
+                                            onPress={() => handleDeleteCurrency(code)}
+                                        >
+                                            <Ionicons name="trash-outline" size={18} color="#ffffff" />
+                                        </TouchableOpacity>
+                                    )}
                                 </View>
                             ))}
                         </ScrollView>
@@ -538,7 +623,70 @@ export default function SettingsScreen() {
                     </View>
                 </View>
             </Modal>
-        </View>
+
+            {/* 通知設定 Modal */}
+            <Modal
+                visible={activeModal === 'notification'}
+                animationType="slide"
+                transparent={true}
+                onRequestClose={() => setActiveModal(null)}
+            >
+                <View style={styles.modalOverlay}>
+                    <View style={[styles.modalContainer, { backgroundColor: colors.background }]}>
+                        <View style={styles.modalHeader}>
+                            <Text style={[styles.modalTitle, { color: colors.text }]}>通知設定</Text>
+                            <TouchableOpacity onPress={() => setActiveModal(null)}>
+                                <Ionicons name="close" size={24} color={colors.text} />
+                            </TouchableOpacity>
+                        </View>
+
+                        <ScrollView style={styles.modalContent}>
+                            {/* 權限狀態 */}
+                            <Text style={[styles.modalSectionTitle, { color: colors.text }]}>權限狀態</Text>
+                            <View style={[styles.permissionCard, { backgroundColor: colors.card, borderColor: colors.borderColor }]}>
+                                {notificationPermission === 'granted' ? (
+                                    <>
+                                        <Ionicons name="checkmark-circle" size={32} color="#10b981" />
+                                        <Text style={[styles.permissionText, { color: colors.text }]}>通知權限已授予</Text>
+                                    </>
+                                ) : notificationPermission === 'denied' ? (
+                                    <>
+                                        <Ionicons name="close-circle" size={32} color="#ef4444" />
+                                        <Text style={[styles.permissionText, { color: colors.text }]}>通知權限被拒絕</Text>
+                                        <TouchableOpacity
+                                            style={[styles.button, { backgroundColor: colors.accent, marginTop: 12 }]}
+                                            onPress={openSettings}
+                                        >
+                                            <Text style={styles.buttonText}>開啟系統設定</Text>
+                                        </TouchableOpacity>
+                                    </>
+                                ) : (
+                                    <>
+                                        <Ionicons name="alert-circle" size={32} color={colors.subtleText} />
+                                        <Text style={[styles.permissionText, { color: colors.text }]}>尚未請求權限</Text>
+                                    </>
+                                )}
+                            </View>
+
+                            {/* 全域通知開關 */}
+                            <Text style={[styles.modalSectionTitle, { color: colors.text, marginTop: 24 }]}>全域通知</Text>
+                            <View style={[styles.switchRow, { backgroundColor: colors.card, borderColor: colors.borderColor }]}>
+                                <View style={{ flex: 1 }}>
+                                    <Text style={[styles.switchLabel, { color: colors.text }]}>啟用所有訂閱通知</Text>
+                                    <Text style={[styles.switchHint, { color: colors.subtleText }]}>關閉後將不會收到任何訂閱提醒</Text>
+                                </View>
+                                <Switch
+                                    value={settings?.notificationsEnabled !== false}
+                                    onValueChange={(value) => updateSettings({ notificationsEnabled: value })}
+                                    trackColor={{ false: colors.borderColor, true: colors.accent }}
+                                    thumbColor={'#ffffff'}
+                                />
+                            </View>
+                        </ScrollView>
+                    </View>
+                </View>
+            </Modal>
+        </SafeAreaView>
     );
 }
 
@@ -630,8 +778,8 @@ const styles = StyleSheet.create({
         borderRadius: 8,
         padding: 12,
         marginBottom: 12,
-        fontSize: 16,
-        borderWidth: 1,
+        borderRadius: 8,
+        minHeight: 48,
     },
     buttonRow: {
         flexDirection: 'row',
@@ -643,17 +791,17 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         alignItems: 'center',
         justifyContent: 'center',
-        padding: 12,
-        borderRadius: 8,
+        padding: 14,
+        borderRadius: 12,
         gap: 8,
-    },
-    logoutButton: {
-        marginTop: 12,
     },
     buttonText: {
         color: '#ffffff',
         fontSize: 16,
         fontWeight: '600',
+    },
+    logoutButton: {
+        marginTop: 12,
     },
     userInfo: {
         fontSize: 14,
@@ -787,5 +935,50 @@ const styles = StyleSheet.create({
     sectionSubtitle: {
         fontSize: 14,
         fontWeight: 'bold',
+    },
+    deleteButton: {
+        width: 36,
+        height: 36,
+        borderRadius: 18,
+        alignItems: 'center',
+        justifyContent: 'center',
+        marginLeft: 8,
+    },
+    customBadge: {
+        fontSize: 10,
+        fontWeight: '600',
+        marginLeft: 6,
+        paddingHorizontal: 6,
+        paddingVertical: 2,
+        borderRadius: 4,
+        backgroundColor: 'rgba(99, 102, 241, 0.1)',
+    },
+    permissionCard: {
+        padding: 20,
+        borderRadius: 12,
+        borderWidth: 1,
+        alignItems: 'center',
+        gap: 8,
+    },
+    permissionText: {
+        fontSize: 16,
+        fontWeight: '600',
+        textAlign: 'center',
+    },
+    switchRow: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        padding: 16,
+        borderRadius: 12,
+        borderWidth: 1,
+        gap: 12,
+    },
+    switchLabel: {
+        fontSize: 16,
+        fontWeight: '600',
+    },
+    switchHint: {
+        fontSize: 12,
+        marginTop: 4,
     },
 });

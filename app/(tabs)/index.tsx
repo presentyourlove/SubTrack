@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { View, Text, StyleSheet, ScrollView, TouchableOpacity, RefreshControl } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 import { useTheme } from '../../src/context/ThemeContext';
 import { useDatabase } from '../../src/context/DatabaseContext';
@@ -61,6 +62,18 @@ export default function SubscriptionsScreen() {
     // 處理刪除訂閱
     const handleDeleteSubscription = async (id: number) => {
         try {
+            // 先檢查是否有日曆事件需要刪除
+            const subscription = subscriptions.find(s => s.id === id);
+            if (subscription?.calendarEventId) {
+                try {
+                    const Calendar = require('expo-calendar');
+                    await Calendar.deleteEventAsync(subscription.calendarEventId);
+                } catch (calendarError) {
+                    console.error('刪除日曆事件失敗:', calendarError);
+                    // 即使日曆刪除失敗,仍繼續刪除訂閱
+                }
+            }
+
             await deleteSubscription(id);
         } catch (error) {
             console.error('Failed to delete subscription:', error);
@@ -76,7 +89,7 @@ export default function SubscriptionsScreen() {
     };
 
     return (
-        <View style={[styles.container, { backgroundColor: colors.background }]}>
+        <SafeAreaView style={[styles.container, { backgroundColor: colors.background }]} edges={['top', 'left', 'right']}>
             {/* Header */}
             <View style={[styles.header, { backgroundColor: colors.background }]}>
                 <Text style={[styles.headerTitle, { color: colors.text }]}>訂閱管理</Text>
@@ -128,6 +141,10 @@ export default function SubscriptionsScreen() {
                                 subscription={subscription}
                                 onEdit={() => handleEditSubscription(subscription.id)}
                                 onDelete={() => handleDeleteSubscription(subscription.id)}
+                                onSyncToCalendar={() => refreshData()}
+                                onUpdateCalendarId={async (eventId) => {
+                                    await updateSubscription(subscription.id, { calendarEventId: eventId });
+                                }}
                             />
                         ))}
                     </View>
@@ -144,7 +161,7 @@ export default function SubscriptionsScreen() {
                 onSubmit={handleSubmitSubscription}
                 initialData={activeSubscription}
             />
-        </View>
+        </SafeAreaView>
     );
 }
 
@@ -157,7 +174,7 @@ const styles = StyleSheet.create({
         justifyContent: 'space-between',
         alignItems: 'center',
         paddingHorizontal: 20,
-        paddingTop: 60,
+        paddingTop: 16,
         paddingBottom: 16,
     },
     headerTitle: {

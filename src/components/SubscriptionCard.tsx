@@ -1,5 +1,6 @@
-import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, Platform } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
+import * as Calendar from 'expo-calendar';
 import { useTheme } from '../context/ThemeContext';
 import { Subscription } from '../types';
 import { formatCurrency } from '../utils/currencyHelper';
@@ -9,17 +10,94 @@ type SubscriptionCardProps = {
     subscription: Subscription;
     onEdit?: () => void;
     onDelete?: () => void;
+    onSyncToCalendar?: () => void;
+    onUpdateCalendarId?: (eventId: string | null) => void;
 };
 
 export default function SubscriptionCard({
     subscription,
     onEdit,
     onDelete,
+    onSyncToCalendar,
+    onUpdateCalendarId,
 }: SubscriptionCardProps) {
     const { colors } = useTheme();
 
     const daysUntil = getDaysUntil(subscription.nextBillingDate);
     const urgency = getUrgencyLevel(subscription.nextBillingDate);
+
+    // 同步到日曆
+    const handleSyncToCalendar = async () => {
+        if (Platform.OS === 'web') {
+            alert('日曆功能在 Web 平台不支援');
+            return;
+        }
+
+        try {
+            // 如果已經同步過,則刪除
+            if (subscription.calendarEventId) {
+                try {
+                    await Calendar.deleteEventAsync(subscription.calendarEventId);
+
+                    // 清除資料庫中的 eventId
+                    if (onUpdateCalendarId) {
+                        onUpdateCalendarId(null);
+                    }
+
+                    alert('已從日曆移除');
+                    // 通知父組件重新載入資料
+                    if (onSyncToCalendar) {
+                        onSyncToCalendar();
+                    }
+                } catch (error) {
+                    console.error('刪除日曆事件失敗:', error);
+                    alert('從日曆移除失敗');
+                }
+                return;
+            }
+
+            // 請求日曆權限
+            const { status } = await Calendar.requestCalendarPermissionsAsync();
+            if (status !== 'granted') {
+                alert('需要日曆權限才能同步');
+                return;
+            }
+
+            const calendars = await Calendar.getCalendarsAsync(Calendar.EntityTypes.EVENT);
+            const defaultCalendar = calendars.find(cal => cal.allowsModifications) || calendars[0];
+
+            if (!defaultCalendar) {
+                alert('找不到可用的日曆');
+                return;
+            }
+
+            const eventDate = new Date(subscription.nextBillingDate);
+            const endDate = new Date(eventDate);
+            endDate.setHours(endDate.getHours() + 1);
+
+            const eventId = await Calendar.createEventAsync(defaultCalendar.id, {
+                title: `${subscription.icon} ${subscription.name} 扣款`,
+                startDate: eventDate,
+                endDate: endDate,
+                notes: `金額: ${formatCurrency(subscription.price, subscription.currency)}`,
+                alarms: [{ relativeOffset: -24 * 60 }], // 提前 1 天提醒
+            });
+
+            // 儲存 eventId 到資料庫
+            if (onUpdateCalendarId) {
+                onUpdateCalendarId(eventId);
+            }
+
+            alert('已成功同步到日曆！');
+            // 通知父組件重新載入資料
+            if (onSyncToCalendar) {
+                onSyncToCalendar();
+            }
+        } catch (error) {
+            console.error('同步日曆失敗:', error);
+            alert('同步日曆失敗，請稍後再試');
+        }
+    };
 
     // 緊急程度顏色
     const urgencyColors = {
@@ -82,6 +160,30 @@ export default function SubscriptionCard({
                 >
                     <Ionicons name="trash-outline" size={18} color={colors.expense} />
                     <Text style={[styles.actionText, { color: colors.expense }]}>刪除</Text>
+                </TouchableOpacity>
+            </View>
+
+            {/* 日曆同步開關 */}
+            <View style={[styles.calendarSync, { borderTopColor: colors.borderColor }]}>
+                <View style={{ flex: 1 }}>
+                    <Text style={[styles.calendarLabel, { color: colors.text }]}>同步到日曆</Text>
+                    <Text style={[styles.calendarHint, { color: colors.subtleText }]}>
+                        自動將扣款日期加入手機日曆
+                    </Text>
+                </View>
+                <TouchableOpacity
+                    style={[
+                        styles.calendarToggle,
+                        subscription.calendarEventId
+                            ? { backgroundColor: colors.accent }
+                            : { backgroundColor: colors.borderColor }
+                    ]}
+                    onPress={handleSyncToCalendar}
+                >
+                    <View style={[
+                        styles.calendarToggleThumb,
+                        subscription.calendarEventId && styles.calendarToggleThumbActive
+                    ]} />
                 </TouchableOpacity>
             </View>
         </View>
@@ -171,5 +273,37 @@ const styles = StyleSheet.create({
     actionText: {
         fontSize: 14,
         fontWeight: '500',
+    },
+    calendarSync: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        paddingTop: 12,
+        marginTop: 12,
+        borderTopWidth: 1,
+        gap: 12,
+    },
+    calendarLabel: {
+        fontSize: 14,
+        fontWeight: '600',
+    },
+    calendarHint: {
+        fontSize: 12,
+        marginTop: 2,
+    },
+    calendarToggle: {
+        width: 50,
+        height: 28,
+        borderRadius: 14,
+        padding: 2,
+        justifyContent: 'center',
+    },
+    calendarToggleThumb: {
+        width: 24,
+        height: 24,
+        borderRadius: 12,
+        backgroundColor: '#ffffff',
+    },
+    calendarToggleThumbActive: {
+        marginLeft: 22,
     },
 });

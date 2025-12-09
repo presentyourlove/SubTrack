@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { View, Text, StyleSheet, ScrollView, TouchableOpacity } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { useTheme } from '../../src/context/ThemeContext';
 import { useDatabase } from '../../src/context/DatabaseContext';
 import { BudgetChart, CategoryBreakdown, CategoryTabs } from '../../src/components';
@@ -22,7 +23,7 @@ export default function BudgetScreen() {
         : subscriptions.filter(sub => sub.category === selectedCategory);
 
     return (
-        <View style={[styles.container, { backgroundColor: colors.background }]}>
+        <SafeAreaView style={[styles.container, { backgroundColor: colors.background }]} edges={['top', 'left', 'right']}>
             {/* Header */}
             <View style={[styles.header, { backgroundColor: colors.background }]}>
                 <Text style={[styles.headerTitle, { color: colors.text }]}>預算追蹤</Text>
@@ -102,7 +103,7 @@ export default function BudgetScreen() {
                     exchangeRates={exchangeRates}
                 />
             </ScrollView>
-        </View>
+        </SafeAreaView>
     );
 }
 
@@ -112,7 +113,7 @@ const styles = StyleSheet.create({
     },
     header: {
         paddingHorizontal: 20,
-        paddingTop: 60,
+        paddingTop: 16,
         paddingBottom: 16,
     },
     headerTitle: {

@@ -18,6 +18,7 @@ export async function initDatabase(): Promise<SQLite.SQLiteDatabase> {
       currency TEXT NOT NULL,
       billingCycle TEXT NOT NULL,
       nextBillingDate TEXT NOT NULL,
+      calendarEventId TEXT,
       createdAt TEXT NOT NULL,
       updatedAt TEXT NOT NULL
     );
@@ -30,6 +31,9 @@ export async function initDatabase(): Promise<SQLite.SQLiteDatabase> {
       mainCurrency TEXT NOT NULL DEFAULT 'TWD',
       exchangeRates TEXT NOT NULL,
       theme TEXT NOT NULL DEFAULT 'dark',
+      notificationsEnabled INTEGER NOT NULL DEFAULT 1,
+      defaultReminderTime TEXT NOT NULL DEFAULT '09:00',
+      defaultReminderDays INTEGER NOT NULL DEFAULT 1,
       createdAt TEXT NOT NULL,
       updatedAt TEXT NOT NULL
     );
@@ -43,10 +47,42 @@ export async function initDatabase(): Promise<SQLite.SQLiteDatabase> {
     if (!settings) {
         const now = new Date().toISOString();
         await db.runAsync(
-            `INSERT INTO user_settings (id, mainCurrency, exchangeRates, theme, createdAt, updatedAt)
-       VALUES (?, ?, ?, ?, ?, ?)`,
-            [1, 'TWD', JSON.stringify(DEFAULT_EXCHANGE_RATES), 'dark', now, now]
+            `INSERT INTO user_settings (id, mainCurrency, exchangeRates, theme, notificationsEnabled, defaultReminderTime, defaultReminderDays, createdAt, updatedAt)
+       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+            [1, 'TWD', JSON.stringify(DEFAULT_EXCHANGE_RATES), 'dark', 1, '09:00', 1, now, now]
         );
+    } else {
+        // 遷移邏輯:檢查是否需要添加新欄位
+        try {
+            await db.execAsync(`
+                ALTER TABLE user_settings ADD COLUMN notificationsEnabled INTEGER NOT NULL DEFAULT 1;
+            `);
+        } catch (e) {
+            // 欄位已存在,忽略錯誤
+        }
+        try {
+            await db.execAsync(`
+                ALTER TABLE user_settings ADD COLUMN defaultReminderTime TEXT NOT NULL DEFAULT '09:00';
+            `);
+        } catch (e) {
+            // 欄位已存在,忽略錯誤
+        }
+        try {
+            await db.execAsync(`
+                ALTER TABLE user_settings ADD COLUMN defaultReminderDays INTEGER NOT NULL DEFAULT 1;
+            `);
+        } catch (e) {
+            // 欄位已存在,忽略錯誤
+        }
+    }
+
+    // 遷移邏輯:為 subscriptions 表添加 calendarEventId 欄位
+    try {
+        await db.execAsync(`
+            ALTER TABLE subscriptions ADD COLUMN calendarEventId TEXT;
+        `);
+    } catch (e) {
+        // 欄位已存在,忽略錯誤
     }
 
     return db;

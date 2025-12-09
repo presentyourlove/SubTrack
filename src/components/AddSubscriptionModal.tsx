@@ -48,7 +48,8 @@ export default function AddSubscriptionModal({
     const [price, setPrice] = useState('');
     const [currency, setCurrency] = useState('TWD');
     const [billingCycle, setBillingCycle] = useState<BillingCycle>('monthly');
-    const [startDate, setStartDate] = useState(new Date().toISOString().split('T')[0]);
+    const [startDate, setStartDate] = useState(new Date());
+    const [showDatePicker, setShowDatePicker] = useState(false);
     const [reminderEnabled, setReminderEnabled] = useState(false);
     const [reminderTime, setReminderTime] = useState(new Date());
     const [reminderDays, setReminderDays] = useState(0);
@@ -64,7 +65,7 @@ export default function AddSubscriptionModal({
                 setPrice(initialData.price.toString());
                 setCurrency(initialData.currency);
                 setBillingCycle(initialData.billingCycle);
-                setStartDate(initialData.startDate);
+                setStartDate(typeof initialData.startDate === 'string' ? new Date(initialData.startDate) : initialData.startDate);
                 setReminderEnabled(initialData.reminderEnabled);
 
                 if (initialData.reminderTime) {
@@ -120,7 +121,7 @@ export default function AddSubscriptionModal({
             price: parseFloat(price),
             currency,
             billingCycle,
-            startDate,
+            startDate: (typeof startDate === 'string' ? startDate : startDate.toISOString().split('T')[0]),
             reminderEnabled,
             reminderTime: reminderEnabled ? formattedTime : undefined,
             reminderDays: reminderEnabled ? reminderDays : undefined,
@@ -262,6 +263,24 @@ export default function AddSubscriptionModal({
                                     style={[
                                         styles.cycleButton,
                                         { backgroundColor: colors.inputBackground, borderColor: colors.borderColor },
+                                        billingCycle === 'weekly' && { backgroundColor: colors.accent, borderColor: colors.accent },
+                                    ]}
+                                    onPress={() => setBillingCycle('weekly')}
+                                >
+                                    <Text
+                                        style={[
+                                            styles.cycleText,
+                                            { color: colors.text },
+                                            billingCycle === 'weekly' && { color: '#ffffff' },
+                                        ]}
+                                    >
+                                        每週
+                                    </Text>
+                                </TouchableOpacity>
+                                <TouchableOpacity
+                                    style={[
+                                        styles.cycleButton,
+                                        { backgroundColor: colors.inputBackground, borderColor: colors.borderColor },
                                         billingCycle === 'monthly' && { backgroundColor: colors.accent, borderColor: colors.accent },
                                     ]}
                                     onPress={() => setBillingCycle('monthly')}
@@ -312,24 +331,6 @@ export default function AddSubscriptionModal({
                                         每年
                                     </Text>
                                 </TouchableOpacity>
-                                <TouchableOpacity
-                                    style={[
-                                        styles.cycleButton,
-                                        { backgroundColor: colors.inputBackground, borderColor: colors.borderColor },
-                                        billingCycle === 'weekly' && { backgroundColor: colors.accent, borderColor: colors.accent },
-                                    ]}
-                                    onPress={() => setBillingCycle('weekly')}
-                                >
-                                    <Text
-                                        style={[
-                                            styles.cycleText,
-                                            { color: colors.text },
-                                            billingCycle === 'weekly' && { color: '#ffffff' },
-                                        ]}
-                                    >
-                                        每週
-                                    </Text>
-                                </TouchableOpacity>
                             </View>
                         </View>
 
@@ -339,8 +340,8 @@ export default function AddSubscriptionModal({
                             {Platform.OS === 'web' ? (
                                 <input
                                     type="date"
-                                    value={startDate}
-                                    onChange={(e) => setStartDate(e.target.value)}
+                                    value={typeof startDate === 'string' ? startDate : startDate.toISOString().split('T')[0]}
+                                    onChange={(e) => setStartDate(new Date(e.target.value))}
                                     style={{
                                         height: 50,
                                         borderRadius: 12,
@@ -356,13 +357,29 @@ export default function AddSubscriptionModal({
                                     }}
                                 />
                             ) : (
-                                <TextInput
-                                    style={[styles.input, { backgroundColor: colors.inputBackground, color: colors.text }]}
-                                    value={startDate}
-                                    onChangeText={setStartDate}
-                                    placeholder="YYYY-MM-DD"
-                                    placeholderTextColor={colors.subtleText}
-                                />
+                                <>
+                                    <TouchableOpacity
+                                        style={[styles.input, { backgroundColor: colors.inputBackground, justifyContent: 'center' }]}
+                                        onPress={() => setShowDatePicker(true)}
+                                    >
+                                        <Text style={{ color: colors.text, fontSize: 16 }}>
+                                            {(typeof startDate === 'string' ? new Date(startDate) : startDate).toLocaleDateString('zh-TW')}
+                                        </Text>
+                                    </TouchableOpacity>
+                                    {showDatePicker && (
+                                        <DateTimePicker
+                                            value={typeof startDate === 'string' ? new Date(startDate) : startDate}
+                                            mode="date"
+                                            display="default"
+                                            onChange={(event, selectedDate) => {
+                                                setShowDatePicker(Platform.OS === 'ios');
+                                                if (selectedDate) {
+                                                    setStartDate(selectedDate);
+                                                }
+                                            }}
+                                        />
+                                    )}
+                                </>
                             )}
                         </View>
 
