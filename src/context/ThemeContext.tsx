@@ -3,48 +3,51 @@ import { useColorScheme } from 'react-native';
 import { Colors, ColorScheme, ThemeColors } from '../constants/Colors';
 
 type ThemeContextType = {
-    theme: ColorScheme;
-    colors: ThemeColors;
-    setTheme: (theme: ColorScheme) => void;
-    toggleTheme: () => void;
+  theme: ColorScheme;
+  colors: ThemeColors;
+  setTheme: (theme: ColorScheme) => void;
+  toggleTheme: () => void;
 };
 
 const ThemeContext = createContext<ThemeContextType | undefined>(undefined);
 
 export function ThemeProvider({ children }: { children: ReactNode }) {
-    const systemColorScheme = useColorScheme();
-    const [theme, setThemeState] = useState<ColorScheme>(systemColorScheme === 'dark' ? 'dark' : 'light');
+  const systemColorScheme = useColorScheme();
+  const [theme, setThemeState] = useState<ColorScheme>(
+    systemColorScheme === 'dark' ? 'dark' : 'light',
+  );
 
-    useEffect(() => {
-        // 可以在這裡從 AsyncStorage 載入使用者偏好的主題
-        // 目前先使用系統主題
-        if (systemColorScheme) {
-            setThemeState(systemColorScheme);
-        }
-    }, [systemColorScheme]);
+  useEffect(() => {
+    // 可以在這裡從 AsyncStorage 載入使用者偏好的主題
+    // 目前先使用系統主題
+    if (systemColorScheme) {
+      // eslint-disable-next-line react-hooks/exhaustive-deps
+      setThemeState(systemColorScheme);
+    }
+  }, [systemColorScheme]);
 
-    const setTheme = (newTheme: ColorScheme) => {
-        setThemeState(newTheme);
-        // 可以在這裡儲存到 AsyncStorage
-    };
+  const setTheme = (newTheme: ColorScheme) => {
+    setThemeState(newTheme);
+    // 可以在這裡儲存到 AsyncStorage
+  };
 
-    const toggleTheme = () => {
-        setThemeState(prev => prev === 'light' ? 'dark' : 'light');
-    };
+  const toggleTheme = () => {
+    setThemeState((prev) => (prev === 'light' ? 'dark' : 'light'));
+  };
 
-    const colors = Colors[theme];
+  const colors = Colors[theme];
 
-    return (
-        <ThemeContext.Provider value={{ theme, colors, setTheme, toggleTheme }}>
-            {children}
-        </ThemeContext.Provider>
-    );
+  return (
+    <ThemeContext.Provider value={{ theme, colors, setTheme, toggleTheme }}>
+      {children}
+    </ThemeContext.Provider>
+  );
 }
 
 export function useTheme() {
-    const context = useContext(ThemeContext);
-    if (context === undefined) {
-        throw new Error('useTheme must be used within a ThemeProvider');
-    }
-    return context;
+  const context = useContext(ThemeContext);
+  if (context === undefined) {
+    throw new Error('useTheme must be used within a ThemeProvider');
+  }
+  return context;
 }

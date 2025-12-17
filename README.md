@@ -1,9 +1,8 @@
 # SubTrack - 訂閱管理應用程式
 
-<div align="center">
-  <h3>📱 輕鬆管理您的所有訂閱服務</h3>
-  <p>追蹤訂閱、分析支出、掌控預算</p>
-</div>
+## 📱 輕鬆管理您的所有訂閱服務
+
+追蹤訂閱、分析支出、掌控預算
 
 ---
 
@@ -66,13 +65,13 @@ git clone https://github.com/presentyourlove/SubTrack.git
 cd SubTrack
 ```
 
-2. **安裝依賴**
+1. **安裝依賴**
 
 ```bash
 npm install --legacy-peer-deps
 ```
 
-3. **設定環境變數**
+1. **設定環境變數**
 
 建立 `.env` 檔案：
 
@@ -85,7 +84,7 @@ EXPO_PUBLIC_FIREBASE_MESSAGING_SENDER_ID=your_sender_id
 EXPO_PUBLIC_FIREBASE_APP_ID=your_app_id
 ```
 
-4. **啟動應用程式**
+1. **啟動應用程式**
 
 ```bash
 # Web
@@ -138,7 +137,7 @@ npm run android
 
 ## 📂 專案結構
 
-```
+```text
 SubTrack/
 ├── app/                    # Expo Router 路由
 │   ├── (tabs)/            # Tab 導航頁面
@@ -148,17 +147,17 @@ SubTrack/
 │   └── _layout.tsx        # 根佈局
 ├── src/
 │   ├── components/        # UI 元件
-│   │   ├── SummaryCard.tsx
-│   │   ├── AlertCard.tsx
-│   │   ├── SubscriptionCard.tsx
+│   │   ├── settings/      # 設定頁面元件
+│   │   ├── subscription/  # 訂閱功能元件
 │   │   ├── AddSubscriptionModal.tsx
-│   │   ├── CategoryTabs.tsx
-│   │   ├── BudgetChart.tsx
-│   │   └── CategoryBreakdown.tsx
+│   │   ├── SubscriptionCard.tsx
+│   │   ├── SummaryCard.tsx
+│   │   └── ...
 │   ├── context/           # React Context
 │   │   ├── ThemeContext.tsx
 │   │   ├── AuthContext.tsx
 │   │   └── DatabaseContext.tsx
+│   ├── constants/         # 常數設定 (AppConfig)
 │   ├── services/          # 資料服務
 │   │   ├── database.ts          # SQLite
 │   │   ├── database.web.ts      # localStorage
@@ -177,6 +176,9 @@ SubTrack/
 │   └── constants/         # 常數
 │       └── Colors.ts
 ├── .env                   # 環境變數
+├── i18n/                  # 國際化資源
+│   ├── index.ts
+│   └── zh.ts
 ├── app.json              # Expo 設定
 ├── package.json          # 依賴套件
 └── README.md             # 本檔案
@@ -191,7 +193,11 @@ SubTrack/
 編輯 `src/types/index.ts`:
 
 ```typescript
-export type SubscriptionCategory = 'entertainment' | 'productivity' | 'lifestyle' | 'your_new_category';
+export type SubscriptionCategory =
+  | 'entertainment'
+  | 'productivity'
+  | 'lifestyle'
+  | 'your_new_category';
 ```
 
 ### 新增支援幣別
@@ -200,8 +206,8 @@ export type SubscriptionCategory = 'entertainment' | 'productivity' | 'lifestyle
 
 ```typescript
 export const DEFAULT_EXCHANGE_RATES = {
-  'TWD': 1,
-  'YOUR_CURRENCY': rate,
+  TWD: 1,
+  YOUR_CURRENCY: rate,
   // ...
 };
 ```
@@ -230,6 +236,12 @@ export const Colors = {
 ```bash
 # 執行測試
 npm test
+
+# 檢查程式碼品質
+npm run lint
+
+# 格式化程式碼
+npm run format
 ```
 
 ---
@@ -276,7 +288,7 @@ eas build --platform android
 
 ## 👤 作者
 
-**Your Name**
+- **Your Name**
 
 - GitHub: [@presentyourlove](https://github.com/presentyourlove)
 
@@ -311,12 +323,11 @@ eas build --platform android
 - [ ] 更多圖表類型
 - [ ] 匯率自動更新
 - [ ] 訂閱推薦功能
-- [ ] 多語言支援
+- [x] 多語言支援 (繁體中文)
 - [ ] Widget 支援
 
 ---
 
-<div align="center">
-  <p>如果這個專案對您有幫助，請給個 ⭐️！</p>
-  <p>Made with ❤️ by presentyourlove</p>
-</div>
+如果這個專案對您有幫助，請給個 ⭐️！
+
+Made with ❤️ by presentyourlove

@@ -10,19 +10,19 @@ export type Database = SQLiteDB.SQLiteDatabase | WebDB.WebDatabase;
 
 // 統一的資料庫初始化函式
 export async function initializeDatabase(): Promise<Database> {
-    return await database.initDatabase();
+  return await database.initDatabase();
 }
 
 // 匯出所有資料庫操作
 export const {
-    getAllSubscriptions,
-    getSubscriptionsByCategory,
-    addSubscription,
-    updateSubscription,
-    deleteSubscription,
-    getUserSettings,
-    updateUserSettings,
-    getMonthlyTotal,
-    getYearlyTotal,
-    getUpcomingSubscriptions,
+  getAllSubscriptions,
+  getSubscriptionsByCategory,
+  addSubscription,
+  updateSubscription,
+  deleteSubscription,
+  getUserSettings,
+  updateUserSettings,
+  getMonthlyTotal,
+  getYearlyTotal,
+  getUpcomingSubscriptions,
 } = database;
