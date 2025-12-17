@@ -4,8 +4,12 @@
  */
 
 import i18n from '../i18n';
+import { TIME_CONSTANTS, REMINDER_CONSTANTS, URGENCY_THRESHOLDS } from '../constants/AppConfig';
 
-const ONE_DAY_MS = 1000 * 60 * 60 * 24;
+// 解構時間常數以便使用
+const { ONE_DAY_MS, DAYS_PER_WEEK, DAYS_PER_MONTH } = TIME_CONSTANTS;
+const { DEFAULT_REMINDER_HOUR, DEFAULT_REMINDER_MINUTE } = REMINDER_CONSTANTS;
+const { URGENT_DAYS, WARNING_DAYS } = URGENCY_THRESHOLDS;
 
 // Format date to ISO string (YYYY-MM-DD) for database storage consistency
 export function formatDate(date: Date | string): string {
@@ -135,7 +139,7 @@ export function getWeekRange(): { start: Date; end: Date } {
   start.setHours(0, 0, 0, 0);
 
   const end = new Date(start);
-  end.setDate(start.getDate() + 6);
+  end.setDate(start.getDate() + (DAYS_PER_WEEK - 1)); // 週日為最後一天
   end.setHours(23, 59, 59, 999);
 
   return { start, end };
@@ -181,13 +185,13 @@ export function formatRelativeTime(date: Date | string): string {
     return i18n.t('date.today');
   } else if (days === 1) {
     return i18n.t('date.tomorrow');
-  } else if (days <= 7) {
+  } else if (days <= DAYS_PER_WEEK) {
     return i18n.t('date.daysLater', { days });
-  } else if (days <= 30) {
-    const weeks = Math.floor(days / 7);
+  } else if (days <= DAYS_PER_MONTH) {
+    const weeks = Math.floor(days / DAYS_PER_WEEK);
     return i18n.t('date.weeksLater', { weeks });
   } else {
-    const months = Math.floor(days / 30);
+    const months = Math.floor(days / DAYS_PER_MONTH);
     return i18n.t('date.monthsLater', { months });
   }
 }
@@ -196,12 +200,12 @@ export function formatRelativeTime(date: Date | string): string {
 export function getUrgencyLevel(date: Date | string): 'urgent' | 'warning' | 'safe' {
   const days = getDaysUntil(date);
 
-  if (days <= 3) {
-    return 'urgent'; // 紅色: 1-3天
-  } else if (days <= 7) {
-    return 'warning'; // 橘色: 4-7天
+  if (days <= URGENT_DAYS) {
+    return 'urgent'; // 紅色: 1-3天（緊急）
+  } else if (days <= WARNING_DAYS) {
+    return 'warning'; // 橘色: 4-7天（警告）
   } else {
-    return 'safe'; // 綠色: 8+天
+    return 'safe'; // 綠色: 8+天（安全）
   }
 }
 
@@ -227,9 +231,9 @@ export function formatTime(date: Date): string {
   });
 }
 
-// 取得預設提醒時間 (09:00)
+// 取得預設提醒時間（早上 9:00）
 export function getDefaultReminderTime(): Date {
   const date = new Date();
-  date.setHours(9, 0, 0, 0);
+  date.setHours(DEFAULT_REMINDER_HOUR, DEFAULT_REMINDER_MINUTE, 0, 0);
   return date;
 }

@@ -2,7 +2,22 @@ import * as SQLite from 'expo-sqlite';
 import { Subscription, UserSettings } from '../types';
 import { DB_NAME, DEFAULT_SETTINGS, DEFAULT_EXCHANGE_RATES } from '../constants/AppConfig';
 
-// 初始化資料庫
+// 匯出型別供其他模組使用
+export type SQLiteDatabase = SQLite.SQLiteDatabase;
+
+/**
+ * 初始化資料庫並建立必要的資料表
+ *
+ * 此函式會建立 subscriptions 和 user_settings 兩個資料表，
+ * 並初始化預設的使用者設定。如果資料表已存在，則會嘗試遷移（新增缺少的欄位）。
+ *
+ * @returns {Promise<SQLite.SQLiteDatabase>} 資料庫實例
+ * @throws {Error} 資料庫開啟或建立失敗時
+ *
+ * @example
+ * const db = await initDatabase();
+ * console.log('資料庫初始化完成');
+ */
 export async function initDatabase(): Promise<SQLite.SQLiteDatabase> {
   const db = await SQLite.openDatabaseAsync(DB_NAME);
 
@@ -133,7 +148,16 @@ export async function initDatabase(): Promise<SQLite.SQLiteDatabase> {
 
 // ==================== 訂閱 CRUD 操作 ====================
 
-// 取得所有訂閱
+/**
+ * 取得所有訂閱資料
+ *
+ * @param {SQLite.SQLiteDatabase} db - 資料庫實例
+ * @returns {Promise<Subscription[]>} 所有訂閱資料，依下次付款日期升序排列
+ *
+ * @example
+ * const subscriptions = await getAllSubscriptions(db);
+ * console.log(`共有 ${subscriptions.length} 個訂閱`);
+ */
 export async function getAllSubscriptions(db: SQLite.SQLiteDatabase): Promise<Subscription[]> {
   const subscriptions = await db.getAllAsync<Subscription>(
     'SELECT * FROM subscriptions ORDER BY nextBillingDate ASC',
@@ -141,7 +165,16 @@ export async function getAllSubscriptions(db: SQLite.SQLiteDatabase): Promise<Su
   return subscriptions;
 }
 
-// 根據分類取得訂閱
+/**
+ * 根據分類取得訂閱資料
+ *
+ * @param {SQLite.SQLiteDatabase} db - 資料庫實例
+ * @param {string} category - 訂閱分類 ('entertainment' | 'productivity' | 'lifestyle')
+ * @returns {Promise<Subscription[]>} 該分類的所有訂閱，依下次付款日期升序排列
+ *
+ * @example
+ * const entertainment = await getSubscriptionsByCategory(db, 'entertainment');
+ */
 export async function getSubscriptionsByCategory(
   db: SQLite.SQLiteDatabase,
   category: string,
@@ -153,7 +186,27 @@ export async function getSubscriptionsByCategory(
   return subscriptions;
 }
 
-// 新增訂閱
+/**
+ * 新增訂閱
+ *
+ * @param {SQLite.SQLiteDatabase} db - 資料庫實例
+ * @param {Omit<Subscription, 'id' | 'createdAt' | 'updatedAt'>} subscription - 訂閱資料（不含 id、createdAt、updatedAt）
+ * @returns {Promise<number>} 新增訂閱的 ID
+ * @throws {Error} 資料插入失敗時
+ *
+ * @example
+ * const id = await addSubscription(db, {
+ *   name: 'Netflix',
+ *   icon: '📺',
+ *   category: 'entertainment',
+ *   price: 390,
+ *   currency: 'TWD',
+ *   billingCycle: 'monthly',
+ *   startDate: '2024-01-01',
+ *   nextBillingDate: '2024-02-01',
+ *   reminderEnabled: true,
+ * });
+ */
 export async function addSubscription(
   db: SQLite.SQLiteDatabase,
   subscription: Omit<Subscription, 'id' | 'createdAt' | 'updatedAt'>,
@@ -181,7 +234,21 @@ export async function addSubscription(
   return result.lastInsertRowId;
 }
 
-// 更新訂閱
+/**
+ * 更新訂閱資料
+ *
+ * @param {SQLite.SQLiteDatabase} db - 資料庫實例
+ * @param {number} id - 訂閱 ID
+ * @param {Partial<Omit<Subscription, 'id' | 'createdAt' | 'updatedAt'>>} subscription - 要更新的欄位
+ * @returns {Promise<void>}
+ * @throws {Error} 更新失敗時
+ *
+ * @example
+ * await updateSubscription(db, 1, {
+ *   price: 490,
+ *   nextBillingDate: '2024-03-01',
+ * });
+ */
 export async function updateSubscription(
   db: SQLite.SQLiteDatabase,
   id: number,
@@ -203,20 +270,55 @@ export async function updateSubscription(
   await db.runAsync(`UPDATE subscriptions SET ${fields.join(', ')} WHERE id = ?`, values);
 }
 
-// 刪除訂閱
+/**
+ * 刪除訂閱
+ *
+ * @param {SQLite.SQLiteDatabase} db - 資料庫實例
+ * @param {number} id - 要刪除的訂閱 ID
+ * @returns {Promise<void>}
+ * @throws {Error} 刪除失敗時
+ *
+ * @example
+ * await deleteSubscription(db, 1);
+ */
 export async function deleteSubscription(db: SQLite.SQLiteDatabase, id: number): Promise<void> {
   await db.runAsync('DELETE FROM subscriptions WHERE id = ?', [id]);
 }
 
 // ==================== 使用者設定 CRUD 操作 ====================
 
-// 取得使用者設定
+/**
+ * 取得使用者設定
+ *
+ * @param {SQLite.SQLiteDatabase} db - 資料庫實例
+ * @returns {Promise<UserSettings | null>} 使用者設定，若不存在則回傳 null
+ *
+ * @example
+ * const settings = await getUserSettings(db);
+ * if (settings) {
+ *   console.log(`主要幣別: ${settings.mainCurrency}`);
+ * }
+ */
 export async function getUserSettings(db: SQLite.SQLiteDatabase): Promise<UserSettings | null> {
   const settings = await db.getFirstAsync<UserSettings>('SELECT * FROM user_settings WHERE id = 1');
   return settings;
 }
 
-// 更新使用者設定
+/**
+ * 更新使用者設定
+ *
+ * @param {SQLite.SQLiteDatabase} db - 資料庫實例
+ * @param {Partial<Omit<UserSettings, 'id' | 'createdAt' | 'updatedAt'>>} settings - 要更新的設定欄位
+ * @returns {Promise<void>}
+ * @throws {Error} 更新失敗時
+ *
+ * @example
+ * await updateUserSettings(db, {
+ *   mainCurrency: 'USD',
+ *   theme: 'dark',
+ *   notificationsEnabled: true,
+ * });
+ */
 export async function updateUserSettings(
   db: SQLite.SQLiteDatabase,
   settings: Partial<Omit<UserSettings, 'id' | 'createdAt' | 'updatedAt'>>,
@@ -248,7 +350,19 @@ export async function updateUserSettings(
 
 // ==================== 統計查詢 ====================
 
-// 計算總月支出
+/**
+ * 計算總月支出
+ *
+ * 自動將年繳訂閱除以 12 換算成月費
+ *
+ * @param {SQLite.SQLiteDatabase} db - 資料庫實例
+ * @param {string} [currency='TWD'] - 貨幣代碼
+ * @returns {Promise<number>} 總月支出金額
+ *
+ * @example
+ * const monthlyTotal = await getMonthlyTotal(db, 'TWD');
+ * console.log(`每月總支出: NT$${monthlyTotal}`);
+ */
 export async function getMonthlyTotal(
   db: SQLite.SQLiteDatabase,
   currency: string = 'TWD',
@@ -267,7 +381,19 @@ export async function getMonthlyTotal(
   return result?.total || 0;
 }
 
-// 計算總年支出
+/**
+ * 計算總年支出
+ *
+ * 自動將月繳訂閱乘以 12 換算成年費
+ *
+ * @param {SQLite.SQLiteDatabase} db - 資料庫實例
+ * @param {string} [currency='TWD'] - 貨幣代碼
+ * @returns {Promise<number>} 總年支出金額
+ *
+ * @example
+ * const yearlyTotal = await getYearlyTotal(db, 'TWD');
+ * console.log(`每年總支出: NT$${yearlyTotal}`);
+ */
 export async function getYearlyTotal(
   db: SQLite.SQLiteDatabase,
   currency: string = 'TWD',
@@ -286,7 +412,20 @@ export async function getYearlyTotal(
   return result?.total || 0;
 }
 
-// 取得即將到期的訂閱 (N天內)
+/**
+ * 取得即將到期的訂閱
+ *
+ * @param {SQLite.SQLiteDatabase} db - 資料庫實例
+ * @param {number} [days=7] - 天數範圍（預設 7 天）
+ * @returns {Promise<Subscription[]>} 即將到期的訂閱，依付款日期升序排列
+ *
+ * @example
+ * // 取得未來 3 天內到期的訂閱
+ * const upcoming = await getUpcomingSubscriptions(db, 3);
+ * upcoming.forEach(sub => {
+ *   console.log(`${sub.name} 將於 ${sub.nextBillingDate} 付款`);
+ * });
+ */
 export async function getUpcomingSubscriptions(
   db: SQLite.SQLiteDatabase,
   days: number = 7,

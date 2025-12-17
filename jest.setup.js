@@ -11,8 +11,6 @@ jest.mock('expo-font', () => ({
   loadAsync: jest.fn(),
 }));
 
-
-
 jest.mock('expo-file-system', () => ({
   documentDirectory: 'file:///mock-document-directory/',
   makeDirectoryAsync: jest.fn(),
@@ -29,7 +27,7 @@ jest.mock('expo-sqlite', () => ({
       runAsync: jest.fn(),
       getFirstAsync: jest.fn(),
       getAllAsync: jest.fn(),
-    })
+    }),
   ),
   SQLiteDatabase: jest.fn(),
 }));

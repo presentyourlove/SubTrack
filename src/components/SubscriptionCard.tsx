@@ -10,7 +10,6 @@ import i18n from '../i18n';
 const ALARM_OFFSET_ONE_DAY_MINS = -24 * 60;
 
 type SubscriptionCardProps = {
-
   subscription: Subscription;
   onEdit?: () => void;
   onDelete?: () => void;
@@ -89,8 +88,6 @@ export default function SubscriptionCard({
         notes: `金額: ${formatCurrency(subscription.price, subscription.currency)}`,
         alarms: [{ relativeOffset: ALARM_OFFSET_ONE_DAY_MINS }], // 提前 1 天提醒
       });
-
-
 
       // 儲存 eventId 到資料庫
       if (onUpdateCalendarId) {

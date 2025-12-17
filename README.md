@@ -73,16 +73,15 @@ npm install --legacy-peer-deps
 
 1. **設定環境變數**
 
-建立 `.env` 檔案：
+複製 `.env.example` 並填入您的 Firebase 設定：
 
-```env
-EXPO_PUBLIC_FIREBASE_API_KEY=your_api_key
-EXPO_PUBLIC_FIREBASE_AUTH_DOMAIN=your_project.firebaseapp.com
-EXPO_PUBLIC_FIREBASE_PROJECT_ID=your_project_id
-EXPO_PUBLIC_FIREBASE_STORAGE_BUCKET=your_project.appspot.com
-EXPO_PUBLIC_FIREBASE_MESSAGING_SENDER_ID=your_sender_id
-EXPO_PUBLIC_FIREBASE_APP_ID=your_app_id
+```bash
+cp .env.example .env
+# 編輯 .env 檔案，填入真實的 Firebase 金鑰
 ```
+
+> [!WARNING]
+> 請勿將 `.env` 檔案提交至版本控制！此檔案已在 `.gitignore` 中排除。
 
 1. **啟動應用程式**
 
@@ -193,6 +192,22 @@ SubTrack/
 
 ## 🔧 開發指南
 
+### Git Hooks
+
+專案已設置 Husky + lint-staged:
+
+- **Pre-commit**: 自動執行 ESLint 和 Prettier
+- 確保提交的程式碼符合品質標準
+
+### 程式碼品質檢查
+
+```bash
+npm run lint       # ESLint 檢查
+npm run lint:fix   # 自動修正 Lint 錯誤
+npm run type-check # TypeScript 型別檢查
+npm run format     # Prettier 格式化
+```
+
 ### 新增訂閱分類
 
 編輯 `src/types/index.ts`:
@@ -236,18 +251,26 @@ export const Colors = {
 
 ## 🧪 測試
 
-> ⚠️ 注意：目前因 Expo 52 (Beta) Runtime 相容性問題，測試環境仍在調整中。
-
 ```bash
-# 執行測試
+# 執行所有測試
 npm test
 
-# 檢查程式碼品質
-npm run lint
+# 執行測試並生成覆蓋率報告
+npm test -- --coverage
 
-# 格式化程式碼
-npm run format
+# 程式碼品質檢查
+npm run lint        # ESLint
+npm run type-check  # TypeScript
+npm run format      # Prettier
 ```
+
+### 測試目標
+
+- ✅ 單元測試覆蓋率 ≥ 60%
+- ✅ 所有 Lint 檢查通過
+- ✅ TypeScript 編譯無錯誤
+
+> ⚠️ 注意：Expo 52 (Beta) 環境可能有相容性問題
 
 ---
 
@@ -275,13 +298,25 @@ eas build --platform android
 
 ## 🤝 貢獻
 
-歡迎提交 Issue 和 Pull Request！
+歡迎提交 Issue 和 Pull Request！詳見 [CONTRIBUTING.md](CONTRIBUTING.md)
+
+### 快速開始
 
 1. Fork 專案
 2. 建立功能分支 (`git checkout -b feature/AmazingFeature`)
-3. 提交變更 (`git commit -m 'Add some AmazingFeature'`)
+3. 提交變更 (遵循 [Conventional Commits](https://www.conventionalcommits.org/))
 4. 推送到分支 (`git push origin feature/AmazingFeature`)
 5. 開啟 Pull Request
+
+### Commit 訊息規範
+
+- `feat:` 新功能
+- `fix:` 錯誤修復
+- `docs:` 文件變更
+- `style:` 程式碼格式
+- `refactor:` 重構
+- `test:` 測試相關
+- `chore:` 建置/工具相關
 
 ---
 

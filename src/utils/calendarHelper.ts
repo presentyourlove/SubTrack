@@ -2,6 +2,10 @@ import * as Calendar from 'expo-calendar';
 import { Platform } from 'react-native';
 import { Subscription } from '../types';
 import i18n from '../i18n';
+import { TIME_CONSTANTS } from '../constants/AppConfig';
+
+// 解構時間常數以便計算
+const { HOURS_PER_DAY, MINUTES_PER_HOUR } = TIME_CONSTANTS;
 
 // 請求日曆權限
 export async function requestCalendarPermissions(): Promise<boolean> {
@@ -62,8 +66,8 @@ export async function addSubscriptionToCalendar(
       startDate,
       endDate,
       alarms: [
-        { relativeOffset: -24 * 60 }, // 1天前提醒
-        { relativeOffset: -60 }, // 1小時前提醒
+        { relativeOffset: -(HOURS_PER_DAY * MINUTES_PER_HOUR) }, // 1天前提醒（1440分鐘）
+        { relativeOffset: -MINUTES_PER_HOUR }, // 1小時前提醒（60分鐘）
       ],
     });
 
@@ -123,7 +127,7 @@ export async function addRecurringSubscriptionToCalendar(
       endDate,
       recurrenceRule,
       alarms: [
-        { relativeOffset: -24 * 60 }, // 1天前提醒
+        { relativeOffset: -(HOURS_PER_DAY * MINUTES_PER_HOUR) }, // 1天前提醒（1440分鐘）
       ],
     });
 

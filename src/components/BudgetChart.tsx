@@ -38,7 +38,6 @@ export default function BudgetChart({
 
   // 圓餅圖
   if (chartType === 'category') {
-
     const total = data.reduce((sum, d) => sum + d.value, 0);
 
     return (

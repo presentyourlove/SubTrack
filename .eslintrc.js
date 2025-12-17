@@ -31,7 +31,7 @@ module.exports = {
   rules: {
     'prettier/prettier': 'error',
     'react/react-in-jsx-scope': 'off', // Not needed in React 17+
-    '@typescript-eslint/no-unused-vars': ['warn', { argsIgnorePattern: '^_' }],
+    '@typescript-eslint/no-unused-vars': ['error', { argsIgnorePattern: '^_' }],
     '@typescript-eslint/explicit-module-boundary-types': 'off',
     '@typescript-eslint/no-explicit-any': 'warn',
   },
@@ -40,5 +40,11 @@ module.exports = {
       version: 'detect',
     },
   },
-  ignorePatterns: ['.eslintrc.js', 'babel.config.js', 'jest.config.js', 'jest.setup.js'],
+  ignorePatterns: [
+    '.eslintrc.js',
+    'babel.config.js',
+    'jest.config.js',
+    'jest.setup.js',
+    '__mocks__',
+  ],
 };

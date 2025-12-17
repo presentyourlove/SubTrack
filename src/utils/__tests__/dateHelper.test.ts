@@ -1,4 +1,4 @@
-import { formatDate, formatDateLocale, getDaysBetween, getDaysUntil } from '../dateHelper';
+import { formatDate, getDaysBetween, getDaysUntil } from '../dateHelper';
 
 describe('dateHelper', () => {
   describe('formatDate', () => {
