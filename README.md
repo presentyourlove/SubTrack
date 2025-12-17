@@ -133,6 +133,11 @@ npm run android
 - 幣別轉換
 - 圖表資料處理
 
+### 其他
+
+- **國際化**: i18n-js, expo-localization
+- **測試**: Jest, React Native Testing Library (建置中)
+
 ---
 
 ## 📂 專案結構
@@ -171,14 +176,14 @@ SubTrack/
 │   │   ├── exportHelper.ts
 │   │   ├── notificationHelper.ts
 │   │   └── calendarHelper.ts
+│   ├── i18n/              # 國際化資源
+│   │   ├── index.ts
+│   │   └── zh.ts
 │   ├── types/             # TypeScript 型別
 │   │   └── index.ts
 │   └── constants/         # 常數
 │       └── Colors.ts
 ├── .env                   # 環境變數
-├── i18n/                  # 國際化資源
-│   ├── index.ts
-│   └── zh.ts
 ├── app.json              # Expo 設定
 ├── package.json          # 依賴套件
 └── README.md             # 本檔案
@@ -202,7 +207,7 @@ export type SubscriptionCategory =
 
 ### 新增支援幣別
 
-編輯 `src/types/index.ts`:
+編輯 `src/constants/AppConfig.ts`:
 
 ```typescript
 export const DEFAULT_EXCHANGE_RATES = {
@@ -231,7 +236,7 @@ export const Colors = {
 
 ## 🧪 測試
 
-詳細測試清單請參考 [TESTING.md](./TESTING.md)
+> ⚠️ 注意：目前因 Expo 52 (Beta) Runtime 相容性問題，測試環境仍在調整中。
 
 ```bash
 # 執行測試
