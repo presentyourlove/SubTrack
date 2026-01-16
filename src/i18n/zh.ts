@@ -27,6 +27,16 @@ export default {
     filterByTag: '依標籤篩選',
     allTags: '全部標籤',
   },
+  // 服務資料庫
+  serviceCatalog: {
+    title: '選擇訂閱服務',
+    search: '搜尋服務...',
+    select: '選擇',
+    all: '全部',
+    noResults: '找不到符合的服務',
+    selectFromCatalog: '從服務清單選擇',
+    orManualEntry: '或手動輸入',
+  },
   // 錯誤訊息
   error: {
     emailInUse: '此 Email 已被註冊',
