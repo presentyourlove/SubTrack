@@ -14,6 +14,7 @@ module.exports = {
       jsx: true,
     },
     project: './tsconfig.json',
+    tsconfigRootDir: __dirname,
   },
   env: {
     'react-native/react-native': true,
