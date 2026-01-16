@@ -1,131 +1,116 @@
-import { useState } from 'react';
-import { View, Text, StyleSheet, ScrollView, TouchableOpacity, RefreshControl } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
-import { Ionicons } from '@expo/vector-icons';
-import { useTheme } from '../../src/context/ThemeContext';
-import { useDatabase } from '../../src/context/DatabaseContext';
-import { SubscriptionCategory, Subscription } from '../../src/types';
+import React, { useState, useMemo, useEffect } from 'react';
 import {
-  SummaryCard,
-  AlertCard,
-  SubscriptionCard,
-  AddSubscriptionModal,
-  CategoryTabs,
-} from '../../src/components';
-import { TagChip } from '../../src/components/TagChip';
+  StyleSheet,
+  View,
+  ScrollView,
+  Text,
+  TouchableOpacity,
+  RefreshControl,
+
+} from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
+import { useRouter } from 'expo-router';
+import { Ionicons } from '@expo/vector-icons';
+import { useDatabase } from '../../src/context/DatabaseContext';
+import { useTheme } from '../../src/context/ThemeContext';
+import { SubscriptionCategory } from '../../src/types';
+import SummaryCard from '../../src/components/SummaryCard';
+import SubscriptionCard from '../../src/components/SubscriptionCard';
+import AddSubscriptionModal from '../../src/components/AddSubscriptionModal';
+import CategoryTabs from '../../src/components/CategoryTabs';
+import AlertCard from '../../src/components/AlertCard';
 import WorkspaceSwitcher from '../../src/components/WorkspaceSwitcher';
-import { calculateNextBillingDate } from '../../src/utils/dateHelper';
+import { PrivacyToggle } from '../../src/components';
 import i18n from '../../src/i18n';
+import TagChip from '../../src/components/TagChip';
+import { hapticFeedback } from '../../src/utils/haptics';
 
 export default function SubscriptionsScreen() {
+  const router = useRouter();
   const { colors } = useTheme();
   const {
     subscriptions,
     tags,
+    refreshData,
     addSubscription,
     updateSubscription,
     deleteSubscription,
-    refreshData,
     setTagsForSubscription,
   } = useDatabase();
 
+  const [refreshing, setRefreshing] = useState(false);
+  const [modalVisible, setModalVisible] = useState(false);
   const [selectedCategory, setSelectedCategory] = useState<'all' | SubscriptionCategory>('all');
   const [selectedTagId, setSelectedTagId] = useState<number | null>(null);
-  const [modalVisible, setModalVisible] = useState(false);
   const [editingId, setEditingId] = useState<number | null>(null);
-  const [refreshing, setRefreshing] = useState(false);
 
-  // 篩選訂閱 (分類 + 標籤)
-  const filteredSubscriptions = subscriptions.filter((sub) => {
-    // 分類篩選
-    if (selectedCategory !== 'all' && sub.category !== selectedCategory) {
-      return false;
-    }
-    // 標籤篩選
-    if (selectedTagId !== null) {
-      if (!sub.tags || !sub.tags.some((t) => t.id === selectedTagId)) {
-        return false;
-      }
-    }
-    return true;
-  });
+  // 當 App 回到前台時重新整理資料
+  useEffect(() => {
+    refreshData();
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
-  const activeSubscription = editingId ? subscriptions.find((s) => s.id === editingId) : null;
-
-  // 處理提交 (新增或更新)
-  const handleSubmitSubscription = async (
-    data: Omit<
-      Subscription,
-      | 'id'
-      | 'createdAt'
-      | 'updatedAt'
-      | 'nextBillingDate'
-      | 'calendarEventId'
-      | 'tags'
-      | 'workspaceId'
-    >,
-    tagIds: number[],
-  ) => {
-    try {
-      const nextBillingDate = calculateNextBillingDate(data.startDate, data.billingCycle);
-      const subscriptionData = { ...data, nextBillingDate };
-
-      if (editingId) {
-        await updateSubscription(editingId, subscriptionData);
-        await setTagsForSubscription(editingId, tagIds);
-      } else {
-        await addSubscription(subscriptionData);
-        // 新增時需要取得新 ID 來設定標籤，暫時先跳過
-        // TODO: 改進 addSubscription 回傳 ID
-      }
-      setModalVisible(false);
-      setEditingId(null);
-    } catch (error) {
-      console.error('Failed to save subscription:', error);
-      alert(i18n.t('validation.saveFailed'));
-    }
+  const onRefresh = async () => {
+    hapticFeedback.medium();
+    setRefreshing(true);
+    await refreshData();
+    setRefreshing(false);
   };
 
-  // 處理編輯訂閱
+  const filteredSubscriptions = useMemo(() => {
+    return subscriptions
+      .filter((sub) => {
+        if (selectedCategory === 'all') return true;
+        return sub.category === selectedCategory;
+      })
+      .filter((sub) => {
+        if (selectedTagId === null) return true;
+        return sub.tags?.some((tag) => tag.id === selectedTagId);
+      })
+      .sort((a, b) => {
+        // Sort by next billing date
+        const dateA = new Date(a.nextBillingDate).getTime();
+        const dateB = new Date(b.nextBillingDate).getTime();
+        return dateA - dateB;
+      });
+  }, [subscriptions, selectedCategory, selectedTagId]);
+
+  const activeSubscription = useMemo(
+    () => (editingId ? subscriptions.find((s) => s.id === editingId) : undefined),
+    [editingId, subscriptions],
+  );
+
+  const handleAddPress = () => {
+    hapticFeedback.light();
+    setEditingId(null);
+    setModalVisible(true);
+  };
+
   const handleEditSubscription = (id: number) => {
     setEditingId(id);
     setModalVisible(true);
   };
 
-  // 處理新增按鈕點擊
-  const handleAddPress = () => {
-    setEditingId(null);
-    setModalVisible(true);
-  };
-
-  // 處理刪除訂閱
   const handleDeleteSubscription = async (id: number) => {
-    try {
-      // 先檢查是否有日曆事件需要刪除
-      const subscription = subscriptions.find((s) => s.id === id);
-      if (subscription?.calendarEventId) {
-        try {
-          // eslint-disable-next-line @typescript-eslint/no-require-imports
-          const Calendar = require('expo-calendar');
-          await Calendar.deleteEventAsync(subscription.calendarEventId);
-        } catch (calendarError) {
-          console.error('刪除日曆事件失敗:', calendarError);
-          // 即使日曆刪除失敗,仍繼續刪除訂閱
-        }
-      }
-
-      await deleteSubscription(id);
-    } catch (error) {
-      console.error('Failed to delete subscription:', error);
-      alert(i18n.t('validation.deleteFailed'));
-    }
+    await deleteSubscription(id);
   };
 
-  // 下拉重新整理
-  const onRefresh = async () => {
-    setRefreshing(true);
-    await refreshData();
-    setRefreshing(false);
+  const handleSubmitSubscription = async (
+    data: Omit<Subscription, 'id' | 'createdAt' | 'updatedAt'>,
+    tagIds: number[],
+  ) => {
+    try {
+      if (editingId) {
+        await updateSubscription(editingId, data);
+        await setTagsForSubscription(editingId, tagIds);
+      } else {
+        await addSubscription(data, tagIds);
+      }
+      setModalVisible(false);
+      setEditingId(null);
+    } catch (error) {
+      console.error('Failed to save subscription:', error);
+      alert(i18n.t('common.error'));
+    }
   };
 
   return (
@@ -133,15 +118,15 @@ export default function SubscriptionsScreen() {
       style={[styles.container, { backgroundColor: colors.background }]}
       edges={['top', 'left', 'right']}
     >
-      {/* Header */}
-      <View style={[styles.header, { backgroundColor: colors.background }]}>
+      <View style={styles.header}>
         <View style={styles.headerLeft}>
-          <Text style={[styles.headerTitle, { color: colors.text }]}>
-            {i18n.t('screen.subscriptions')}
-          </Text>
-          <WorkspaceSwitcher />
+          <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
+            <Text style={[styles.headerTitle, { color: colors.text }]}>SubTrack</Text>
+            <WorkspaceSwitcher />
+          </View>
         </View>
         <View style={styles.headerRight}>
+          <PrivacyToggle />
           <TouchableOpacity
             style={[styles.iconButton, { backgroundColor: colors.card }]}
             onPress={() => router.push('/search')}
@@ -160,17 +145,12 @@ export default function SubscriptionsScreen() {
       <ScrollView
         style={styles.content}
         refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
+        contentContainerStyle={{ paddingBottom: 100 }}
       >
-        {/* 總覽卡片 */}
         <SummaryCard />
-
-        {/* 提醒卡片 */}
         <AlertCard />
-
-        {/* 分類篩選 */}
         <CategoryTabs selectedCategory={selectedCategory} onSelectCategory={setSelectedCategory} />
 
-        {/* 標籤篩選 */}
         {tags.length > 0 && (
           <View style={styles.tagFilterContainer}>
             <ScrollView
@@ -184,7 +164,10 @@ export default function SubscriptionsScreen() {
                   { borderColor: colors.borderColor },
                   selectedTagId === null && { backgroundColor: colors.accent },
                 ]}
-                onPress={() => setSelectedTagId(null)}
+                onPress={() => {
+                  hapticFeedback.selection();
+                  setSelectedTagId(null);
+                }}
               >
                 <Text
                   style={[
@@ -200,14 +183,16 @@ export default function SubscriptionsScreen() {
                   key={tag.id}
                   tag={tag}
                   selected={selectedTagId === tag.id}
-                  onPress={() => setSelectedTagId(selectedTagId === tag.id ? null : tag.id)}
+                  onPress={() => {
+                    hapticFeedback.selection();
+                    setSelectedTagId(selectedTagId === tag.id ? null : tag.id);
+                  }}
                 />
               ))}
             </ScrollView>
           </View>
         )}
 
-        {/* 訂閱列表 */}
         {filteredSubscriptions.length === 0 ? (
           <View style={styles.emptyState}>
             <Ionicons name="file-tray-outline" size={64} color={colors.subtleText} />
@@ -243,7 +228,6 @@ export default function SubscriptionsScreen() {
         )}
       </ScrollView>
 
-      {/* 新增/編輯訂閱彈窗 */}
       <AddSubscriptionModal
         visible={modalVisible}
         onClose={() => {
@@ -270,16 +254,29 @@ const styles = StyleSheet.create({
     paddingBottom: 16,
   },
   headerTitle: {
-    fontSize: 28,
+    fontSize: 24,
     fontWeight: 'bold',
   },
   headerLeft: {
-    gap: 8,
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  headerRight: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 12,
   },
   addButton: {
-    width: 44,
-    height: 44,
-    borderRadius: 22,
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  iconButton: {
+    width: 40,
+    height: 40,
+    borderRadius: 20,
     justifyContent: 'center',
     alignItems: 'center',
   },
@@ -289,6 +286,7 @@ const styles = StyleSheet.create({
   },
   list: {
     paddingBottom: 20,
+    gap: 16,
   },
   emptyState: {
     alignItems: 'center',
@@ -311,7 +309,7 @@ const styles = StyleSheet.create({
     fontWeight: '600',
   },
   tagFilterContainer: {
-    marginBottom: 12,
+    marginBottom: 16,
   },
   tagFilterContent: {
     flexDirection: 'row',

@@ -2,6 +2,7 @@ import { Text, StyleSheet, TouchableOpacity, ScrollView } from 'react-native';
 import { useTheme } from '../context/ThemeContext';
 import { SubscriptionCategory } from '../types';
 import i18n from '../i18n';
+import { hapticFeedback } from '../utils/haptics';
 
 type CategoryTabsProps = {
   selectedCategory: 'all' | SubscriptionCategory;
@@ -37,7 +38,10 @@ export default function CategoryTabs({ selectedCategory, onSelectCategory }: Cat
               borderColor: colors.accent,
             },
           ]}
-          onPress={() => onSelectCategory(cat.value)}
+          onPress={() => {
+            hapticFeedback.selection();
+            onSelectCategory(cat.value);
+          }}
         >
           <Text
             style={[

@@ -13,6 +13,7 @@ import {
   syncUserSettingsToFirestore,
   deleteSubscriptionFromFirestore,
 } from '../services/syncService';
+import i18n from '../i18n';
 
 type DatabaseContextType = {
   database: Database | null;
@@ -47,7 +48,7 @@ type DatabaseContextType = {
   getTagsForSubscription: (subscriptionId: number) => Promise<Tag[]>;
   setTagsForSubscription: (subscriptionId: number, tagIds: number[]) => Promise<void>;
   // 工作區方法
-  workspaces: Workspace[];
+
   createWorkspace: (name: string, icon: string) => Promise<void>;
   updateWorkspace: (id: number, name: string, icon: string) => Promise<void>;
   deleteWorkspace: (id: number) => Promise<void>;
@@ -140,6 +141,15 @@ export function DatabaseProvider({ children }: { children: ReactNode }) {
     setSubscriptions,
     setSettings,
   );
+
+  // 監聽語言設定變更
+  useEffect(() => {
+    if (settings?.language) {
+      i18n.locale = settings.language;
+    }
+  }, [settings?.language]);
+
+  // 新增訂閱
 
   // 新增訂閱
   async function addSubscription(

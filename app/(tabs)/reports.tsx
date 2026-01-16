@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useCallback } from 'react';
 import {
   View,
   Text,
@@ -26,15 +26,15 @@ export default function ReportsScreen() {
   const [modalVisible, setModalVisible] = useState(false);
   const [refreshing, setRefreshing] = useState(false);
 
-  const loadReports = async () => {
+  const loadReports = useCallback(async () => {
     const data = await getReports();
     setReports(data || []);
-  };
+  }, [getReports]);
 
   useFocusEffect(
     useCallback(() => {
       loadReports();
-    }, []),
+    }, [loadReports]),
   );
 
   const handleRefresh = async () => {

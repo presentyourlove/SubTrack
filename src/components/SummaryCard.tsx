@@ -2,13 +2,14 @@ import { useMemo } from 'react';
 import { View, Text, StyleSheet } from 'react-native';
 import { useTheme } from '../context/ThemeContext';
 import { useDatabase } from '../context/DatabaseContext';
-import { formatCurrency } from '../utils/currencyHelper';
-import { convertCurrency } from '../utils/currencyHelper';
+import { formatCurrency, convertCurrency } from '../utils/currencyHelper';
 import i18n from '../i18n';
+import { usePrivacy } from '../hooks/usePrivacy';
 
 export default function SummaryCard() {
   const { colors } = useTheme();
   const { subscriptions, settings } = useDatabase();
+  const { maskValue } = usePrivacy();
 
   // 計算總金額
   const { monthlyTotal, yearlyTotal } = useMemo(() => {
@@ -46,7 +47,7 @@ export default function SummaryCard() {
       <View style={styles.header}>
         <Text style={[styles.title, { color: '#ffffff' }]}>{i18n.t('summary.monthlyTitle')}</Text>
         <Text style={[styles.amount, { color: '#ffffff' }]}>
-          {formatCurrency(monthlyTotal, mainCurrency)}
+          {maskValue(formatCurrency(monthlyTotal, mainCurrency))}
         </Text>
       </View>
 
@@ -65,7 +66,7 @@ export default function SummaryCard() {
             {i18n.t('summary.yearlyTitle')}
           </Text>
           <Text style={[styles.statValue, { color: '#ffffff' }]}>
-            {formatCurrency(yearlyTotal, mainCurrency)}
+            {maskValue(formatCurrency(yearlyTotal, mainCurrency))}
           </Text>
         </View>
       </View>

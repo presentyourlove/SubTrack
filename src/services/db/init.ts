@@ -43,6 +43,7 @@ export async function initDatabase(): Promise<SQLite.SQLiteDatabase> {
       notificationsEnabled INTEGER NOT NULL DEFAULT ${DEFAULT_SETTINGS.NOTIFICATIONS_ENABLED},
       defaultReminderTime TEXT NOT NULL DEFAULT '${DEFAULT_SETTINGS.REMINDER_TIME}',
       defaultReminderDays INTEGER NOT NULL DEFAULT ${DEFAULT_SETTINGS.REMINDER_DAYS},
+      privacyMode INTEGER NOT NULL DEFAULT 0,
       createdAt TEXT NOT NULL,
       updatedAt TEXT NOT NULL
     );
@@ -126,8 +127,8 @@ export async function initDatabase(): Promise<SQLite.SQLiteDatabase> {
   if (!settings) {
     const now = new Date().toISOString();
     await db.runAsync(
-      `INSERT INTO user_settings (id, mainCurrency, exchangeRates, theme, notificationsEnabled, defaultReminderTime, defaultReminderDays, currentWorkspaceId, createdAt, updatedAt)
-       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+      `INSERT INTO user_settings (id, mainCurrency, exchangeRates, theme, notificationsEnabled, defaultReminderTime, defaultReminderDays, currentWorkspaceId, privacyMode, createdAt, updatedAt)
+       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
       [
         1,
         DEFAULT_SETTINGS.MAIN_CURRENCY,
@@ -136,7 +137,8 @@ export async function initDatabase(): Promise<SQLite.SQLiteDatabase> {
         DEFAULT_SETTINGS.NOTIFICATIONS_ENABLED,
         DEFAULT_SETTINGS.REMINDER_TIME,
         DEFAULT_SETTINGS.REMINDER_DAYS,
-        1, // 預設 workspaceId
+        1,
+        0, // privacyMode
         now,
         now,
       ],
@@ -161,6 +163,8 @@ export async function initDatabase(): Promise<SQLite.SQLiteDatabase> {
       `ALTER TABLE user_settings ADD COLUMN salaryAmount REAL DEFAULT 0`,
       `ALTER TABLE user_settings ADD COLUMN workDaysPerMonth INTEGER DEFAULT 22`,
       `ALTER TABLE user_settings ADD COLUMN workHoursPerDay INTEGER DEFAULT 8`,
+      `ALTER TABLE user_settings ADD COLUMN privacyMode INTEGER NOT NULL DEFAULT 0`,
+      `ALTER TABLE user_settings ADD COLUMN language TEXT`,
     ];
 
     for (const sql of migrations) {

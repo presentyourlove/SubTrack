@@ -27,6 +27,7 @@ export const TAG_COLORS = [
 export interface Subscription {
   id: number;
   name: string; // 訂閱名稱
+  description?: string; // 描述
   icon: string; // emoji 或圖示代碼
   category: SubscriptionCategory;
   price: number; // 價格
@@ -60,6 +61,9 @@ export interface UserSettings {
   salaryAmount?: number;
   workDaysPerMonth?: number;
   workHoursPerDay?: number;
+  // UI Preferences
+  privacyMode?: boolean;
+  language?: 'zh' | 'en';
   createdAt: string;
   updatedAt: string;
 }

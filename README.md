@@ -192,17 +192,22 @@ npm test -- --coverage
 * 感謝 [Expo](https://expo.dev) 提供強大的開發工具。
 * 圖示來源：[Ionicons](https://ionic.io/ionicons)。
 
+## 🔄 Recent Updates (2025-01-23)
+
+* **Maintenance**: Comprehensive update to fix linting errors, resolve type safety issues, and correct logic bugs in Reports and Search.
+* **Haptic Feedback**: Integrated tactile responses for a better user experience.
+* **Privacy & Localization**: Added Privacy Mode and Traditional Chinese support.
+
 ## 🔮 後繼優化建議 (Future Roadmap)
 
 我們持續規劃讓 SubTrack 更強大，以下是未來的開發藍圖，涵蓋功能、體驗、安全與極致的技術追求：
 
-### 🎨 使用者體驗 (UX/UI)
+* [x] **📳 觸覺回饋 (Haptic Feedback)**：在互動操作（如滑動、開關）加入 `expo-haptics` 細微震動，提升精緻感。
 
-* [ ] **📳 觸覺回饋 (Haptic Feedback)**：在互動操作（如滑動、開關）加入 `expo-haptics` 細微震動，提升精緻感。
+* [x] **️ 隱私模式 (Privacy Mode)**：一鍵隱藏主畫面金額顯示，在公共場合也能安全查看。
+* [x] **🌐 多國語言 (Localization)**：新增英文介面支援，推向國際市場。
 
-* [ ] **🧩 桌面小工具 (Widgets)**：在 iOS/Android 主畫面直接查看即將扣款項目。
-* [ ] **️ 隱私模式 (Privacy Mode)**：一鍵隱藏主畫面金額顯示，在公共場合也能安全查看。
-* [ ] **🌐 多國語言 (Localization)**：新增英文介面支援，推向國際市場。
+* [ ] **🧩 桌面小工具 (Widgets)** (V3)：在 iOS/Android 主畫面直接查看即將扣款項目。
 
 ### �️ 安全與隱私 (Security & Privacy)
 

@@ -31,9 +31,9 @@ export default function SplitBillModal({
       try {
         // 確保成員數量符合
         if (subscription.memberCount && subscription.memberCount > 0) {
-          await MemberService.syncMemberCount(db, subscription.id, subscription.memberCount);
+          await MemberService.syncMemberCount(db as any, subscription.id, subscription.memberCount);
         }
-        const data = await MemberService.getMembers(db, subscription.id);
+        const data = await MemberService.getMembers(db as any, subscription.id);
         setMembers(data);
       } catch (error) {
         console.error('Failed to load members:', error);
@@ -49,10 +49,10 @@ export default function SplitBillModal({
   const handleToggleStatus = async (member: Member) => {
     if (!db) return;
     const newStatus = member.status === 'paid' ? 'unpaid' : 'paid';
-    await MemberService.updateMemberStatus(db, member.id, newStatus);
+    await MemberService.updateMemberStatus(db as any, member.id, newStatus);
 
     // Reload members
-    const data = await MemberService.getMembers(db, subscription.id);
+    const data = await MemberService.getMembers(db as any, subscription.id);
     setMembers(data);
 
     if (onUpdate) onUpdate();

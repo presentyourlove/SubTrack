@@ -1,5 +1,12 @@
 import React, { useState, useMemo } from 'react';
-import { View, Text, StyleSheet, TextInput, FlatList, TouchableOpacity } from 'react-native';
+import {
+    View,
+    Text,
+    StyleSheet,
+    TextInput,
+    FlatList,
+    TouchableOpacity,
+} from 'react-native';
 import { useTheme } from '../../context/ThemeContext';
 import { useDatabase } from '../../context/DatabaseContext';
 import SubscriptionCard from '../SubscriptionCard';
@@ -8,13 +15,16 @@ import i18n from '../../i18n';
 import { useRouter } from 'expo-router';
 import { Subscription } from '../../types';
 import AddSubscriptionModal from '../AddSubscriptionModal';
+import { hapticFeedback } from '../../utils/haptics';
 
 export default function SearchScreen() {
     const { colors } = useTheme();
-    const { subscriptions, updateSubscription, deleteSubscription } = useDatabase();
+    const { subscriptions, updateSubscription, deleteSubscription } =
+        useDatabase();
     const router = useRouter();
     const [query, setQuery] = useState('');
-    const [editingSubscription, setEditingSubscription] = useState<Subscription | null>(null);
+    const [editingSubscription, setEditingSubscription] =
+        useState<Subscription | null>(null);
 
     const filteredSubscriptions = useMemo(() => {
         if (!query.trim()) return [];
@@ -23,14 +33,21 @@ export default function SearchScreen() {
             (sub) =>
                 sub.name.toLowerCase().includes(lowerQuery) ||
                 sub.description?.toLowerCase().includes(lowerQuery) ||
-                i18n.t(`categories.${sub.category}`).toLowerCase().includes(lowerQuery) ||
+                i18n
+                    .t(`categories.${sub.category}`)
+                    .toLowerCase()
+                    .includes(lowerQuery) ||
                 sub.tags?.some((tag) => tag.name.toLowerCase().includes(lowerQuery)),
         );
     }, [query, subscriptions]);
 
-    const handleUpdate = async (data: any, tagIds: number[]) => {
+    const handleUpdate = async (data: Partial<Subscription>, tagIds: number[]) => {
         if (editingSubscription) {
-            await updateSubscription({ ...editingSubscription, ...data }, tagIds);
+            await updateSubscription(
+                editingSubscription.id,
+                { ...data },
+                tagIds,
+            );
             setEditingSubscription(null);
         }
     };
@@ -45,14 +62,30 @@ export default function SearchScreen() {
             <View
                 style={[
                     styles.header,
-                    { backgroundColor: colors.card, borderBottomColor: colors.borderColor },
+                    {
+                        backgroundColor: colors.card,
+                        borderBottomColor: colors.borderColor,
+                    },
                 ]}
             >
-                <TouchableOpacity onPress={() => router.back()} style={styles.backButton}>
+                <TouchableOpacity
+                    onPress={() => router.back()}
+                    style={styles.backButton}
+                >
                     <Ionicons name="arrow-back" size={24} color={colors.text} />
                 </TouchableOpacity>
-                <View style={[styles.searchContainer, { backgroundColor: colors.inputBackground }]}>
-                    <Ionicons name="search" size={20} color={colors.subtleText} style={styles.searchIcon} />
+                <View
+                    style={[
+                        styles.searchContainer,
+                        { backgroundColor: colors.inputBackground },
+                    ]}
+                >
+                    <Ionicons
+                        name="search"
+                        size={20}
+                        color={colors.subtleText}
+                        style={styles.searchIcon}
+                    />
                     <TextInput
                         style={[styles.input, { color: colors.text }]}
                         placeholder={i18n.t('search.placeholder')}
@@ -62,8 +95,17 @@ export default function SearchScreen() {
                         autoFocus
                     />
                     {query.length > 0 && (
-                        <TouchableOpacity onPress={() => setQuery('')}>
-                            <Ionicons name="close-circle" size={20} color={colors.subtleText} />
+                        <TouchableOpacity
+                            onPress={() => {
+                                hapticFeedback.selection();
+                                setQuery('');
+                            }}
+                        >
+                            <Ionicons
+                                name="close-circle"
+                                size={20}
+                                color={colors.subtleText}
+                            />
                         </TouchableOpacity>
                     )}
                 </View>
@@ -84,7 +126,9 @@ export default function SearchScreen() {
                 ListEmptyComponent={
                     query.trim().length > 0 ? (
                         <View style={styles.emptyState}>
-                            <Text style={{ color: colors.subtleText }}>{i18n.t('search.noResults')}</Text>
+                            <Text style={{ color: colors.subtleText }}>
+                                {i18n.t('search.noResults')}
+                            </Text>
                         </View>
                     ) : null
                 }
@@ -93,7 +137,7 @@ export default function SearchScreen() {
             <AddSubscriptionModal
                 visible={!!editingSubscription}
                 onClose={() => setEditingSubscription(null)}
-                initialData={editingSubscription}
+                initialData={editingSubscription || undefined}
                 onSubmit={handleUpdate}
             />
         </View>

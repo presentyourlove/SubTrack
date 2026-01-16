@@ -21,6 +21,8 @@ const mockSubscription = {
   reminderEnabled: true,
   createdAt: '2023-01-01',
   updatedAt: '2023-01-01',
+  workspaceId: 1,
+  description: 'Test Description',
 };
 
 describe('SubscriptionCard', () => {

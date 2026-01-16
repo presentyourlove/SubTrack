@@ -6,3 +6,4 @@ export { default as AddSubscriptionModal } from './AddSubscriptionModal';
 export { default as CategoryTabs } from './CategoryTabs';
 export { default as BudgetChart } from './BudgetChart';
 export { default as CategoryBreakdown } from './CategoryBreakdown';
+export { default as PrivacyToggle } from './PrivacyToggle';

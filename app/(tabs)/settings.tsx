@@ -3,6 +3,7 @@ import { StyleSheet, ScrollView, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useTheme } from '../../src/context/ThemeContext';
 import ThemeSettings from '../../src/components/settings/ThemeSettings';
+import LanguageSettings from '../../src/components/settings/LanguageSettings';
 import CurrencySettings from '../../src/components/settings/CurrencySettings';
 import NotificationSettings from '../../src/components/settings/NotificationSettings';
 import ValueConverterSettings from '../../src/components/settings/ValueConverterSettings';
@@ -21,6 +22,7 @@ export default function SettingsScreen() {
       <ScrollView style={styles.scrollView}>
         <View style={styles.settingsList}>
           <ThemeSettings />
+          <LanguageSettings />
           <CurrencySettings />
           <NotificationSettings />
           <ValueConverterSettings />

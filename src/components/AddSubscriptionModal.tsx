@@ -6,6 +6,7 @@ import { useDatabase } from '../context/DatabaseContext';
 import { SubscriptionCategory, BillingCycle, Subscription } from '../types';
 import { parseTime, formatTime, getDefaultReminderTime } from '../utils/dateHelper';
 import i18n from '../i18n';
+import { hapticFeedback } from '../utils/haptics';
 
 import BasicInfo from './subscription/BasicInfo';
 import CategorySelector from './subscription/CategorySelector';
@@ -110,18 +111,21 @@ export default function AddSubscriptionModal({
 
   const handleSubmit = () => {
     if (!name || !price || !startDate) {
+      hapticFeedback.error();
       Alert.alert(i18n.t('common.error'), i18n.t('validation.requiredFields'));
       return;
     }
 
     const numericPrice = parseFloat(price);
     if (isNaN(numericPrice) || numericPrice < 0) {
+      hapticFeedback.error();
       Alert.alert(i18n.t('common.error'), i18n.t('validation.invalidAmount'));
       return;
     }
 
     const formattedTime = formatTime(reminderTime);
 
+    hapticFeedback.success();
     onSubmit(
       {
         name,

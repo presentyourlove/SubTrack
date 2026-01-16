@@ -11,6 +11,8 @@ import { formatDateLocale, getDaysUntil, getUrgencyLevel } from '../utils/dateHe
 import i18n from '../i18n';
 import { TagChip } from './TagChip';
 import SplitBillModal from './SplitBillModal';
+import { usePrivacy } from '../hooks/usePrivacy';
+import { hapticFeedback } from '../utils/haptics';
 
 const ALARM_OFFSET_ONE_DAY_MINS = -24 * 60;
 
@@ -31,6 +33,7 @@ export default function SubscriptionCard({
 }: SubscriptionCardProps) {
   const { colors } = useTheme();
   const { settings } = useDatabase();
+  const { maskValue } = usePrivacy();
 
   // 計算工時換算
   const hourlyRate = settings ? calculateHourlyRate(settings) : 0;
@@ -169,7 +172,7 @@ export default function SubscriptionCard({
         <View style={styles.details}>
           <View style={styles.priceContainer}>
             <Text style={[styles.price, { color: colors.text }]}>
-              {formatCurrency(subscription.price, subscription.currency)} /{' '}
+              {maskValue(formatCurrency(subscription.price, subscription.currency))} /{' '}
               {subscription.billingCycle === 'monthly'
                 ? i18n.t('card.perMonth')
                 : i18n.t('card.perYear')}
@@ -183,9 +186,11 @@ export default function SubscriptionCard({
                   ]}
                 >
                   (
-                  {formatCurrency(
-                    subscription.price / subscription.memberCount,
-                    subscription.currency,
+                  {maskValue(
+                    formatCurrency(
+                      subscription.price / subscription.memberCount,
+                      subscription.currency,
+                    ),
                   )}{' '}
                   / {i18n.t('card.person')})
                 </Text>
@@ -218,7 +223,12 @@ export default function SubscriptionCard({
         <View style={styles.actions}>
           <TouchableOpacity
             style={[styles.actionButton, { borderColor: colors.borderColor }]}
-            onPress={onEdit}
+            onPress={() => {
+              if (onEdit) {
+                hapticFeedback.selection();
+                onEdit();
+              }
+            }}
           >
             <Ionicons name="pencil" size={18} color={colors.text} />
             <Text style={[styles.actionText, { color: colors.text }]}>{i18n.t('common.edit')}</Text>
@@ -226,7 +236,12 @@ export default function SubscriptionCard({
 
           <TouchableOpacity
             style={[styles.actionButton, { borderColor: colors.borderColor }]}
-            onPress={onDelete}
+            onPress={() => {
+              if (onDelete) {
+                hapticFeedback.error();
+                onDelete();
+              }
+            }}
           >
             <Ionicons name="trash-outline" size={18} color={colors.expense} />
             <Text style={[styles.actionText, { color: colors.expense }]}>
@@ -252,7 +267,10 @@ export default function SubscriptionCard({
                 ? { backgroundColor: colors.accent }
                 : { backgroundColor: colors.borderColor },
             ]}
-            onPress={handleSyncToCalendar}
+            onPress={() => {
+              hapticFeedback.light();
+              handleSyncToCalendar();
+            }}
           >
             <View
               style={[
