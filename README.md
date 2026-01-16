@@ -286,6 +286,11 @@ npm test -- --coverage
 * [ ] **💾 SQLite WAL 模式 (Write-Ahead Logging)**：啟用 WAL 模式並優化 Checkpoint 策略，大幅提升資料庫並發讀寫能力。
 * [ ] **⚡ 延遲載入 (Inline Requires)**：實作 Metro 的 Inline Requires 配置，將模組解析推遲至執行期，進一步削減啟動時間。
 * [ ] **🔧 PGO 編譯優化 (Profile-Guided Optimization)**：收集真實用戶的執行路徑數據，重新編譯 Android SO 檔，提升熱點代碼執行效率。
+* [ ] **⚡ MMKV 全面替代 (MMKV Storage)**：以騰訊開源的 MMKV 替換 AsyncStorage，利用 mmap 記憶體映射技術實現 100x 讀寫加速。
+* [ ] **🔢 Protobuf 二進制傳輸 (Protocol Buffers)**：將 API Payload 從 JSON 升級為 Protobuf，縮減體積並提升 5x 解析速度。
+* [ ] **♻️ 自定義物件池 (Object Pooling)**：針對高頻建立的元件 (如清單項目) 實作物件回收機制，大幅降低 Garbage Collection 觸發頻率。
+* [ ] **🎯 視圖層級扁平化 (View Flattening)**：利用 Yoga 引擎特性手動優化 Layout 結構，減少過度繪製 (Overdraw) 與各層級 View 合成開銷。
+* [ ] **🔮 預測性網路預載 (Predictive Prefetching)**：基於使用者行為模型 AI，預判下一個動作提前發出 API 請求，達成「零延遲」體感。
 
 ---
 
