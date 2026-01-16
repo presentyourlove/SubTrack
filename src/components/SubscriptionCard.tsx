@@ -6,6 +6,7 @@ import { Subscription } from '../types';
 import { formatCurrency } from '../utils/currencyHelper';
 import { formatDateLocale, getDaysUntil, getUrgencyLevel } from '../utils/dateHelper';
 import i18n from '../i18n';
+import { TagChip } from './TagChip';
 
 const ALARM_OFFSET_ONE_DAY_MINS = -24 * 60;
 
@@ -158,6 +159,15 @@ export default function SubscriptionCard({
         </Text>
       </View>
 
+      {/* 標籤 */}
+      {subscription.tags && subscription.tags.length > 0 && (
+        <View style={styles.tagsContainer}>
+          {subscription.tags.map((tag) => (
+            <TagChip key={tag.id} tag={tag} size="small" />
+          ))}
+        </View>
+      )}
+
       {/* 操作按鈕 */}
       <View style={styles.actions}>
         <TouchableOpacity
@@ -269,6 +279,12 @@ const styles = StyleSheet.create({
   actions: {
     flexDirection: 'row',
     gap: 8,
+  },
+  tagsContainer: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    gap: 6,
+    marginBottom: 12,
   },
   actionButton: {
     flex: 1,

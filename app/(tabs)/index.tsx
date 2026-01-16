@@ -17,8 +17,14 @@ import i18n from '../../src/i18n';
 
 export default function SubscriptionsScreen() {
   const { colors } = useTheme();
-  const { subscriptions, addSubscription, updateSubscription, deleteSubscription, refreshData } =
-    useDatabase();
+  const {
+    subscriptions,
+    addSubscription,
+    updateSubscription,
+    deleteSubscription,
+    refreshData,
+    setTagsForSubscription,
+  } = useDatabase();
 
   const [selectedCategory, setSelectedCategory] = useState<'all' | SubscriptionCategory>('all');
   const [modalVisible, setModalVisible] = useState(false);
@@ -37,8 +43,9 @@ export default function SubscriptionsScreen() {
   const handleSubmitSubscription = async (
     data: Omit<
       Subscription,
-      'id' | 'createdAt' | 'updatedAt' | 'nextBillingDate' | 'calendarEventId'
+      'id' | 'createdAt' | 'updatedAt' | 'nextBillingDate' | 'calendarEventId' | 'tags'
     >,
+    tagIds: number[],
   ) => {
     try {
       const nextBillingDate = calculateNextBillingDate(data.startDate, data.billingCycle);
@@ -46,8 +53,11 @@ export default function SubscriptionsScreen() {
 
       if (editingId) {
         await updateSubscription(editingId, subscriptionData);
+        await setTagsForSubscription(editingId, tagIds);
       } else {
         await addSubscription(subscriptionData);
+        // 新增時需要取得新 ID 來設定標籤，暫時先跳過
+        // TODO: 改進 addSubscription 回傳 ID
       }
       setModalVisible(false);
       setEditingId(null);

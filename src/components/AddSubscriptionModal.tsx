@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, Modal, TouchableOpacity, ScrollView, Alert } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useTheme } from '../context/ThemeContext';
+import { useDatabase } from '../context/DatabaseContext';
 import { SubscriptionCategory, BillingCycle, Subscription } from '../types';
 import { parseTime, formatTime, getDefaultReminderTime } from '../utils/dateHelper';
 import i18n from '../i18n';
@@ -10,23 +11,27 @@ import BasicInfo from './subscription/BasicInfo';
 import CategorySelector from './subscription/CategorySelector';
 import PaymentInfo from './subscription/PaymentInfo';
 import ReminderSettings from './subscription/ReminderSettings';
+import { TagSelector } from './TagSelector';
 
 type AddSubscriptionModalProps = {
   visible: boolean;
   onClose: () => void;
   initialData?: Subscription | null;
-  onSubmit: (data: {
-    name: string;
-    icon: string;
-    category: SubscriptionCategory;
-    price: number;
-    currency: string;
-    billingCycle: BillingCycle;
-    startDate: string;
-    reminderEnabled: boolean;
-    reminderTime?: string;
-    reminderDays?: number;
-  }) => void;
+  onSubmit: (
+    data: {
+      name: string;
+      icon: string;
+      category: SubscriptionCategory;
+      price: number;
+      currency: string;
+      billingCycle: BillingCycle;
+      startDate: string;
+      reminderEnabled: boolean;
+      reminderTime?: string;
+      reminderDays?: number;
+    },
+    tagIds: number[],
+  ) => void;
 };
 
 export default function AddSubscriptionModal({
@@ -36,6 +41,7 @@ export default function AddSubscriptionModal({
   onSubmit,
 }: AddSubscriptionModalProps) {
   const { colors } = useTheme();
+  const { tags, createTag, deleteTag, getTagsForSubscription } = useDatabase();
 
   const [name, setName] = useState('');
   const [icon, setIcon] = useState('📱');
@@ -47,6 +53,7 @@ export default function AddSubscriptionModal({
   const [reminderEnabled, setReminderEnabled] = useState(false);
   const [reminderTime, setReminderTime] = useState(() => getDefaultReminderTime());
   const [reminderDays, setReminderDays] = useState(0);
+  const [selectedTagIds, setSelectedTagIds] = useState<number[]>([]);
 
   useEffect(() => {
     if (visible) {
@@ -71,6 +78,11 @@ export default function AddSubscriptionModal({
         }
 
         setReminderDays(initialData.reminderDays || 0);
+
+        // 載入現有標籤
+        getTagsForSubscription(initialData.id).then((existingTags) => {
+          setSelectedTagIds(existingTags.map((t) => t.id));
+        });
       } else {
         setName('');
         setIcon('📱');
@@ -82,6 +94,7 @@ export default function AddSubscriptionModal({
         setReminderEnabled(false);
         setReminderTime(getDefaultReminderTime());
         setReminderDays(0);
+        setSelectedTagIds([]);
       }
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -101,18 +114,22 @@ export default function AddSubscriptionModal({
 
     const formattedTime = formatTime(reminderTime);
 
-    onSubmit({
-      name,
-      icon,
-      category,
-      price: numericPrice,
-      currency,
-      billingCycle,
-      startDate: typeof startDate === 'string' ? startDate : startDate.toISOString().split('T')[0],
-      reminderEnabled,
-      reminderTime: reminderEnabled ? formattedTime : undefined,
-      reminderDays: reminderEnabled ? reminderDays : undefined,
-    });
+    onSubmit(
+      {
+        name,
+        icon,
+        category,
+        price: numericPrice,
+        currency,
+        billingCycle,
+        startDate:
+          typeof startDate === 'string' ? startDate : startDate.toISOString().split('T')[0],
+        reminderEnabled,
+        reminderTime: reminderEnabled ? formattedTime : undefined,
+        reminderDays: reminderEnabled ? reminderDays : undefined,
+      },
+      selectedTagIds,
+    );
 
     // Reset form handled by parent closing modal or next open
     onClose();
@@ -155,6 +172,13 @@ export default function AddSubscriptionModal({
               setReminderTime={setReminderTime}
               reminderDays={reminderDays}
               setReminderDays={setReminderDays}
+            />
+            <TagSelector
+              tags={tags}
+              selectedTagIds={selectedTagIds}
+              onSelectionChange={setSelectedTagIds}
+              onCreateTag={createTag}
+              onDeleteTag={deleteTag}
             />
           </ScrollView>
 
