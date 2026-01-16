@@ -301,6 +301,11 @@ npm test -- --coverage
 * [ ] **🧠 自定義記憶體配置器 (Custom Allocator)**：替換預設 malloc 為 jemalloc 或 mimalloc，針對 React Native 的短期物件分配模式進行特化調優。
 * [ ] **🌊 Bytecode Streaming**：實作串流式腳本載入，在網路下載 JS Bundle 的同時即刻開始解析與執行，消除等待時間。
 * [ ] **🌋 Vulkan/Metal 直接渲染**：繞過所有中間層，針對圖表繪製直接呼叫底層 Graphics API，榨乾硬體最後一滴效能。
+* [ ] **📏 Zero-Copy 反序列化 (FlatBuffers)**：引入 FlatBuffers 替換 Protobuf，存取數據時無需任何記憶體複製與解碼步驟，達成真正的零開銷。
+* [ ] **🧊 ASTC 紋理壓縮 (Adaptive Scalable Texture Compression)**：將所有 UI 圖標與資源轉為 GPU 硬體支援的 ASTC 格式，減少 60% VRAM 佔用並提升渲染頻寬。
+* [ ] **🔥 CPU 時脈預先排程 (Performance Hints)**：利用 Android Performance Hint API 在繁重任務前微秒級預先拉升 CPU 頻率，消除頻率爬升延遲。
+* [ ] **⚡ 預編譯著色器 (Pre-compiled Shaders)**：在安裝階段即完成 Skia/OpenGL Shader 編譯，徹底根除應用程式首次執行的動畫卡頓 (Jank)。
+* [ ] **🕺 完全離線主執行緒 (Off-Main-Thread Architecture)**：將所有動畫、手勢與渲染邏輯徹底剝離 JS Thread，即便 JS 滿載卡死，介面依然保持 120Hz 響應。
 
 ---
 
