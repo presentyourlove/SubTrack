@@ -233,7 +233,15 @@ npm test -- --coverage
 * [ ] **💳 虛擬卡整合 (Virtual Cards)**：整合 Privacy.com 等服務，為每個訂閱產生專屬虛擬卡，設定扣款上限以防超收。
 * [ ] **🔔 漲價社群預警 (Community Pricing Alerts)**：群眾外包的價格監測，當 Netflix 或 Spotify 宣布漲價時第一時間通知。
 * [ ] **🌱 數位碳足跡 (Digital Carbon Footprint)**：估算訂閱服務的數位碳排放量，推廣環境永續意識。
-* [ ] **🔌 開發者 API (Public API)**：提供 REST/GraphQL API，讓進階使用者將訂閱資料整合至自己的自動化工作流 (如 Home Assistant)。
+* [ ] **🧩 瀏覽器擴充套件 (Web Extension)**：在 Chrome/Edge 瀏覽網頁時自動偵測訂閱扣款行為並同步至 App。
+* [ ] **🤝 拼團媒合 (P2P Sharing Matcher)**：協助尋找合法的 Family Plan 分享夥伴（如 Office 365 家用版），降低每人平均成本。
+* [ ] **💼 多重工作區 (Multi-Workspace)**：將「個人」、「公司」、「家庭」的訂閱完全隔離管理的帳務系統。
+* [ ] **📡 區域網路同步 (Local P2P Sync)**：不經過雲端伺服器，直接在同一 WiFi 下的裝置間同步資料，極致隱私保護。
+* [ ] **👓 空間運算支援 (Spatial Computing)**：支援 Apple Vision Pro，以 3D 瀑布流展示訂閱項目。
+* [ ] **🧠 消費心理分析 (Psychological Analysis)**：偵測「報復性訂閱」行為並給予友善提醒。
+* [ ] **🏢 企業級 SSO 登入 (Enterprise SSO)**：支援公司統編發票管理與 SAML/OIDC 登入。
+* [ ] **🔗 Web3 支付整合 (Crypto Payments)**：追蹤透過 ETH/Solana 支付的鏈上訂閱服務。
+* [ ] **💝 零頭捐款 (Charity Round-up)**：將每筆訂閱金額無條件進位，差額自動捐贈給指定公益團體。
 
 ---
 
