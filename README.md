@@ -190,10 +190,32 @@ npm test -- --coverage
 
 ## 🔮 後繼優化建議 (Future Roadmap)
 
-* [ ] **AI 智能建議**：分析消費習慣，推薦更划算的訂閱方案。
+我們持續規劃讓 SubTrack 更強大，以下是未來的開發藍圖：
+
+### 📱 功能增強 (Feature Enhancements)
+
+* [ ] **🔐 生物辨識解鎖 (Biometric Security)**：整合 FaceID / TouchID，保護敏感的訂閱財務資訊。
+* [ ] **📂 資料匯出/匯入 (Data Export/Import)**：支援 CSV/PDF 報表匯出，與 Excel 格式資料匯入。
+* [ ] **🏷️ 標籤系統 (Tagging System)**：支援 `#work`, `#family` 等多重標籤，提供比單一分類更靈活的篩選。
+* [ ] **📈 價格歷史追蹤 (Price History)**：記錄訂閱服務的漲價歷程，分析長期支出變化。
+* [ ] **🔍 訂閱服務資料庫 (Service Catalog)**：內建 Netflix, Spotify 等熱門服務圖示與方案，一鍵快速新增。
+* [ ] **📷 帳單 OCR 掃描**：拍照自動辨識帳單金額與日期，快速建立訂閱 (需整合 Vision API)。
+* [ ] **👨‍👩‍👧‍👦 家庭共享 (Family Plan Support)**：針對 Spotify Family, Netflix Premium 等共享方案，計算每人應分攤金額。
+
+### 🛠️ 技術工程優化 (Engineering)
+
+* [ ] **⚡ 離線圖片快取 (Offline Image Caching)**：使用 `expo-image` 優化網路圖片載入體驗。
+* [ ] **🧪 E2E 自動化測試 (End-to-End Testing)**：引入 Maestro 進行完整的使用者流程自動化測試。
+* [ ] **🐞 錯誤監控 (Error Monitoring)**：整合 Sentry 即時捕捉線上 Crash 與錯誤。
+* [ ] **📲 捷徑與整合 (Shortcuts & App Actions)**：支援 iOS/Android 主畫面長按捷徑 (Quick Actions)。
+* [ ] **☁️ Google Calendar 雙向同步**：除了寫入，也支援從日曆讀取既有訂閱事件。
+
+### 🎨 使用者體驗 (UX/UI)
+
+* [ ] **📳 觸覺回饋 (Haptic Feedback)**：在互動操作（如滑動、開關）加入 `expo-haptics` 細微震動，提升精緻感。
+* [ ] **AI 智能建議**：分析消費習慣，推薦更划算的訂閱方案（例如：提示「此訂閱使用率低，建議取消」）。
 * [ ] **桌面小工具 (Widgets)**：在 iOS/Android 主畫面直接查看即將扣款項目。
-* [ ] **銀行帳戶整合**：透過 Open Banking API 自動匯入扣款紀錄 (需視地區法規)。
-* [ ] **家庭共享**：與家人共同管理訂閱支出。
+* [ ] **🔍 全局搜尋 (Global Search)**：快速查找特定訂閱或歷史紀錄。
 
 ---
 
