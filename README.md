@@ -216,6 +216,16 @@ npm test -- --coverage
 * [ ] **AI 智能建議**：分析消費習慣，推薦更划算的訂閱方案（例如：提示「此訂閱使用率低，建議取消」）。
 * [ ] **桌面小工具 (Widgets)**：在 iOS/Android 主畫面直接查看即將扣款項目。
 * [ ] **🔍 全局搜尋 (Global Search)**：快速查找特定訂閱或歷史紀錄。
+* [ ] **⌚ 穿戴裝置整合 (WatchOS/WearOS)**：在手錶上接收扣款通知與查看簡易統計。
+* [ ] **📧 信件解析 (Email Parsing)**：轉寄訂閱收據至指定信箱，自動建立或更新訂閱紀錄。
+* [ ] **🕶️ 隱私模式 (Privacy Mode)**：一鍵隱藏主畫面金額顯示，在公共場合也能安全查看。
+* [ ] **👯‍♂️ 分帳功能 (Split Bill)**：針對共享訂閱（如 Netflix Family），自動計算並追蹤每位成員的欠款狀態。
+* [ ] **🛡️ 暗網監測 (Dark Web Monitoring)**：檢查訂閱帳號密碼是否在外洩資料庫中 (整合 HaveIBeenPwned API)。
+* [ ] **🗣️ 語音控制 (Voice Control)**：支援 Siri / Google Assistant 指令查詢特定訂閱或下期帳單。
+* [ ] **🎫 優惠券社群 (Coupon Community)**：匿名共享可用的訂閱折扣碼或試用連結。
+* [ ] **📦 訂閱組合建議 (Bundle Recommendations)**：自動偵測分散訂閱（如 iCloud + Apple Music），建議更划算的 Apple One 等組合包。
+* [ ] **📊 自訂報表產生器 (Custom Report Builder)**：拖拉式介面，讓使用者定義專屬的財務分析維度。
+* [ ] **🔄 訂閱取消指南 (Cancellation Helper)**：針對難以取消的服務，提供一步步的官方取消連結與教學。
 
 ---
 
