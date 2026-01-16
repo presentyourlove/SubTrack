@@ -306,6 +306,11 @@ npm test -- --coverage
 * [ ] **🔥 CPU 時脈預先排程 (Performance Hints)**：利用 Android Performance Hint API 在繁重任務前微秒級預先拉升 CPU 頻率，消除頻率爬升延遲。
 * [ ] **⚡ 預編譯著色器 (Pre-compiled Shaders)**：在安裝階段即完成 Skia/OpenGL Shader 編譯，徹底根除應用程式首次執行的動畫卡頓 (Jank)。
 * [ ] **🕺 完全離線主執行緒 (Off-Main-Thread Architecture)**：將所有動畫、手勢與渲染邏輯徹底剝離 JS Thread，即便 JS 滿載卡死，介面依然保持 120Hz 響應。
+* [ ] **🧮 形式化驗證 (Formal Verification)**：使用 Coq 證明核心演算法正確性，移除所有 Runtime 邊界檢查 (Bounds Checks)，極致縮減指令數。
+* [ ] **🧠 數據導向設計 (Data-Oriented Design)**：捨棄 OOP 物件參照，改用 ECS (Entity Component System) 架構，最大化 CPU L1/L2 Cache 命中率。
+* [ ] **⚡ 手寫組合語言 (Hand-written Assembly)**：針對 ARM64 架構手寫關鍵熱點代碼 (Critical Hotspots)，繞過編譯器優化限制。
+* [ ] **🌐 自訂傳輸協定 (Custom UDP Protocol)**：基於 UDP 實作類似遊戲的不可靠傳輸層 (Reliable UDP)，消除 TCP 握手與壅塞控制延遲。
+* [ ] **🧊 晶片級指令特化 (ASIC/NPU Optimization)**：直接呼叫手機 NPU 進行本地神經網路推論，將功耗降低 90%。
 
 ---
 
