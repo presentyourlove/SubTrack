@@ -281,6 +281,11 @@ npm test -- --coverage
 * [ ] **🖼️ 圖片客戶端壓縮 (Client-side Compression)**：上傳收據前先進行高效失真壓縮 (WebP)，減少 70% 流量與雲端儲存成本。
 * [ ] **📡 網路請求聚合 (Request Batching)**：實作 GraphQL 式的查詢聚合層，將多個 API 呼叫合併為單一請求，降低延遲。
 * [ ] **🧊 原生模組重寫 (Native Rewrite)**：針對加密與日期計算等熱點邏輯，直接以 C++ 重寫並透過 JSI 呼叫。
+* [ ] **🎨 Skia 繪圖引擎 (Skia Rendering)**：引入 `@shopify/react-native-skia` 替換 SVG 圖表，利用 GPU 加速達成 120Hz 絲滑動畫。
+* [ ] **🚀 HTTP/3 (QUIC) 支援**：升級網路層支援 QUIC 協定，在弱網環境下減少 30% 連線延遲。
+* [ ] **💾 SQLite WAL 模式 (Write-Ahead Logging)**：啟用 WAL 模式並優化 Checkpoint 策略，大幅提升資料庫並發讀寫能力。
+* [ ] **⚡ 延遲載入 (Inline Requires)**：實作 Metro 的 Inline Requires 配置，將模組解析推遲至執行期，進一步削減啟動時間。
+* [ ] **🔧 PGO 編譯優化 (Profile-Guided Optimization)**：收集真實用戶的執行路徑數據，重新編譯 Android SO 檔，提升熱點代碼執行效率。
 
 ---
 
