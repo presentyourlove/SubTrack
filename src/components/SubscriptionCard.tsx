@@ -34,7 +34,9 @@ export default function SubscriptionCard({
 
   // 計算工時換算
   const hourlyRate = settings ? calculateHourlyRate(settings) : 0;
-  const workHours = settings?.conversionEnabled ? convertToWorkHours(subscription.price, hourlyRate) : null;
+  const workHours = settings?.conversionEnabled
+    ? convertToWorkHours(subscription.price, hourlyRate)
+    : null;
 
   const daysUntil = getDaysUntil(subscription.nextBillingDate);
   const urgency = getUrgencyLevel(subscription.nextBillingDate);
@@ -189,7 +191,6 @@ export default function SubscriptionCard({
                 </Text>
               </TouchableOpacity>
             )}
-
           </View>
           {workHours && (
             <Text style={[styles.date, { color: colors.subtleText, marginTop: 2, fontSize: 12 }]}>

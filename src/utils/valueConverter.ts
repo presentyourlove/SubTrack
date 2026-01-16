@@ -5,21 +5,21 @@ import i18n from '../i18n';
  * 計算基準時薪
  */
 export function calculateHourlyRate(settings: UserSettings): number {
-    if (!settings || !settings.conversionEnabled) return 0;
+  if (!settings || !settings.conversionEnabled) return 0;
 
-    const { salaryType, salaryAmount, workDaysPerMonth = 22, workHoursPerDay = 8 } = settings;
+  const { salaryType, salaryAmount, workDaysPerMonth = 22, workHoursPerDay = 8 } = settings;
 
-    if (!salaryAmount || salaryAmount <= 0) return 0;
+  if (!salaryAmount || salaryAmount <= 0) return 0;
 
-    if (salaryType === 'hourly') {
-        return salaryAmount;
-    }
+  if (salaryType === 'hourly') {
+    return salaryAmount;
+  }
 
-    // 月薪模式：月薪 / (天數 * 時數)
-    const totalHours = workDaysPerMonth * workHoursPerDay;
-    if (totalHours <= 0) return 0;
+  // 月薪模式：月薪 / (天數 * 時數)
+  const totalHours = workDaysPerMonth * workHoursPerDay;
+  if (totalHours <= 0) return 0;
 
-    return salaryAmount / totalHours;
+  return salaryAmount / totalHours;
 }
 
 /**
@@ -29,12 +29,12 @@ export function calculateHourlyRate(settings: UserSettings): number {
  * @returns 格式化後的字串 (e.g. "≈ 1.5 hr")
  */
 export function convertToWorkHours(price: number, hourlyRate: number): string | null {
-    if (hourlyRate <= 0) return null;
+  if (hourlyRate <= 0) return null;
 
-    const hours = price / hourlyRate;
+  const hours = price / hourlyRate;
 
-    // 顯示小數點後一位
-    const formattedHours = hours.toFixed(1);
+  // 顯示小數點後一位
+  const formattedHours = hours.toFixed(1);
 
-    return `≈ ${formattedHours} ${i18n.t('settings.valueConverter.hoursUnit')}`;
+  return `≈ ${formattedHours} ${i18n.t('settings.valueConverter.hoursUnit')}`;
 }
