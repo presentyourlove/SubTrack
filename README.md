@@ -245,7 +245,10 @@ npm test -- --coverage
 * [ ] **🏆 節省排行榜 (Savings Leaderboard)**：(匿名) 比較同類別用戶的平均支出，激勵減少不必要開銷。
 * [ ] **🌡️ 訂閱疲勞偵測 (Fatigue Detector)**：偵測過多影音服務導致的「選擇困難症」，主動建議暫停部分訂閱。
 * [ ] **🔄 帳號無縫移轉 (Account Transfer)**：協助將訂閱帳號權限安全、無縫地移轉給他人（如離職交接、分手分產）。
-* [ ] **🎮 元宇宙連動 (Metaverse Integration)**：將省下的訂閱費用轉化為虛擬替身 (Avatar) 的專屬配件或資產。
+* [ ] **� 智慧家庭連動 (Smart Home Integration)**：當月支出超支時，連動 Philips Hue 燈光變紅警示。
+* [ ] **🔐 量子抗性加密 (Post-Quantum Cryptography)**：採用與 NIST 標準相容的加密演算法，抵禦未來量子電腦夠算力破解的風險。
+* [ ] **🆔 去中心化身分 (DID Login)**：支援 ENS / Unstoppable Domains 登入，完全掌握自己的身分數據，不依賴 Google/Apple。
+* [ ] **🛒 訂閱市集 (Subscription Marketplace)**：直接在 App 內購買或轉讓（合規前提下）剩餘的訂閱會籍期間。
 
 ---
 
