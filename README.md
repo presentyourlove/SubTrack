@@ -196,9 +196,9 @@ npm test -- --coverage
 
 * [ ] **資料匯出/匯入 (Data Export/Import)**：支援 CSV/PDF 報表匯出，與 Excel 格式資料匯入。
 * [ ] **🏷️ 標籤系統 (Tagging System)**：支援 `#work`, `#family` 等多重標籤，提供比單一分類更靈活的篩選。
-* [ ] **📈 價格歷史追蹤 (Price History)**：記錄訂閱服務的漲價歷程，分析長期支出變化。
+
 * [ ] **🔍 訂閱服務資料庫 (Service Catalog)**：內建 Netflix, Spotify 等熱門服務圖示與方案，一鍵快速新增。
-* [ ] **📷 帳單 OCR 掃描**：拍照自動辨識帳單金額與日期，快速建立訂閱 (需整合 Vision API)。
+
 * [ ] **👨‍👩‍👧‍👦 家庭共享 (Family Plan Support)**：針對 Spotify Family, Netflix Premium 等共享方案，計算每人應分攤金額。
 * [ ] **�‍♂️ 分帳功能 (Split Bill)**：針對共享訂閱，自動計算並追蹤每位成員的欠款狀態。
 * [ ] **💼 多重工作區 (Multi-Workspace)**：將「個人」、「公司」、「家庭」的訂閱完全隔離管理的帳務系統。
@@ -211,7 +211,7 @@ npm test -- --coverage
 ### 🎨 使用者體驗 (UX/UI)
 
 * [ ] **📳 觸覺回饋 (Haptic Feedback)**：在互動操作（如滑動、開關）加入 `expo-haptics` 細微震動，提升精緻感。
-* [ ] **🤖 AI 智能建議**：分析消費習慣，推薦更划算的訂閱方案（例如：提示「此訂閱使用率低，建議取消」）。
+
 * [ ] **🧩 桌面小工具 (Widgets)**：在 iOS/Android 主畫面直接查看即將扣款項目。
 * [ ] **️ 隱私模式 (Privacy Mode)**：一鍵隱藏主畫面金額顯示，在公共場合也能安全查看。
 * [ ] **🌐 多國語言 (Localization)**：新增英文介面支援，推向國際市場。
