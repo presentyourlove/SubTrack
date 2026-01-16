@@ -197,7 +197,7 @@ npm test -- --coverage
 * [ ] **資料匯出/匯入 (Data Export/Import)**：支援 CSV/PDF 報表匯出，與 Excel 格式資料匯入。
 * [ ] **🏷️ 標籤系統 (Tagging System)**：支援 `#work`, `#family` 等多重標籤，提供比單一分類更靈活的篩選。
 
-* [ ] **🔍 訂閱服務資料庫 (Service Catalog)**：內建 Netflix, Spotify 等熱門服務圖示與方案，一鍵快速新增。
+* [ ] **🔍 訂閱服務資料庫 (Service Catalog)**：內建 (本地靜態) 熱門服務預設資料，點選後自動帶入欄位，使用者可依實際情況修改金額再送出。
 
 * [ ] **👨‍👩‍👧‍👦 家庭共享 (Family Plan Support)**：針對 Spotify Family, Netflix Premium 等共享方案，計算每人應分攤金額。
 * [ ] **�‍♂️ 分帳功能 (Split Bill)**：針對共享訂閱，自動計算並追蹤每位成員的欠款狀態。
