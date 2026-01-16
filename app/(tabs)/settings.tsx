@@ -6,6 +6,7 @@ import ThemeSettings from '../../src/components/settings/ThemeSettings';
 import CurrencySettings from '../../src/components/settings/CurrencySettings';
 import NotificationSettings from '../../src/components/settings/NotificationSettings';
 import SyncSettings from '../../src/components/settings/SyncSettings';
+import { DataManagement } from '../../src/components/settings/DataManagement';
 import AboutSection from '../../src/components/settings/AboutSection';
 
 export default function SettingsScreen() {
@@ -22,6 +23,7 @@ export default function SettingsScreen() {
           <CurrencySettings />
           <NotificationSettings />
           <SyncSettings />
+          <DataManagement />
         </View>
         <AboutSection />
       </ScrollView>

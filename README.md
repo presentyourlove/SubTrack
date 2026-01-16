@@ -194,7 +194,7 @@ npm test -- --coverage
 
 ### 📱 核心功能增強 (Core Features)
 
-* [ ] **資料匯出/匯入 (Data Export/Import)**：支援 CSV/PDF 報表匯出，與 Excel 格式資料匯入。
+* [x] **資料匯出/匯入 (Data Export/Import)**：支援 CSV/PDF 報表匯出，與 CSV/Excel 格式資料匯入。
 * [ ] **🏷️ 標籤系統 (Tagging System)**：支援 `#work`, `#family` 等多重標籤，提供比單一分類更靈活的篩選。
 
 * [ ] **🔍 訂閱服務資料庫 (Service Catalog)**：內建 (本地靜態) 熱門服務預設資料，點選後自動帶入欄位，使用者可依實際情況修改金額再送出。
