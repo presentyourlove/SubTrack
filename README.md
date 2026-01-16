@@ -296,6 +296,11 @@ npm test -- --coverage
 * [ ] **🎮 GPU 運算加速 (Compute Shaders)**：利用 WebGPU / Metal 進行客戶端大數據分析 (如年度支出熱點圖)，釋放 CPU 負載。
 * [ ] **📉 差異化 OTA 更新 (Differential Updates)**：優化 EAS Update 機制，僅下載變更的 JS Chunk，將熱更新耗時從 5秒降至 0.5秒。
 * [ ] **🔬 啟動時序迴歸測試 (Startup Time Regression)**：在 CI/CD 流水線整合 Systrace，任何導致啟動慢於 200ms 的 Commit 自動退回。
+* [ ] **⚡ React Server Components (RSC for Mobile)**：實驗性引入 RSC 架構，將 90% 的業務邏輯留存於伺服器，達成「零 Bundle」的極致輕量化。
+* [ ] **🧮 SIMD 指令集優化 (Neon/AVX)**：在 C++ 層針對 ARM NEON 指令集進行手動向量化編碼，加速加密與雜湊運算 400%。
+* [ ] **🧠 自定義記憶體配置器 (Custom Allocator)**：替換預設 malloc 為 jemalloc 或 mimalloc，針對 React Native 的短期物件分配模式進行特化調優。
+* [ ] **🌊 Bytecode Streaming**：實作串流式腳本載入，在網路下載 JS Bundle 的同時即刻開始解析與執行，消除等待時間。
+* [ ] **🌋 Vulkan/Metal 直接渲染**：繞過所有中間層，針對圖表繪製直接呼叫底層 Graphics API，榨乾硬體最後一滴效能。
 
 ---
 
