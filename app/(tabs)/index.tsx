@@ -12,6 +12,7 @@ import {
   AddSubscriptionModal,
   CategoryTabs,
 } from '../../src/components';
+import { TagChip } from '../../src/components/TagChip';
 import { calculateNextBillingDate } from '../../src/utils/dateHelper';
 import i18n from '../../src/i18n';
 
@@ -19,6 +20,7 @@ export default function SubscriptionsScreen() {
   const { colors } = useTheme();
   const {
     subscriptions,
+    tags,
     addSubscription,
     updateSubscription,
     deleteSubscription,
@@ -27,15 +29,25 @@ export default function SubscriptionsScreen() {
   } = useDatabase();
 
   const [selectedCategory, setSelectedCategory] = useState<'all' | SubscriptionCategory>('all');
+  const [selectedTagId, setSelectedTagId] = useState<number | null>(null);
   const [modalVisible, setModalVisible] = useState(false);
   const [editingId, setEditingId] = useState<number | null>(null);
   const [refreshing, setRefreshing] = useState(false);
 
-  // 篩選訂閱
-  const filteredSubscriptions =
-    selectedCategory === 'all'
-      ? subscriptions
-      : subscriptions.filter((sub) => sub.category === selectedCategory);
+  // 篩選訂閱 (分類 + 標籤)
+  const filteredSubscriptions = subscriptions.filter((sub) => {
+    // 分類篩選
+    if (selectedCategory !== 'all' && sub.category !== selectedCategory) {
+      return false;
+    }
+    // 標籤篩選
+    if (selectedTagId !== null) {
+      if (!sub.tags || !sub.tags.some((t) => t.id === selectedTagId)) {
+        return false;
+      }
+    }
+    return true;
+  });
 
   const activeSubscription = editingId ? subscriptions.find((s) => s.id === editingId) : null;
 
@@ -140,6 +152,43 @@ export default function SubscriptionsScreen() {
         {/* 分類篩選 */}
         <CategoryTabs selectedCategory={selectedCategory} onSelectCategory={setSelectedCategory} />
 
+        {/* 標籤篩選 */}
+        {tags.length > 0 && (
+          <View style={styles.tagFilterContainer}>
+            <ScrollView
+              horizontal
+              showsHorizontalScrollIndicator={false}
+              contentContainerStyle={styles.tagFilterContent}
+            >
+              <TouchableOpacity
+                style={[
+                  styles.tagFilterChip,
+                  { borderColor: colors.borderColor },
+                  selectedTagId === null && { backgroundColor: colors.accent },
+                ]}
+                onPress={() => setSelectedTagId(null)}
+              >
+                <Text
+                  style={[
+                    styles.tagFilterText,
+                    { color: selectedTagId === null ? '#ffffff' : colors.text },
+                  ]}
+                >
+                  {i18n.t('tags.allTags')}
+                </Text>
+              </TouchableOpacity>
+              {tags.map((tag) => (
+                <TagChip
+                  key={tag.id}
+                  tag={tag}
+                  selected={selectedTagId === tag.id}
+                  onPress={() => setSelectedTagId(selectedTagId === tag.id ? null : tag.id)}
+                />
+              ))}
+            </ScrollView>
+          </View>
+        )}
+
         {/* 訂閱列表 */}
         {filteredSubscriptions.length === 0 ? (
           <View style={styles.emptyState}>
@@ -239,5 +288,23 @@ const styles = StyleSheet.create({
     color: '#ffffff',
     fontSize: 16,
     fontWeight: '600',
+  },
+  tagFilterContainer: {
+    marginBottom: 12,
+  },
+  tagFilterContent: {
+    flexDirection: 'row',
+    gap: 8,
+    paddingRight: 20,
+  },
+  tagFilterChip: {
+    paddingHorizontal: 14,
+    paddingVertical: 6,
+    borderRadius: 16,
+    borderWidth: 1,
+  },
+  tagFilterText: {
+    fontSize: 13,
+    fontWeight: '500',
   },
 });
