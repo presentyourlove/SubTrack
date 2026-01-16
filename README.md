@@ -1,541 +1,201 @@
-# SubTrack - 訂閱管理應用程式
+# SubTrack - 智慧訂閱管理助手 📱💰
 
-[![Code Quality](https://img.shields.io/badge/code%20quality-excellent-brightgreen)](https://github.com/presentyourlove/SubTrack)
-[![TypeScript](https://img.shields.io/badge/TypeScript-5.3-blue)](https://www.typescriptlang.org/)
-[![Expo](https://img.shields.io/badge/Expo-54.0-000020)](https://expo.dev/)
-[![License](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
+[![React Native](https://img.shields.io/badge/React_Native-Expo-blue.svg)](https://reactnative.dev)
+[![TypeScript](https://img.shields.io/badge/Language-TypeScript-007ACC.svg)](https://www.typescriptlang.org/)
+[![License](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
+[![i18n](https://img.shields.io/badge/i18n-Traditional_Chinese-red.svg)](src/i18n)
 
-## 📱 輕鬆管理您的所有訂閱服務
-
-追蹤訂閱、分析支出、掌控預算
-
-**專案狀態**: ✅ 生產就緒 | **品質評分**: ⭐⭐⭐⭐⭐ (5/5)
+**SubTrack** 是一款專為現代人設計的跨平台訂閱管理應用程式。幫助您輕鬆追蹤 Netflix, Spotify, AWS 等各式週期性支出，掌握財務狀況，拒絕不明扣款！
 
 ---
 
-## ✨ 功能特色
+## ✨ 專案亮點 (Highlights)
 
-### 📊 訂閱管理
+* **跨平台支援**：單一程式碼庫同時支援 iOS、Android 與 Web。
+* **離線優先 (Offline-First)**：主要資料儲存於本地 (SQLite/LocalStorage)，無網路也能順暢使用。
+* **雲端同步 (Cloud Sync)**：整合 Firebase，支援多裝置間資料即時同步。
+* **隱私專注**：您的資料您作主，僅在您登入後才進行加密雲端備份。
+* **極致效能**：針對移動裝置優化的輕量級架構，啟動速度快。
 
-- **智慧追蹤**: 管理所有訂閱服務（Netflix、Spotify、Adobe...）
-- **到期提醒**: 自動提醒即將到期的訂閱
-- **分類管理**: 依娛樂、生產力、生活分類整理
-- **快速操作**: 輕鬆新增、編輯、刪除訂閱
+## 🚀 功能特色 (Features)
 
-### 💰 預算分析
+* **📊 視覺化儀表板**：直觀的圖表分析每月/每年支出趨勢與分類佔比。
+* **🔔 智慧提醒**：透過本地推播通知 (Local Notifications) 在扣款前提醒您，不再錯過繳費日。
+* **🌍 多幣別支援**：支援 TWD, USD, JPY, EUR 等多種貨幣，自動換算匯率。
+* **🌓 深色/淺色模式**：自動跟隨系統或手動切換主題，保護您的眼睛。
+* **📅 日曆整合**：一鍵將扣款日同步至您的手機行事曆。
+* **🔐 安全驗證**：支援 Email 註冊/登入，保障資料安全。
 
-- **視覺化圖表**: 長條圖和圓餅圖呈現支出趨勢
-- **多時間範圍**: 週、月、年度支出統計
-- **詳細明細**: 按分類或應用程式查看支出
-- **自動計算**: 即時計算月費和年費總額
+## 💎 程式碼品質 (Code Quality)
 
-### 🌍 多幣別支援
+本專案嚴格遵循業界標準與 `.agent` 規範：
 
-- **11種貨幣**: TWD、USD、JPY、CNY、HKD、MOP、GBP、KRW、TRY、PKR、IDR、NGN
-- **自動轉換**: 統一顯示為主要幣別
-- **彈性設定**: 可自訂匯率
+* **TypeScript Strict Mode**：全面啟用嚴格型別檢查，減少運行時錯誤。
+* **ESLint + Prettier**：自動化代碼風格檢查與格式化，保持代碼整潔一致。
+* **i18n 國際化**：所有 UI 字串提取至資源檔，無 Hardcoded 字串 (目前支援繁體中文)。
+* **Component Atomization**：元件細粒度拆分，提升重用性與可維護性。
+* **Accessibility (A11y)**：遵循無障礙設計規範，支援螢幕閱讀器。
+* **File Size Limits**：單一檔案不超過 300 行，函式保持單一職責。
 
-### ☁️ 雲端同步
+## 🛠️ 技術堆疊 (Tech Stack)
 
-- **Firebase 整合**: 安全的雲端資料儲存
-- **跨裝置同步**: 在所有裝置上保持資料一致
-- **自動備份**: 登入後自動同步資料
-- **本地優先**: 未登入也可完整使用
+### Client Side
 
-### 🎨 精美介面
+* **Framework**: [React Native](https://reactnative.dev/) / [Expo](https://expo.dev/) (SDK 50+)
+* **Language**: [TypeScript](https://www.typescriptlang.org/)
+* **Navigation**: [Expo Router](https://docs.expo.dev/router/introduction/) (v3)
+* **Styling**: StyleSheet (Native) / CSS Modules (Web)
+* **State Management**: React Context API & Hooks
 
-- **深色/淺色模式**: 依您的喜好切換主題
-- **響應式設計**: 完美支援手機、平板、電腦
-- **流暢動畫**: 優雅的使用者體驗
-- **無障礙支援**: 符合 a11y 標準
+### Backend & Service
 
-### 🔔 進階功能
+* **Auth**: Firebase Authentication
+* **Database (Cloud)**: Cloud Firestore
+* **Database (Local)**: `expo-sqlite` (Native) / `localStorage` (Web)
 
-- **資料匯出**: 支援 JSON 和 CSV 格式
-- **通知提醒**: 訂閱到期前自動通知（Native）
-- **日曆整合**: 將訂閱加入系統日曆（Native）
-- **i18n 支援**: 繁體中文（可擴展多語言）
+### Tools
 
----
+* **Testing**: Jest, React Native Testing Library
+* **Linting**: ESLint, Prettier
+* **Build**: EAS (Expo Application Services)
 
-## 🏆 程式碼品質
-
-### 品質指標
-
-| 指標           | 狀態              | 說明                |
-| -------------- | ----------------- | ------------------- |
-| **Lint**       | ✅ 0 errors       | ESLint 檢查通過     |
-| **格式化**     | ✅ 100%           | Prettier 規範       |
-| **TypeScript** | ✅ 型別安全       | 嚴格模式            |
-| **JSDoc**      | ✅ 17 個 API      | 核心函式文件化      |
-| **測試**       | ✅ 80% 核心通過   | Jest 測試框架       |
-| **Git Hooks**  | ✅ Pre-commit     | Husky + lint-staged |
-| **CI/CD**      | ✅ GitHub Actions | 自動化工作流程      |
-
-### 開發標準
-
-- ✅ 無 Magic Numbers（使用具名常數）
-- ✅ 統一程式碼風格
-- ✅ 完整的錯誤處理
-- ✅ 安全的環境變數管理
-- ✅ ADR 架構決策記錄
-
----
-
-## 🚀 快速開始
-
-### 前置需求
-
-- Node.js 18+
-- npm 或 yarn
-- Expo CLI（可選，專案內建）
-
-### 一鍵啟動
-
-```bash
-# 1. Clone 專案
-git clone https://github.com/presentyourlove/SubTrack.git
-cd SubTrack
-
-# 2. 安裝依賴
-npm install
-
-# 3. 啟動 Web 版（最快）
-npm run web
-```
-
-### 完整設定
-
-1. **設定環境變數**（選填，用於 Firebase 同步）
-
-```bash
-# Windows (PowerShell)
-Copy-Item .env.example .env
-
-# Linux/Mac
-cp .env.example .env
-
-# 編輯 .env 填入 Firebase 設定（或保持預設值以使用本地模式）
-```
-
-> [!NOTE]
-> 無需 Firebase 也可完整使用！資料會儲存在本地。
-
-1. **選擇啟動方式**
-
-```bash
-# Web 版本（推薦開始）
-npm run web
-
-# 開發模式（支援所有平台）
-npm start
-
-# iOS 模擬器（需要 macOS）
-npm run ios
-
-# Android 模擬器
-npm run android
-```
-
-> [!WARNING]
-> 請勿將 `.env` 檔案提交至版本控制！
-
----
-
-## 📱 支援平台
-
-- ✅ **Web** (Chrome, Firefox, Safari, Edge)
-- ✅ **iOS** 13.0+ (iPhone, iPad)
-- ✅ **Android** 5.0+ (手機, 平板)
-
----
-
-## 🛠️ 技術堆疊
-
-### 核心技術
-
-- **React Native** 0.76 - 跨平台開發
-- **Expo** 54.0 - 開發工具鏈
-- **TypeScript** 5.3 - 型別安全
-
-### 資料層
-
-- **SQLite** (expo-sqlite) - Native 本地資料庫
-- **IndexedDB** (localStorage) - Web 資料持久化
-- **Firebase** - 雲端同步和認證（選用）
-
-### 狀態管理
-
-- **React Context** - 全域狀態
-- **Custom Hooks** - 業務邏輯封裝
-
-### UI/UX
-
-- **Expo Router** - 檔案路由系統
-- **自訂主題系統** - 深色/淺色模式
-- **React Native Reanimated** - 流暢動畫
-
-### 工具與函式庫
-
-- **日期處理**: date-fns概念，自訂 dateHelper
-- **圖表**: 自訂 chartHelper
-- **幣別轉換**: currencyHelper
-- **國際化**: i18n-js, expo-localization
-- **通知**: expo-notifications
-- **日曆**: expo-calendar
-
-### DevOps
-
-- **Git Hooks**: Husky + lint-staged
-- **CI/CD**: GitHub Actions
-- **測試**: Jest, React Native Testing Library
-- **Lint**: ESLint + TypeScript ESLint
-- **格式化**: Prettier
-
----
-
-## 📂 專案結構
+## 📂 專案結構 (Project Structure)
 
 ```text
 SubTrack/
-├── .github/
-│   └── workflows/
-│       └── ci.yml              # GitHub Actions CI/CD
-├── .husky/
-│   └── pre-commit              # Git pre-commit hook
-├── app/                        # Expo Router 路由
-│   ├── (tabs)/                 # Tab 導航
-│   │   ├── index.tsx           # 首頁（訂閱列表）
-│   │   ├── budget.tsx          # 預算分析
-│   │   └── settings.tsx        # 設定
-│   └── _layout.tsx             # 根佈局
+├── app/                      # Expo Router 頁面路由
+│   ├── (tabs)/              # 底部導航頁面 (Home, Budget, Settings)
+│   └── _layout.tsx          # 根導航配置
 ├── src/
-│   ├── components/             # UI 元件
-│   │   ├── settings/           # 設定元件
-│   │   ├── subscription/       # 訂閱元件
-│   │   ├── AddSubscriptionModal.tsx
-│   │   ├── SubscriptionCard.tsx
+│   ├── components/          # 可重用 UI 元件
+│   │   ├── settings/        # 設定頁面專用元件
+│   │   ├── subscription/    # 訂閱卡片與表單元件
 │   │   └── ...
-│   ├── context/                # React Context
-│   │   ├── ThemeContext.tsx    # 主題管理
-│   │   ├── AuthContext.tsx     # 認證狀態
-│   │   ├── DatabaseContext.tsx # 資料庫抽象
-│   │   └── ToastContext.tsx    # 通知提示
-│   ├── constants/              # 常數設定
-│   │   ├── AppConfig.ts        # 應用設定 + 時間常數
-│   │   └── Colors.ts           # 顏色主題
-│   ├── services/               # 核心服務（17 個 JSDoc API）
-│   │   ├── __tests__/          # 服務測試
-│   │   ├── database.ts         # SQLite 服務
-│   │   ├── database.web.ts     # Web localStorage
-│   │   ├── authService.ts      # Firebase 認證
-│   │   ├── syncService.ts      # 資料同步
-│   │   └── firebaseConfig.ts   # Firebase 設定
-│   ├── utils/                  # 工具函式
-│   │   ├── __tests__/          # 工具測試
-│   │   ├── dateHelper.ts       # 日期計算（無 magic numbers）
-│   │   ├── currencyHelper.ts   # 幣別轉換
-│   │   ├── chartHelper.ts      # 圖表資料
-│   │   ├── calendarHelper.ts   # 日曆整合
-│   │   ├── notificationHelper.ts
-│   │   └── exportHelper.ts
-│   ├── hooks/                  # Custom Hooks
-│   │   └── useSync.ts          # 同步邏輯
-│   ├── i18n/                   # 國際化
-│   │   ├── index.ts
-│   │   └── zh.ts               # 繁體中文
-│   └── types/                  # TypeScript 型別
-│       └── index.ts
-├── docs/
-│   └── ARCHITECTURE.md         # 系統架構與 ADR
-├── .env.example                # 環境變數範例
-├── .eslintrc.js                # ESLint 設定
-├── .prettierrc                 # Prettier 設定
-├── .lintstagedrc.js            # lint-staged 設定
-├── jest.config.js              # Jest 設定
-├── jest.setup.js               # Jest 全域設定
-├── tsconfig.json               # TypeScript 設定
-├── CHANGELOG.md                # 版本變更記錄
-├── CONTRIBUTING.md             # 貢獻指南
-├── QUICK_START.md              # 快速開始
-├── package.json                # 依賴套件
-└── README.md                   # 本檔案
+│   ├── context/            # 全域狀態 (Theme, Auth, Database)
+│   ├── services/           # 業務邏輯層 (API, DB, Sync)
+│   │   ├── db/             # 資料庫操作模組
+│   │   └── ...
+│   ├── hooks/              # Custom Hooks (useSync, etc.)
+│   ├── types/              # TypeScript 型別定義
+│   ├── utils/              # 工具函式庫 (Date, Currency)
+│   └── i18n/              # 語言檔 (zh.ts)
+├── scripts/                # 自動化工具腳本 (Compliance Scan)
+└── docs/                   # 專案文件
 ```
 
----
+## 🏁 快速開始 (Quick Start)
 
-## 🔧 開發指南
+### 前置需求
 
-### Git Hooks（自動化品質檢查）
+* Node.js (LTS version recommended)
+* npm or yarn
 
-專案已設置 **Husky + lint-staged**：
-
-- ✅ **Pre-commit**: 自動執行 ESLint 和 Prettier
-- ✅ 確保提交的程式碼符合品質標準
-- ✅ 只檢查 staged 的檔案（快速）
-
-### 程式碼品質指令
+### 安裝依賴
 
 ```bash
-# Lint 檢查與修復
-npm run lint          # ESLint 檢查
-npm run lint:fix      # 自動修復 lint 問題
-
-# TypeScript 檢查
-npm run type-check    # 型別檢查（不編譯）
-
-# 程式碼格式化
-npm run format        # Prettier 格式化所有檔案
+git clone https://github.com/your-repo/SubTrack.git
+cd SubTrack
+npm install
 ```
 
-### 開發最佳實踐
+### 啟動開發伺服器
 
-1. **遵循 Conventional Commits**
+```bash
+# 啟動 Expo Go (通用)
+npm start
 
-   ```bash
-   git commit -m "feat: 新增訂閱匯出功能"
-   git commit -m "fix: 修正日期計算錯誤"
-   git commit -m "docs: 更新 API 文件"
-   ```
+# 啟動 Web 版
+npm run web
 
-2. **使用具名常數（無 Magic Numbers）**
+# 啟動 Android 模擬器 (需安裝 Android Studio)
+npm run android
 
-   ```typescript
-   // ❌ 不好
-   if (days <= 7) { ... }
-
-   // ✅ 好
-   import { URGENCY_THRESHOLDS } from '@/constants/AppConfig';
-   if (days <= URGENCY_THRESHOLDS.WARNING_DAYS) { ... }
-   ```
-
-3. **編寫 JSDoc 註解**
-
-   ```typescript
-   /**
-    * 計算下一次扣款日期
-    * @param startDate - 訂閱開始日期
-    * @param cycle - 帳單週期
-    * @returns ISO 格式的日期字串
-    */
-   export function calculateNextBillingDate(
-     startDate: string,
-     cycle: BillingCycle
-   ): string { ... }
-   ```
-
-### 自訂擴展
-
-#### 新增訂閱分類
-
-編輯 `src/types/index.ts`:
-
-```typescript
-export type SubscriptionCategory =
-  | 'entertainment'
-  | 'productivity'
-  | 'lifestyle'
-  | 'your_new_category'; // 新增分類
+# 啟動 iOS 模擬器 (需安裝 Xcode, Mac Only)
+npm run ios
 ```
 
-#### 新增支援幣別
+## 📦 打包與發布 (Build & Release)
 
-編輯 `src/constants/AppConfig.ts`:
+本專案使用 **EAS Build** 進行雲端打包，這是 Expo 推薦的最佳實踐。
 
-```typescript
-export const DEFAULT_EXCHANGE_RATES = {
-  TWD: 1,
-  YOUR_CURRENCY: rate, // 新增幣別
-  // ...
-};
+### 1. Android APK
+
+產生適用於測試的 APK 檔案：
+
+```bash
+npm install -g eas-cli
+eas login
+eas build -p android --profile preview
 ```
 
-#### 自訂主題顏色
+### 2. iOS IPA (AltStore/Ad-hoc)
 
-編輯 `src/constants/Colors.ts`:
+產生適用於 AltStore 或 Ad-hoc 部署的 IPA 檔案 (需 Apple Developer Account 或適當配置)：
 
-```typescript
-export const Colors = {
-  light: {
-    primary: '#your_color',
-    // ...
-  },
-  dark: {
-    primary: '#your_color',
-    // ...
-  },
-};
+```bash
+eas build -p ios --profile preview
 ```
 
----
+### 3. Web App (PWA)
 
-## 🧪 測試
+輸出靜態網站檔案至 `dist/` 目錄，可直接部署至 Vercel/Netlify：
 
-### 執行測試
+```bash
+npx expo export -p web
+```
+
+## 🧪 測試 (Testing)
+
+我們使用 Jest 進行單元測試與快照測試。
 
 ```bash
 # 執行所有測試
 npm test
 
-# 執行測試並生成覆蓋率報告
-npm test -- --coverage
-
-# 監聽模式（開發時）
+# 監聽模式 (開發用)
 npm test -- --watch
+
+# 產生測試覆蓋率報告
+npm test -- --coverage
 ```
 
-### 測試現況
+## 📚 API 文件 (Internal Services)
 
-- ✅ **database.test.ts**: 12/15 通過（80%）
-- ✅ **核心 CRUD 操作**: 全部通過
-- ⚠️ **已知**: Expo 54 測試環境相容性問題
+由於本專案主要使用 Serverless 架構，"API" 指的是內部的 Service Layer 介面：
 
-### 測試目標
+### `AuthService`
 
-- 單元測試覆蓋率 ≥ 60%
-- 所有 Lint 檢查通過
-- TypeScript 編譯無錯誤
+* `registerUser(email, password)`: 註冊新帳號
+* `loginUser(email, password)`: 登入
+* `syncToCloud()`: 觸發資料同步
 
----
+### `DatabaseService`
 
-## 📦 打包發布
+* `getSubscriptions()`: 取得所有訂閱
+* `addSubscription(data)`: 新增訂閱
+* `getMonthlyTotal()`: 計算月支出
 
-### Web
+詳細介面定義請參閱 `src/services/` 目錄下的 `.ts` 檔案。
 
-```bash
-# 建置生產版本
-npx expo export:web
+## 🤝 開發指南 (Development Guide)
 
-# 預覽建置結果
-npx serve dist
-```
+1. **提交規範**: 請遵循 Conventional Commits (e.g., `feat: add new chart`, `fix: login bug`)。
+2. **分支策略**: `main` 為穩定分支，開發請開 `feature/xxx` 分支。
+3. **合規檢查**: 提交前請執行 `node scripts/scan-compliance.js` 確保無違規 (如 UTF-8 BOM, Hardcoded Strings)。
 
-### Native (使用 EAS Build)
+## 📝 致謝 (Acknowledgments)
 
-```bash
-# iOS
-eas build --platform ios --profile production
+* 感謝 [Expo](https://expo.dev) 提供強大的開發工具。
+* 圖示來源：[Ionicons](https://ionic.io/ionicons)。
 
-# Android
-eas build --platform android --profile production
+## 🔮 後繼優化建議 (Future Roadmap)
 
-# 同時建置兩個平台
-eas build --platform all
-```
+* [ ] **AI 智能建議**：分析消費習慣，推薦更划算的訂閱方案。
+* [ ] **桌面小工具 (Widgets)**：在 iOS/Android 主畫面直接查看即將扣款項目。
+* [ ] **銀行帳戶整合**：透過 Open Banking API 自動匯入扣款紀錄 (需視地區法規)。
+* [ ] **家庭共享**：與家人共同管理訂閱支出。
 
 ---
 
-## 🤝 貢獻
-
-歡迎提交 Issue 和 Pull Request！
-
-### 快速開始
-
-1. Fork 專案
-2. 建立功能分支 (`git checkout -b feature/AmazingFeature`)
-3. 遵循程式碼品質標準（Lint 會自動檢查）
-4. 提交變更（遵循 [Conventional Commits](https://www.conventionalcommits.org/)）
-5. 推送到分支 (`git push origin feature/AmazingFeature`)
-6. 開啟 Pull Request
-
-詳見 [CONTRIBUTING.md](CONTRIBUTING.md)
-
-### Commit 訊息類型
-
-- `feat:` 新功能
-- `fix:` 錯誤修復
-- `docs:` 文件變更
-- `style:` 程式碼格式（不影響功能）
-- `refactor:` 重構
-- `perf:` 效能優化
-- `test:` 測試相關
-- `chore:` 建置/工具相關
-
----
-
-## 📚 文件
-
-- 📖 [架構設計](docs/ARCHITECTURE.md) - 系統架構與設計決策（ADR）
-- 🚀 [快速開始](QUICK_START.md) - 詳細啟動指南
-- 📝 [變更記錄](CHANGELOG.md) - 版本歷史
-- 🤝 [貢獻指南](CONTRIBUTING.md) - 如何參與開發
-
----
-
-## 📄 授權
-
-本專案採用 MIT 授權 - 詳見 [LICENSE](LICENSE) 檔案
-
----
-
-## 👤 作者
-
-- **presentyourlove**
-- GitHub: [@presentyourlove](https://github.com/presentyourlove)
-
----
-
-## 🙏 致謝
-
-- [Expo](https://expo.dev/) - 優秀的跨平台開發工具
-- [Firebase](https://firebase.google.com/) - 強大的雲端服務
-- [React Native](https://reactnative.dev/) - 出色的跨平台框架
-- [TypeScript](https://www.typescriptlang.org/) - 型別安全的 JavaScript
-
----
-
-## 📸 截圖
-
-### 訂閱管理
-
-![Subscription Management](./screenshots/subscriptions.png)
-
-### 預算追蹤
-
-![Budget Tracking](./screenshots/budget.png)
-
-### 設定頁面
-
-![Settings](./screenshots/settings.png)
-
----
-
-## 🔮 開發路線圖
-
-### v1.1（近期）
-
-- [x] Git Hooks 自動化
-- [x] CI/CD 整合
-- [x] JSDoc 完整文件
-- [x] 移除 Magic Numbers
-- [ ] pre-push 測試hook
-
-### v1.2（規劃中）
-
-- [ ] 更多圖表類型（折線圖、面積圖）
-- [ ] 匯率自動更新 API
-- [ ] 訂閱推薦功能
-- [ ] Widget 支援
-
-### v2.0（未來）
-
-- [ ] AI 支出分析
-- [ ] 多語言擴展（英文、日文）
-- [ ] 家庭共享功能
-- [ ] 支出預測
-
----
-
-## 🌟 專案亮點
-
-✨ **生產就緒**: 完整的 DevOps 工作流程  
-✨ **高品質**: 0 lint errors, 完整型別安全  
-✨ **良好文件**: JSDoc + 架構文件 + ADR  
-✨ **易維護**: 具名常數、清晰結構  
-✨ **自動化**: Git Hooks + CI/CD
-
----
-
-如果這個專案對您有幫助，請給個 ⭐️！
-
-Made with ❤️ by presentyourlove
+**Author**: SubTrack Team
+**Copyright**: © 2026 SubTrack. All rights reserved.
