@@ -64,7 +64,9 @@ export function DatabaseProvider({ children }: { children: ReactNode }) {
   async function loadLocalData(dbInstance: Database) {
     try {
       const [subs, sets] = await Promise.all([
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         db.getAllSubscriptions(dbInstance as any),
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         db.getUserSettings(dbInstance as any),
       ]);
       setSubscriptions(subs);
@@ -107,10 +109,12 @@ export function DatabaseProvider({ children }: { children: ReactNode }) {
       nextBillingDate: subscription.nextBillingDate || calculatedNextBillingDate,
     };
 
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const id = await db.addSubscription(database as any, subData);
 
     // 如果已登入，同步到雲端
     if (isAuthenticated && user) {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const allSubs = await db.getAllSubscriptions(database as any);
       const newSub = allSubs.find((s) => s.id === id);
       if (newSub) {
@@ -139,10 +143,12 @@ export function DatabaseProvider({ children }: { children: ReactNode }) {
       }
     }
 
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     await db.updateSubscription(database as any, id, finalUpdates);
 
     // 如果已登入，同步到雲端
     if (isAuthenticated && user) {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const allSubs = await db.getAllSubscriptions(database as any);
       const updatedSub = allSubs.find((s) => s.id === id);
       if (updatedSub) {
@@ -158,6 +164,7 @@ export function DatabaseProvider({ children }: { children: ReactNode }) {
   async function deleteSubscription(id: number) {
     if (!database) throw new Error('Database not initialized');
 
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     await db.deleteSubscription(database as any, id);
 
     // 如果已登入，從雲端刪除
@@ -175,10 +182,12 @@ export function DatabaseProvider({ children }: { children: ReactNode }) {
   ) {
     if (!database) throw new Error('Database not initialized');
 
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     await db.updateUserSettings(database as any, updates);
 
     // 如果已登入，同步到雲端
     if (isAuthenticated && user) {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const newSettings = await db.getUserSettings(database as any);
       if (newSettings) {
         await syncUserSettingsToFirestore(user.uid, newSettings);

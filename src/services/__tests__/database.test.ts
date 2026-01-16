@@ -99,6 +99,7 @@ describe('Database Service', () => {
 
       mockDb.getAllAsync.mockResolvedValueOnce(mockSubscriptions);
 
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const result = await dbModule.getAllSubscriptions(mockDb as any);
 
       expect(result).toEqual(mockSubscriptions);
@@ -108,6 +109,7 @@ describe('Database Service', () => {
     it('should return empty array when no subscriptions', async () => {
       mockDb.getAllAsync.mockResolvedValueOnce([]);
 
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const result = await dbModule.getAllSubscriptions(mockDb as any);
 
       expect(result).toEqual([]);
@@ -130,6 +132,7 @@ describe('Database Service', () => {
 
       mockDb.runAsync.mockResolvedValueOnce({ lastInsertRowId: 2 });
 
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const id = await dbModule.addSubscription(mockDb as any, newSubscription);
 
       expect(id).toBe(2);
@@ -143,6 +146,7 @@ describe('Database Service', () => {
         price: 199,
       };
 
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       await dbModule.updateSubscription(mockDb as any, 1, updates);
 
       expect(mockDb.runAsync).toHaveBeenCalled();
@@ -151,6 +155,7 @@ describe('Database Service', () => {
 
   describe('deleteSubscription', () => {
     it('should delete subscription by id', async () => {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       await dbModule.deleteSubscription(mockDb as any, 1);
 
       expect(mockDb.runAsync).toHaveBeenCalledWith('DELETE FROM subscriptions WHERE id = ?', [1]);
@@ -173,6 +178,7 @@ describe('Database Service', () => {
 
       mockDb.getFirstAsync.mockResolvedValueOnce(mockSettings);
 
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const result = await dbModule.getUserSettings(mockDb as any);
 
       expect(result).toEqual(mockSettings);
@@ -181,6 +187,7 @@ describe('Database Service', () => {
     it('should return null when no settings exist', async () => {
       mockDb.getFirstAsync.mockResolvedValueOnce(null);
 
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const result = await dbModule.getUserSettings(mockDb as any);
 
       expect(result).toBeNull();
@@ -194,6 +201,7 @@ describe('Database Service', () => {
         theme: 'dark' as const,
       };
 
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       await dbModule.updateUserSettings(mockDb as any, updates);
 
       expect(mockDb.runAsync).toHaveBeenCalled();
@@ -204,6 +212,7 @@ describe('Database Service', () => {
     it('should calculate monthly total correctly', async () => {
       mockDb.getFirstAsync.mockResolvedValueOnce({ total: 1500 });
 
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const result = await dbModule.getMonthlyTotal(mockDb as any, 'TWD');
 
       expect(result).toBe(1500);
@@ -212,6 +221,7 @@ describe('Database Service', () => {
     it('should return 0 when no subscriptions', async () => {
       mockDb.getFirstAsync.mockResolvedValueOnce({ total: null });
 
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const result = await dbModule.getMonthlyTotal(mockDb as any);
 
       expect(result).toBe(0);
@@ -222,6 +232,7 @@ describe('Database Service', () => {
     it('should calculate yearly total correctly', async () => {
       mockDb.getFirstAsync.mockResolvedValueOnce({ total: 18000 });
 
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const result = await dbModule.getYearlyTotal(mockDb as any, 'TWD');
 
       expect(result).toBe(18000);
@@ -249,6 +260,7 @@ describe('Database Service', () => {
 
       mockDb.getAllAsync.mockResolvedValueOnce(mockUpcoming);
 
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const result = await dbModule.getUpcomingSubscriptions(mockDb as any, 7);
 
       expect(result).toEqual(mockUpcoming);

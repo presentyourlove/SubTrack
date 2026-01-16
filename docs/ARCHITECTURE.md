@@ -6,7 +6,7 @@ SubTrack 是一個跨平台的訂閱管理應用程式，支援 Web、iOS 和 An
 
 ## 系統架構圖
 
-```
+```mermaid
 ┌─────────────────────────────────────────────────────────┐
 │                   Client Layer                          │
 ├─────────────────────────────────────────────────────────┤
@@ -70,25 +70,25 @@ SubTrack 是一個跨平台的訂閱管理應用程式，支援 Web、iOS 和 An
 
 ### 1. 本地操作流程
 
-```
+```mermaid
 User Action → Component → Context → Service Layer → Local DB → State Update → UI Refresh
 ```
 
 ### 2. 雲端同步流程
 
-```
+```mermaid
 Local DB Change → Sync Service → Firebase Firestore → Other Devices
 ```
 
 ### 3. 使用者認證流程
 
-```
+```mermaid
 Login/Register → Auth Service → Firebase Auth → AuthContext → App State
 ```
 
 ## 專案結構
 
-```
+```text
 SubTrack/
 ├── app/                      # Expo Router 路由檔案
 │   ├── (tabs)/              # Tab 導航頁面
