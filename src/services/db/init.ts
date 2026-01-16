@@ -143,6 +143,11 @@ export async function initDatabase(): Promise<SQLite.SQLiteDatabase> {
       `ALTER TABLE subscriptions ADD COLUMN isFamilyPlan INTEGER NOT NULL DEFAULT 0`,
       `ALTER TABLE subscriptions ADD COLUMN memberCount INTEGER`,
       `ALTER TABLE subscriptions ADD COLUMN workspaceId INTEGER REFERENCES workspaces(id) ON DELETE CASCADE DEFAULT 1`,
+      `ALTER TABLE user_settings ADD COLUMN conversionEnabled INTEGER NOT NULL DEFAULT 0`,
+      `ALTER TABLE user_settings ADD COLUMN salaryType TEXT NOT NULL DEFAULT 'hourly'`,
+      `ALTER TABLE user_settings ADD COLUMN salaryAmount REAL DEFAULT 0`,
+      `ALTER TABLE user_settings ADD COLUMN workDaysPerMonth INTEGER DEFAULT 22`,
+      `ALTER TABLE user_settings ADD COLUMN workHoursPerDay INTEGER DEFAULT 8`,
     ];
 
     for (const sql of migrations) {

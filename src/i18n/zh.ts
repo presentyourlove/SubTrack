@@ -170,6 +170,19 @@ export default {
     upload: '上傳',
     download: '下載',
     logout: '登出',
+    valueConverter: {
+      title: '價值換算',
+      description: '將費用換算為工時，讓支出更有感',
+      hourly: '時薪模式',
+      monthly: '月薪模式',
+      hourlyWage: '時薪金額',
+      monthlySalary: '月薪金額',
+      daysPerMonth: '每月工作天數 (天)',
+      hoursPerDay: '每日工作時數 (時)',
+      calculatedRate: '基準時薪',
+      hr: '元/時',
+      hoursUnit: '小時工時',
+    },
   },
   // 日期工具
   date: {

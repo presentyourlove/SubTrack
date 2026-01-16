@@ -54,6 +54,12 @@ export interface UserSettings {
   theme: 'light' | 'dark';
   notificationsEnabled?: boolean; // 新增：是否啟用通知
   currentWorkspaceId?: number; // 當前工作區 ID
+  // 價值換算器設定
+  conversionEnabled?: boolean;
+  salaryType?: 'hourly' | 'monthly';
+  salaryAmount?: number;
+  workDaysPerMonth?: number;
+  workHoursPerDay?: number;
   createdAt: string;
   updatedAt: string;
 }

@@ -4,6 +4,8 @@ import { Ionicons } from '@expo/vector-icons';
 import * as Calendar from 'expo-calendar';
 import { useTheme } from '../context/ThemeContext';
 import { Subscription } from '../types';
+import { useDatabase } from '../context/DatabaseContext';
+import { calculateHourlyRate, convertToWorkHours } from '../utils/valueConverter';
 import { formatCurrency } from '../utils/currencyHelper';
 import { formatDateLocale, getDaysUntil, getUrgencyLevel } from '../utils/dateHelper';
 import i18n from '../i18n';
@@ -28,6 +30,11 @@ export default function SubscriptionCard({
   onUpdateCalendarId,
 }: SubscriptionCardProps) {
   const { colors } = useTheme();
+  const { settings } = useDatabase();
+
+  // 計算工時換算
+  const hourlyRate = settings ? calculateHourlyRate(settings) : 0;
+  const workHours = settings?.conversionEnabled ? convertToWorkHours(subscription.price, hourlyRate) : null;
 
   const daysUntil = getDaysUntil(subscription.nextBillingDate);
   const urgency = getUrgencyLevel(subscription.nextBillingDate);
@@ -182,7 +189,13 @@ export default function SubscriptionCard({
                 </Text>
               </TouchableOpacity>
             )}
+
           </View>
+          {workHours && (
+            <Text style={[styles.date, { color: colors.subtleText, marginTop: 2, fontSize: 12 }]}>
+              {workHours}
+            </Text>
+          )}
           <Text style={[styles.date, { color: colors.subtleText }]}>
             {i18n.t('card.nextBilling')}{' '}
             {subscription.nextBillingDate

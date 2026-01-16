@@ -5,6 +5,7 @@ import { useTheme } from '../../src/context/ThemeContext';
 import ThemeSettings from '../../src/components/settings/ThemeSettings';
 import CurrencySettings from '../../src/components/settings/CurrencySettings';
 import NotificationSettings from '../../src/components/settings/NotificationSettings';
+import ValueConverterSettings from '../../src/components/settings/ValueConverterSettings';
 import SyncSettings from '../../src/components/settings/SyncSettings';
 import { DataManagement } from '../../src/components/settings/DataManagement';
 import AboutSection from '../../src/components/settings/AboutSection';
@@ -22,6 +23,7 @@ export default function SettingsScreen() {
           <ThemeSettings />
           <CurrencySettings />
           <NotificationSettings />
+          <ValueConverterSettings />
           <SyncSettings />
           <DataManagement />
         </View>
