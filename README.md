@@ -225,7 +225,11 @@ npm test -- --coverage
 * [ ] **🎫 優惠券社群 (Coupon Community)**：匿名共享可用的訂閱折扣碼或試用連結。
 * [ ] **📦 訂閱組合建議 (Bundle Recommendations)**：自動偵測分散訂閱（如 iCloud + Apple Music），建議更划算的 Apple One 等組合包。
 * [ ] **📊 自訂報表產生器 (Custom Report Builder)**：拖拉式介面，讓使用者定義專屬的財務分析維度。
-* [ ] **🔄 訂閱取消指南 (Cancellation Helper)**：針對難以取消的服務，提供一步步的官方取消連結與教學。
+* [ ] **🎮 遊戲化成就 (Gamification)**：達成「預算不超支」、「刪除殭屍訂閱」等目標可獲得徽章。
+* [ ] **📉 使用量追蹤 (Usage Tracker)**：手動或自動 (Android) 記錄 App 開啟頻率，揪出少用的浪費項目。
+* [ ] **🔌 外部整合 (Integrations)**：支援匯入/匯出至 Notion, YNAB, Excel 等生產力工具。
+* [ ] **🌐 多國語言 (Localization)**：新增英文、日文、韓文介面支援，推向國際市場。
+* [ ] **🖥️ 桌面版 App (Desktop Support)**：推出 macOS / Windows 原生應用程式，提供更寬廣的操作視野。
 
 ---
 
