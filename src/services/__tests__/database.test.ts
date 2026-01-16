@@ -9,6 +9,13 @@ import type { Subscription } from '../../types';
 
 describe('Database Service', () => {
   // Mock 資料庫物件
+  type MockDatabase = {
+    execAsync: jest.Mock;
+    runAsync: jest.Mock;
+    getAllAsync: jest.Mock;
+    getFirstAsync: jest.Mock;
+  };
+
   let mockDb: MockDatabase;
   let dbModule: typeof import('../database');
 
@@ -52,7 +59,7 @@ describe('Database Service', () => {
       await dbModule.initDatabase();
 
       const calls = mockDb.execAsync.mock.calls;
-      const createTableCall = calls.find((call: unknown[]) =>
+      const createTableCall = calls.find((call: string[]) =>
         call[0].includes('CREATE TABLE IF NOT EXISTS subscriptions'),
       );
 
@@ -63,7 +70,7 @@ describe('Database Service', () => {
       await dbModule.initDatabase();
 
       const calls = mockDb.execAsync.mock.calls;
-      const createTableCall = calls.find((call: unknown[]) =>
+      const createTableCall = calls.find((call: string[]) =>
         call[0].includes('CREATE TABLE IF NOT EXISTS user_settings'),
       );
 
@@ -92,7 +99,7 @@ describe('Database Service', () => {
 
       mockDb.getAllAsync.mockResolvedValueOnce(mockSubscriptions);
 
-      const result = await dbModule.getAllSubscriptions(mockDb);
+      const result = await dbModule.getAllSubscriptions(mockDb as any);
 
       expect(result).toEqual(mockSubscriptions);
       expect(mockDb.getAllAsync).toHaveBeenCalled();
@@ -101,7 +108,7 @@ describe('Database Service', () => {
     it('should return empty array when no subscriptions', async () => {
       mockDb.getAllAsync.mockResolvedValueOnce([]);
 
-      const result = await dbModule.getAllSubscriptions(mockDb);
+      const result = await dbModule.getAllSubscriptions(mockDb as any);
 
       expect(result).toEqual([]);
     });
@@ -123,7 +130,7 @@ describe('Database Service', () => {
 
       mockDb.runAsync.mockResolvedValueOnce({ lastInsertRowId: 2 });
 
-      const id = await dbModule.addSubscription(mockDb, newSubscription);
+      const id = await dbModule.addSubscription(mockDb as any, newSubscription);
 
       expect(id).toBe(2);
       expect(mockDb.runAsync).toHaveBeenCalled();
@@ -136,7 +143,7 @@ describe('Database Service', () => {
         price: 199,
       };
 
-      await dbModule.updateSubscription(mockDb, 1, updates);
+      await dbModule.updateSubscription(mockDb as any, 1, updates);
 
       expect(mockDb.runAsync).toHaveBeenCalled();
     });
@@ -144,7 +151,7 @@ describe('Database Service', () => {
 
   describe('deleteSubscription', () => {
     it('should delete subscription by id', async () => {
-      await dbModule.deleteSubscription(mockDb, 1);
+      await dbModule.deleteSubscription(mockDb as any, 1);
 
       expect(mockDb.runAsync).toHaveBeenCalledWith('DELETE FROM subscriptions WHERE id = ?', [1]);
     });
@@ -166,7 +173,7 @@ describe('Database Service', () => {
 
       mockDb.getFirstAsync.mockResolvedValueOnce(mockSettings);
 
-      const result = await dbModule.getUserSettings(mockDb);
+      const result = await dbModule.getUserSettings(mockDb as any);
 
       expect(result).toEqual(mockSettings);
     });
@@ -174,7 +181,7 @@ describe('Database Service', () => {
     it('should return null when no settings exist', async () => {
       mockDb.getFirstAsync.mockResolvedValueOnce(null);
 
-      const result = await dbModule.getUserSettings(mockDb);
+      const result = await dbModule.getUserSettings(mockDb as any);
 
       expect(result).toBeNull();
     });
@@ -184,10 +191,10 @@ describe('Database Service', () => {
     it('should update user settings', async () => {
       const updates = {
         mainCurrency: 'USD',
-        theme: 'dark',
+        theme: 'dark' as const,
       };
 
-      await dbModule.updateUserSettings(mockDb, updates);
+      await dbModule.updateUserSettings(mockDb as any, updates);
 
       expect(mockDb.runAsync).toHaveBeenCalled();
     });
@@ -197,7 +204,7 @@ describe('Database Service', () => {
     it('should calculate monthly total correctly', async () => {
       mockDb.getFirstAsync.mockResolvedValueOnce({ total: 1500 });
 
-      const result = await dbModule.getMonthlyTotal(mockDb, 'TWD');
+      const result = await dbModule.getMonthlyTotal(mockDb as any, 'TWD');
 
       expect(result).toBe(1500);
     });
@@ -205,7 +212,7 @@ describe('Database Service', () => {
     it('should return 0 when no subscriptions', async () => {
       mockDb.getFirstAsync.mockResolvedValueOnce({ total: null });
 
-      const result = await dbModule.getMonthlyTotal(mockDb);
+      const result = await dbModule.getMonthlyTotal(mockDb as any);
 
       expect(result).toBe(0);
     });
@@ -215,7 +222,7 @@ describe('Database Service', () => {
     it('should calculate yearly total correctly', async () => {
       mockDb.getFirstAsync.mockResolvedValueOnce({ total: 18000 });
 
-      const result = await dbModule.getYearlyTotal(mockDb, 'TWD');
+      const result = await dbModule.getYearlyTotal(mockDb as any, 'TWD');
 
       expect(result).toBe(18000);
     });
@@ -242,7 +249,7 @@ describe('Database Service', () => {
 
       mockDb.getAllAsync.mockResolvedValueOnce(mockUpcoming);
 
-      const result = await dbModule.getUpcomingSubscriptions(mockDb, 7);
+      const result = await dbModule.getUpcomingSubscriptions(mockDb as any, 7);
 
       expect(result).toEqual(mockUpcoming);
     });

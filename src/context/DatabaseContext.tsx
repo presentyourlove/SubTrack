@@ -64,8 +64,8 @@ export function DatabaseProvider({ children }: { children: ReactNode }) {
   async function loadLocalData(dbInstance: Database) {
     try {
       const [subs, sets] = await Promise.all([
-        db.getAllSubscriptions(dbInstance),
-        db.getUserSettings(dbInstance),
+        db.getAllSubscriptions(dbInstance as any),
+        db.getUserSettings(dbInstance as any),
       ]);
       setSubscriptions(subs);
       setSettings(sets);
@@ -107,11 +107,11 @@ export function DatabaseProvider({ children }: { children: ReactNode }) {
       nextBillingDate: subscription.nextBillingDate || calculatedNextBillingDate,
     };
 
-    const id = await db.addSubscription(database, subData);
+    const id = await db.addSubscription(database as any, subData);
 
     // 如果已登入，同步到雲端
     if (isAuthenticated && user) {
-      const allSubs = await db.getAllSubscriptions(database);
+      const allSubs = await db.getAllSubscriptions(database as any);
       const newSub = allSubs.find((s) => s.id === id);
       if (newSub) {
         await syncSubscriptionToFirestore(user.uid, newSub);
@@ -139,11 +139,11 @@ export function DatabaseProvider({ children }: { children: ReactNode }) {
       }
     }
 
-    await db.updateSubscription(database, id, finalUpdates);
+    await db.updateSubscription(database as any, id, finalUpdates);
 
     // 如果已登入，同步到雲端
     if (isAuthenticated && user) {
-      const allSubs = await db.getAllSubscriptions(database);
+      const allSubs = await db.getAllSubscriptions(database as any);
       const updatedSub = allSubs.find((s) => s.id === id);
       if (updatedSub) {
         await syncSubscriptionToFirestore(user.uid, updatedSub);
@@ -158,7 +158,7 @@ export function DatabaseProvider({ children }: { children: ReactNode }) {
   async function deleteSubscription(id: number) {
     if (!database) throw new Error('Database not initialized');
 
-    await db.deleteSubscription(database, id);
+    await db.deleteSubscription(database as any, id);
 
     // 如果已登入，從雲端刪除
     if (isAuthenticated && user) {
@@ -175,11 +175,11 @@ export function DatabaseProvider({ children }: { children: ReactNode }) {
   ) {
     if (!database) throw new Error('Database not initialized');
 
-    await db.updateUserSettings(database, updates);
+    await db.updateUserSettings(database as any, updates);
 
     // 如果已登入，同步到雲端
     if (isAuthenticated && user) {
-      const newSettings = await db.getUserSettings(database);
+      const newSettings = await db.getUserSettings(database as any);
       if (newSettings) {
         await syncUserSettingsToFirestore(user.uid, newSettings);
       }
