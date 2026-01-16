@@ -85,7 +85,9 @@ export default function SubscriptionCard({
         }),
         startDate: eventDate,
         endDate: endDate,
-        notes: `金額: ${formatCurrency(subscription.price, subscription.currency)}`,
+        notes: i18n.t('calendar.eventNotesPrice', {
+          price: formatCurrency(subscription.price, subscription.currency),
+        }),
         alarms: [{ relativeOffset: ALARM_OFFSET_ONE_DAY_MINS }], // 提前 1 天提醒
       });
 

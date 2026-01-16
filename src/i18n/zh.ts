@@ -11,6 +11,7 @@ export default {
     error: '發生錯誤',
     success: '成功',
     close: '關閉',
+    days: '天',
   },
   // 錯誤訊息
   error: {
@@ -46,11 +47,16 @@ export default {
   chart: {
     categoryTitle: '分類占比',
     expenseTitle: '費用統計',
+    trendTitle: '趨勢統計',
     weekPattern: '第{{week}}週',
   },
   // 畫面標題
   screen: {
     subscriptions: '訂閱管理',
+    budget: '預算追蹤',
+    budgetTab: '預算',
+    subsTab: '訂閱',
+    settingsTab: '設定',
   },
   // 訂閱相關
   subscription: {
@@ -58,6 +64,7 @@ export default {
     editTitle: '編輯訂閱',
     name: '訂閱名稱',
     namePlaceholder: '例: Netflix Premium',
+    icon: '圖示',
     price: '價格',
     pricePlaceholder: '390',
     category: '分類',
@@ -86,6 +93,7 @@ export default {
     addFailed: '新增到日曆失敗',
     recurringFailed: '新增重複事件失敗',
     eventNotes: '金額: {{price}} {{currency}}\n週期: {{cycle}}',
+    eventNotesPrice: '金額: {{price}}',
   },
   // 通知
   notification: {
@@ -131,6 +139,12 @@ export default {
     mainCurrency: '主要幣別: {{currency}}',
     authStatus: '已登入: {{email}}',
     loginToSync: '登入以啟用雲端同步',
+    noAccount: '還沒有帳號？ ',
+    registerNow: '立即註冊',
+    cloudSync: '雲端同步',
+    upload: '上傳',
+    download: '下載',
+    logout: '登出',
   },
   // 日期工具
   date: {

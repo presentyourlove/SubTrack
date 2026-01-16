@@ -199,10 +199,12 @@ export default function SyncSettings() {
                         alignItems: 'center',
                       }}
                     >
-                      <Text style={{ color: colors.subtleText, fontSize: 14 }}>還沒有帳號？ </Text>
+                      <Text style={{ color: colors.subtleText, fontSize: 14 }}>
+                        {i18n.t('settings.noAccount')}
+                      </Text>
                       <TouchableOpacity onPress={handleRegister}>
                         <Text style={{ color: colors.accent, fontWeight: 'bold', fontSize: 14 }}>
-                          立即註冊
+                          {i18n.t('settings.registerNow')}
                         </Text>
                       </TouchableOpacity>
                     </View>
@@ -211,24 +213,26 @@ export default function SyncSettings() {
               ) : (
                 <View>
                   <Text style={[styles.userInfo, { color: colors.text }]}>
-                    已登入: {user?.email}
+                    {i18n.t('settings.authStatus', { email: user?.email })}
                   </Text>
 
-                  <Text style={[styles.modalSectionTitle, { color: colors.text }]}>雲端同步</Text>
+                  <Text style={[styles.modalSectionTitle, { color: colors.text }]}>
+                    {i18n.t('settings.cloudSync')}
+                  </Text>
                   <View style={styles.buttonRow}>
                     <TouchableOpacity
                       style={[styles.button, { backgroundColor: colors.accent }]}
                       onPress={handleSyncToCloud}
                     >
                       <Ionicons name="cloud-upload" size={20} color="#fff" />
-                      <Text style={styles.buttonText}>上傳</Text>
+                      <Text style={styles.buttonText}>{i18n.t('settings.upload')}</Text>
                     </TouchableOpacity>
                     <TouchableOpacity
                       style={[styles.button, { backgroundColor: colors.accent }]}
                       onPress={handleSyncFromCloud}
                     >
                       <Ionicons name="cloud-download" size={20} color="#fff" />
-                      <Text style={styles.buttonText}>下載</Text>
+                      <Text style={styles.buttonText}>{i18n.t('settings.download')}</Text>
                     </TouchableOpacity>
                   </View>
 
@@ -236,7 +240,7 @@ export default function SyncSettings() {
                     style={[styles.button, { backgroundColor: colors.expense, marginTop: 24 }]}
                     onPress={handleLogout}
                   >
-                    <Text style={styles.buttonText}>登出</Text>
+                    <Text style={styles.buttonText}>{i18n.t('settings.logout')}</Text>
                   </TouchableOpacity>
                 </View>
               )}

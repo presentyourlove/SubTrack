@@ -1,6 +1,7 @@
 import { Tabs } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import { useTheme } from '../../src/context/ThemeContext';
+import i18n from '../../src/i18n';
 
 export default function TabLayout() {
   const { colors } = useTheme();
@@ -20,21 +21,21 @@ export default function TabLayout() {
       <Tabs.Screen
         name="index"
         options={{
-          title: '訂閱',
+          title: i18n.t('screen.subsTab'),
           tabBarIcon: ({ color, size }) => <Ionicons name="list" size={size} color={color} />,
         }}
       />
       <Tabs.Screen
         name="budget"
         options={{
-          title: '預算',
+          title: i18n.t('screen.budgetTab'),
           tabBarIcon: ({ color, size }) => <Ionicons name="bar-chart" size={size} color={color} />,
         }}
       />
       <Tabs.Screen
         name="settings"
         options={{
-          title: '設定',
+          title: i18n.t('screen.settingsTab'),
           tabBarIcon: ({ color, size }) => <Ionicons name="settings" size={size} color={color} />,
         }}
       />

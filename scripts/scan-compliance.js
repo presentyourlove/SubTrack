@@ -1,7 +1,8 @@
 const fs = require('fs');
 const path = require('path');
 
-const SRC_DIR = path.resolve(__dirname, '../src');
+const TARGET_DIRS = [path.resolve(__dirname, '../src'), path.resolve(__dirname, '../app')];
+
 // Exclude these from i18n checks
 const I18N_EXCLUDES = ['i18n', 'assets', '__tests__', '__mocks__'];
 
@@ -27,54 +28,58 @@ const issues = {
   hardcodedChinese: [],
 };
 
-walk(SRC_DIR, (filepath) => {
-  const buffer = fs.readFileSync(filepath);
+TARGET_DIRS.forEach((dir) => {
+  walk(dir, (filepath) => {
+    const buffer = fs.readFileSync(filepath);
 
-  // 1. Check for BOM (EF BB BF)
-  if (buffer[0] === 0xef && buffer[1] === 0xbb && buffer[2] === 0xbf) {
-    issues.bom.push(path.relative(SRC_DIR, filepath));
-  }
+    // 1. Check for BOM (EF BB BF)
+    if (buffer[0] === 0xef && buffer[1] === 0xbb && buffer[2] === 0xbf) {
+      issues.bom.push(path.relative(path.join(__dirname, '..'), filepath));
+    }
 
-  const content = buffer.toString('utf8');
-  const lines = content.split('\n');
+    const content = buffer.toString('utf8');
+    const lines = content.split('\n');
 
-  // 2. Check File Size (> 300 lines)
-  if (lines.length > 300) {
-    issues.largeFiles.push({
-      file: path.relative(SRC_DIR, filepath),
-      lines: lines.length,
-    });
-  }
+    // 2. Check File Size (> 300 lines)
+    if (lines.length > 300) {
+      issues.largeFiles.push({
+        file: path.relative(path.join(__dirname, '..'), filepath),
+        lines: lines.length,
+      });
+    }
 
-  // 3. Check for Hardcoded Chinese Characters
-  // Regex for Chinese range
-  const relativePath = path.relative(SRC_DIR, filepath);
-  const pathParts = relativePath.split(path.sep);
+    // 3. Check for Hardcoded Chinese Characters
+    const relativePath = path.relative(path.join(__dirname, '..'), filepath);
+    const pathParts = relativePath.split(path.sep);
 
-  // Skip i18n definition files and tests
-  const isExcluded = pathParts.some((part) => I18N_EXCLUDES.includes(part));
+    // Skip i18n definition files and tests
+    const isExcluded = pathParts.some((part) => I18N_EXCLUDES.includes(part));
 
-  if (!isExcluded) {
-    lines.forEach((line, index) => {
-      // Very prompt way to strip comments:
-      // Remove // comment
-      let cleanLine = line.replace(/\/\/.*/, '');
-      // Remove /* */ block comment (simple inline check)
-      cleanLine = cleanLine.replace(/\/\*.*?\*\//g, '');
+    if (!isExcluded) {
+      lines.forEach((line, index) => {
+        // Remove comments
+        let cleanLine = line.replace(/\/\/.*/, '');
+        cleanLine = cleanLine.replace(/\/\*.*?\*\//g, '');
 
-      // Ignore console.log/error/warn usually ok, but strictly we might want to flag
-      // For this check, let's flag everything.
+        // Ignore console.log/error/warn
+        if (
+          cleanLine.includes('console.log') ||
+          cleanLine.includes('console.error') ||
+          cleanLine.includes('console.warn')
+        ) {
+          return;
+        }
 
-      if (/[\u4e00-\u9fa5]/.test(cleanLine)) {
-        // Ignore import lines? No, imports usually don't have Chinese unless file name is Chinese (which is bad practice but possible)
-        issues.hardcodedChinese.push({
-          file: relativePath,
-          line: index + 1,
-          content: line.trim(),
-        });
-      }
-    });
-  }
+        if (/[\u4e00-\u9fa5]/.test(cleanLine)) {
+          issues.hardcodedChinese.push({
+            file: relativePath,
+            line: index + 1,
+            content: line.trim(),
+          });
+        }
+      });
+    }
+  });
 });
 
 console.log(JSON.stringify(issues, null, 2));

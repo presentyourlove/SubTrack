@@ -109,12 +109,16 @@ export default function ReminderSettings({
                 )}
               </View>
               <View style={{ flex: 1 }}>
-                <Text style={[styles.subLabel, { color: colors.subtleText }]}>提前提醒 (天)</Text>
+                <Text style={[styles.subLabel, { color: colors.subtleText }]}>
+                  {i18n.t('subscription.reminderDays')}
+                </Text>
                 <TouchableOpacity
                   style={[styles.input, { backgroundColor: colors.inputBackground }]}
                   onPress={() => setShowDaysPicker(true)}
                 >
-                  <Text style={{ color: colors.text }}>{String(reminderDays)} 天</Text>
+                  <Text style={{ color: colors.text }}>
+                    {reminderDays} {i18n.t('common.days')}
+                  </Text>
                 </TouchableOpacity>
               </View>
             </View>

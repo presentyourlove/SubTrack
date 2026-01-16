@@ -29,7 +29,7 @@ export default function BasicInfo({ name, setName, icon, setIcon }: BasicInfoPro
       </View>
 
       <View style={styles.field}>
-        <Text style={[styles.label, { color: colors.text }]}>圖示</Text>
+        <Text style={[styles.label, { color: colors.text }]}>{i18n.t('subscription.icon')}</Text>
         <View style={styles.iconGrid}>
           {commonIcons.map((emoji) => (
             <TouchableOpacity

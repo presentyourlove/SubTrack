@@ -5,6 +5,7 @@ import { useTheme } from '../../src/context/ThemeContext';
 import { useDatabase } from '../../src/context/DatabaseContext';
 import { BudgetChart, CategoryBreakdown, CategoryTabs } from '../../src/components';
 import { SubscriptionCategory } from '../../src/types';
+import i18n from '../../src/i18n';
 
 export default function BudgetScreen() {
   const { colors } = useTheme();
@@ -28,7 +29,7 @@ export default function BudgetScreen() {
     >
       {/* Header */}
       <View style={[styles.header, { backgroundColor: colors.background }]}>
-        <Text style={[styles.headerTitle, { color: colors.text }]}>預算追蹤</Text>
+        <Text style={[styles.headerTitle, { color: colors.text }]}>{i18n.t('screen.budget')}</Text>
       </View>
 
       <ScrollView style={styles.content}>
@@ -52,7 +53,7 @@ export default function BudgetScreen() {
                 chartType === 'timeline' && { color: '#ffffff' },
               ]}
             >
-              趨勢統計
+              {i18n.t('chart.trendTitle')}
             </Text>
           </TouchableOpacity>
 
@@ -74,7 +75,7 @@ export default function BudgetScreen() {
                 chartType === 'category' && { color: '#ffffff' },
               ]}
             >
-              分類占比
+              {i18n.t('chart.categoryTitle')}
             </Text>
           </TouchableOpacity>
         </View>
