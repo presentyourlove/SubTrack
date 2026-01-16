@@ -1,7 +1,8 @@
 import { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 import { initializeDatabase, Database } from '../services';
-import { Subscription, UserSettings } from '../types';
+import { Subscription, UserSettings, Tag } from '../types';
 import * as db from '../services';
+import * as tagDb from '../services/db/tags';
 import { useAuth } from './AuthContext';
 import { calculateNextBillingDate } from '../utils/dateHelper';
 import { useSync } from '../hooks/useSync';
@@ -14,6 +15,7 @@ import {
 type DatabaseContextType = {
   database: Database | null;
   subscriptions: Subscription[];
+  tags: Tag[];
   settings: UserSettings | null;
   loading: boolean;
   isOnline: boolean;
@@ -22,10 +24,12 @@ type DatabaseContextType = {
   refreshData: () => Promise<void>;
   addSubscription: (
     subscription: Omit<Subscription, 'id' | 'createdAt' | 'updatedAt'>,
+    tagIds?: number[],
   ) => Promise<void>;
   updateSubscription: (
     id: number,
     updates: Partial<Omit<Subscription, 'id' | 'createdAt' | 'updatedAt'>>,
+    tagIds?: number[],
   ) => Promise<void>;
   deleteSubscription: (id: number) => Promise<void>;
   updateSettings: (
@@ -33,6 +37,11 @@ type DatabaseContextType = {
   ) => Promise<void>;
   syncToCloud: () => Promise<void>;
   syncFromCloud: () => Promise<void>;
+  // 標籤相關方法
+  createTag: (name: string, color: string) => Promise<number | null>;
+  deleteTag: (id: number) => Promise<void>;
+  getTagsForSubscription: (subscriptionId: number) => Promise<Tag[]>;
+  setTagsForSubscription: (subscriptionId: number, tagIds: number[]) => Promise<void>;
 };
 
 const DatabaseContext = createContext<DatabaseContextType | undefined>(undefined);
@@ -41,6 +50,7 @@ export function DatabaseProvider({ children }: { children: ReactNode }) {
   const { user, isAuthenticated } = useAuth();
   const [database, setDatabase] = useState<Database | null>(null);
   const [subscriptions, setSubscriptions] = useState<Subscription[]>([]);
+  const [tags, setTags] = useState<Tag[]>([]);
   const [settings, setSettings] = useState<UserSettings | null>(null);
   const [loading, setLoading] = useState(true);
 
@@ -63,14 +73,17 @@ export function DatabaseProvider({ children }: { children: ReactNode }) {
   // 載入本地資料
   async function loadLocalData(dbInstance: Database) {
     try {
-      const [subs, sets] = await Promise.all([
+      const [subs, sets, allTags] = await Promise.all([
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         db.getAllSubscriptions(dbInstance as any),
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         db.getUserSettings(dbInstance as any),
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        tagDb.getAllTags(dbInstance as any),
       ]);
       setSubscriptions(subs);
       setSettings(sets);
+      setTags(allTags);
     } catch (error) {
       console.error('Failed to load local data:', error);
     }
@@ -198,9 +211,46 @@ export function DatabaseProvider({ children }: { children: ReactNode }) {
     triggerSync();
   }
 
+  // 建立標籤
+  async function createTag(name: string, color: string): Promise<number | null> {
+    if (!database) return null;
+    try {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const id = await tagDb.createTag(database as any, name, color);
+      await refreshData();
+      return id;
+    } catch (error) {
+      console.error('Failed to create tag:', error);
+      return null;
+    }
+  }
+
+  // 刪除標籤
+  async function deleteTag(id: number): Promise<void> {
+    if (!database) return;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    await tagDb.deleteTag(database as any, id);
+    await refreshData();
+  }
+
+  // 取得訂閱的標籤
+  async function getTagsForSubscription(subscriptionId: number): Promise<Tag[]> {
+    if (!database) return [];
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    return tagDb.getTagsForSubscription(database as any, subscriptionId);
+  }
+
+  // 設定訂閱的標籤
+  async function setTagsForSubscription(subscriptionId: number, tagIds: number[]): Promise<void> {
+    if (!database) return;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    await tagDb.setTagsForSubscription(database as any, subscriptionId, tagIds);
+  }
+
   const value = {
     database,
     subscriptions,
+    tags,
     settings,
     loading,
     isOnline,
@@ -213,6 +263,10 @@ export function DatabaseProvider({ children }: { children: ReactNode }) {
     updateSettings,
     syncToCloud,
     syncFromCloud,
+    createTag,
+    deleteTag,
+    getTagsForSubscription,
+    setTagsForSubscription,
   };
 
   return <DatabaseContext.Provider value={value}>{children}</DatabaseContext.Provider>;

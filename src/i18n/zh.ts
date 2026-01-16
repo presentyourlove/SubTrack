@@ -14,6 +14,19 @@ export default {
     days: '天',
     password: '密碼',
   },
+  // 標籤
+  tags: {
+    title: '標籤',
+    add: '新增標籤',
+    edit: '編輯標籤',
+    delete: '刪除標籤',
+    deleteConfirm: '確定要刪除「{{name}}」標籤嗎？相關訂閱的標籤將被移除。',
+    placeholder: '輸入標籤名稱...',
+    noTags: '尚無標籤',
+    selectTags: '選擇標籤',
+    filterByTag: '依標籤篩選',
+    allTags: '全部標籤',
+  },
   // 錯誤訊息
   error: {
     emailInUse: '此 Email 已被註冊',

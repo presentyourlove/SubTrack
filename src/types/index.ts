@@ -1,8 +1,27 @@
-// 訂閱類別
+﻿// 訂閱類別
 export type SubscriptionCategory = 'entertainment' | 'productivity' | 'lifestyle' | 'other';
 
 // 計費週期
 export type BillingCycle = 'weekly' | 'monthly' | 'quarterly' | 'yearly';
+
+// 標籤
+export interface Tag {
+  id: number;
+  name: string; // 標籤名稱 (不含 #)
+  color: string; // HEX 顏色碼
+  createdAt: string;
+  updatedAt: string;
+}
+
+// 預設標籤顏色
+export const TAG_COLORS = [
+  '#007AFF', // 藍色
+  '#34C759', // 綠色
+  '#FF9500', // 橘色
+  '#AF52DE', // 紫色
+  '#FF3B30', // 紅色
+  '#8E8E93', // 灰色
+] as const;
 
 // 訂閱資料
 export interface Subscription {
@@ -19,6 +38,7 @@ export interface Subscription {
   reminderDays?: number; // 提前天數 (0-14)
   nextBillingDate: string; // ISO 日期字串 (計算得出或手動)
   calendarEventId?: string; // 日曆事件 ID (可選)
+  tags?: Tag[]; // 標籤 (透過 JOIN 查詢填充)
   createdAt: string;
   updatedAt: string;
 }

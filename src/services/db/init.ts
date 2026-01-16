@@ -46,6 +46,28 @@ export async function initDatabase(): Promise<SQLite.SQLiteDatabase> {
     );
   `);
 
+  // 建立標籤表
+  await db.execAsync(`
+    CREATE TABLE IF NOT EXISTS tags (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      name TEXT NOT NULL UNIQUE,
+      color TEXT NOT NULL DEFAULT '#007AFF',
+      createdAt TEXT NOT NULL,
+      updatedAt TEXT NOT NULL
+    );
+  `);
+
+  // 建立訂閱-標籤關聯表 (多對多)
+  await db.execAsync(`
+    CREATE TABLE IF NOT EXISTS subscription_tags (
+      subscriptionId INTEGER NOT NULL,
+      tagId INTEGER NOT NULL,
+      PRIMARY KEY (subscriptionId, tagId),
+      FOREIGN KEY (subscriptionId) REFERENCES subscriptions(id) ON DELETE CASCADE,
+      FOREIGN KEY (tagId) REFERENCES tags(id) ON DELETE CASCADE
+    );
+  `);
+
   // 檢查是否需要初始化預設設定
   const settings = await db.getFirstAsync<UserSettings>('SELECT * FROM user_settings WHERE id = 1');
 
