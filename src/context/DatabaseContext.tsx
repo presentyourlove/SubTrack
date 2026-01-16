@@ -1,9 +1,10 @@
 import { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 import { initializeDatabase, Database } from '../services';
-import { Subscription, UserSettings, Tag, Workspace } from '../types';
+import { Subscription, UserSettings, Tag, Workspace, CustomReport } from '../types';
 import * as db from '../services';
 import * as tagDb from '../services/db/tags';
 import * as workspaceDb from '../services/db/workspaces';
+import * as reportDb from '../services/db/reports';
 import { useAuth } from './AuthContext';
 import { calculateNextBillingDate } from '../utils/dateHelper';
 import { useSync } from '../hooks/useSync';
@@ -51,6 +52,12 @@ type DatabaseContextType = {
   updateWorkspace: (id: number, name: string, icon: string) => Promise<void>;
   deleteWorkspace: (id: number) => Promise<void>;
   switchWorkspace: (id: number) => Promise<void>;
+  // 報表方法
+  createReport: (
+    report: Omit<CustomReport, 'id' | 'createdAt' | 'updatedAt'>,
+  ) => Promise<number | null>;
+  getReports: () => Promise<CustomReport[]>;
+  deleteReport: (id: number) => Promise<void>;
 };
 
 const DatabaseContext = createContext<DatabaseContextType | undefined>(undefined);
@@ -337,7 +344,29 @@ export function DatabaseProvider({ children }: { children: ReactNode }) {
     updateWorkspace,
     deleteWorkspace,
     switchWorkspace,
+    createReport,
+    getReports,
+    deleteReport,
   };
+
+  // 報表操作
+  async function createReport(report: Omit<CustomReport, 'id' | 'createdAt' | 'updatedAt'>) {
+    if (!database) return null;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    return reportDb.createReport(database as any, report);
+  }
+
+  async function getReports() {
+    if (!database) return [];
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    return reportDb.getReports(database as any);
+  }
+
+  async function deleteReport(id: number) {
+    if (!database) return;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    await reportDb.deleteReport(database as any, id);
+  }
 
   return <DatabaseContext.Provider value={value}>{children}</DatabaseContext.Provider>;
 }

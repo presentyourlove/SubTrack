@@ -24,5 +24,10 @@ export const {
   updateUserSettings,
   getMonthlyTotal,
   getYearlyTotal,
+  getMonthlyTotal,
+  getYearlyTotal,
   getUpcomingSubscriptions,
+  createReport,
+  getReports,
+  deleteReport,
 } = database;

@@ -96,6 +96,19 @@ export async function initDatabase(): Promise<SQLite.SQLiteDatabase> {
     );
   `);
 
+  // 建立自訂報表表
+  await db.execAsync(`
+    CREATE TABLE IF NOT EXISTS custom_reports (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      title TEXT NOT NULL,
+      chartType TEXT NOT NULL,
+      dimension TEXT NOT NULL,
+      metric TEXT NOT NULL,
+      createdAt TEXT NOT NULL,
+      updatedAt TEXT NOT NULL
+    );
+  `);
+
   // 檢查並初始化預設工作區
   const defaultWorkspace = await db.getFirstAsync('SELECT * FROM workspaces WHERE id = 1');
   if (!defaultWorkspace) {

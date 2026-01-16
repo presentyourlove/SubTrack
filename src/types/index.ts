@@ -84,3 +84,14 @@ export interface Member {
   createdAt: string;
   updatedAt: string;
 }
+
+// 自訂報表
+export interface CustomReport {
+  id: number;
+  title: string;
+  chartType: 'pie' | 'bar';
+  dimension: 'category' | 'tag' | 'cycle';
+  metric: 'cost_monthly' | 'cost_yearly' | 'count';
+  createdAt: string;
+  updatedAt: string;
+}
