@@ -153,7 +153,7 @@ export default function ReportBuilderModal({ visible, onClose, onSave }: ReportB
 
           <View style={[styles.footer, { borderTopColor: colors.borderColor }]}>
             <TouchableOpacity
-              style={[styles.saveButton, { backgroundColor: colors.primary }]}
+              style={[styles.saveButton, { backgroundColor: colors.accent }]}
               onPress={handleSave}
             >
               <Text style={styles.saveButtonText}>{i18n.t('common.save')}</Text>

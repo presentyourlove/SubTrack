@@ -6,14 +6,13 @@ import {
   Text,
   TouchableOpacity,
   RefreshControl,
-
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import { useDatabase } from '../../src/context/DatabaseContext';
 import { useTheme } from '../../src/context/ThemeContext';
-import { SubscriptionCategory } from '../../src/types';
+import { Subscription, SubscriptionCategory } from '../../src/types';
 import SummaryCard from '../../src/components/SummaryCard';
 import SubscriptionCard from '../../src/components/SubscriptionCard';
 import AddSubscriptionModal from '../../src/components/AddSubscriptionModal';
@@ -95,7 +94,7 @@ export default function SubscriptionsScreen() {
   };
 
   const handleSubmitSubscription = async (
-    data: Omit<Subscription, 'id' | 'createdAt' | 'updatedAt'>,
+    data: Partial<Subscription>,
     tagIds: number[],
   ) => {
     try {
@@ -103,7 +102,7 @@ export default function SubscriptionsScreen() {
         await updateSubscription(editingId, data);
         await setTagsForSubscription(editingId, tagIds);
       } else {
-        await addSubscription(data, tagIds);
+        await addSubscription(data as any, tagIds);
       }
       setModalVisible(false);
       setEditingId(null);

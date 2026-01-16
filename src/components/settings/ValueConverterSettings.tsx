@@ -19,11 +19,24 @@ export default function ValueConverterSettings() {
 
   useEffect(() => {
     if (settings) {
-      setConversionEnabled(settings.conversionEnabled || false);
-      setSalaryType(settings.salaryType || 'hourly');
-      setSalaryAmount(settings.salaryAmount ? settings.salaryAmount.toString() : '');
-      setWorkDaysPerMonth(settings.workDaysPerMonth ? settings.workDaysPerMonth.toString() : '22');
-      setWorkHoursPerDay(settings.workHoursPerDay ? settings.workHoursPerDay.toString() : '8');
+      if (settings.conversionEnabled !== conversionEnabled) {
+        setConversionEnabled(settings.conversionEnabled || false);
+      }
+      if (settings.salaryType && settings.salaryType !== salaryType) {
+        setSalaryType(settings.salaryType);
+      }
+      const newAmount = settings.salaryAmount ? settings.salaryAmount.toString() : '';
+      if (newAmount !== salaryAmount) {
+        setSalaryAmount(newAmount);
+      }
+      const newDays = settings.workDaysPerMonth ? settings.workDaysPerMonth.toString() : '22';
+      if (newDays !== workDaysPerMonth) {
+        setWorkDaysPerMonth(newDays);
+      }
+      const newHours = settings.workHoursPerDay ? settings.workHoursPerDay.toString() : '8';
+      if (newHours !== workHoursPerDay) {
+        setWorkHoursPerDay(newHours);
+      }
     }
   }, [settings]);
 

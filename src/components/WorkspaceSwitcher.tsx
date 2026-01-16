@@ -12,7 +12,7 @@ export default function WorkspaceSwitcher() {
   const [modalVisible, setModalVisible] = useState(false);
   const [isCreating, setIsCreating] = useState(false);
   const [newName, setNewName] = useState('');
-  const [newIcon, setNewIcon] = useState('💼');
+  const [newIcon] = useState('💼');
 
   const handleSwitch = async (workspace: Workspace) => {
     await switchWorkspace(workspace.id);
