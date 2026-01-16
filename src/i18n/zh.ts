@@ -269,4 +269,11 @@ export default {
     count: '訂閱數量',
     deleteConfirm: '確定要刪除此報表嗎？',
   },
+  // 搜尋
+  search: {
+    title: '搜尋',
+    placeholder: '搜尋訂閱、描述、分類或標籤...',
+    noResults: '找不到符合條件的訂閱',
+    results: '找到 {{count}} 筆結果',
+  },
 };
