@@ -4,10 +4,16 @@ import { Subscription } from '../../types';
 /**
  * 取得所有訂閱資料
  */
-export async function getAllSubscriptions(db: SQLite.SQLiteDatabase): Promise<Subscription[]> {
-  const subscriptions = await db.getAllAsync<Subscription>(
-    'SELECT * FROM subscriptions ORDER BY nextBillingDate ASC',
-  );
+export async function getAllSubscriptions(
+  db: SQLite.SQLiteDatabase,
+  workspaceId?: number,
+): Promise<Subscription[]> {
+  const query = workspaceId
+    ? 'SELECT * FROM subscriptions WHERE workspaceId = ? ORDER BY nextBillingDate ASC'
+    : 'SELECT * FROM subscriptions ORDER BY nextBillingDate ASC';
+  const params = workspaceId ? [workspaceId] : [];
+
+  const subscriptions = await db.getAllAsync<Subscription>(query, params);
   return subscriptions;
 }
 
@@ -34,8 +40,8 @@ export async function addSubscription(
 ): Promise<number> {
   const now = new Date().toISOString();
   const result = await db.runAsync(
-    `INSERT INTO subscriptions (name, icon, category, price, currency, billingCycle, startDate, nextBillingDate, reminderEnabled, reminderTime, reminderDays, createdAt, updatedAt)
-     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+    `INSERT INTO subscriptions (name, icon, category, price, currency, billingCycle, startDate, nextBillingDate, reminderEnabled, reminderTime, reminderDays, isFamilyPlan, memberCount, workspaceId, createdAt, updatedAt)
+     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
     [
       subscription.name,
       subscription.icon,
@@ -48,6 +54,9 @@ export async function addSubscription(
       subscription.reminderEnabled ? 1 : 0,
       subscription.reminderTime || null,
       subscription.reminderDays ?? null,
+      subscription.isFamilyPlan ? 1 : 0,
+      subscription.memberCount ?? null,
+      subscription.workspaceId,
       now,
       now,
     ],

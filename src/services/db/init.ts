@@ -25,6 +25,8 @@ export async function initDatabase(): Promise<SQLite.SQLiteDatabase> {
       reminderEnabled INTEGER NOT NULL DEFAULT 0,
       reminderTime TEXT,
       reminderDays INTEGER,
+      isFamilyPlan INTEGER NOT NULL DEFAULT 0,
+      memberCount INTEGER,
       calendarEventId TEXT,
       createdAt TEXT NOT NULL,
       updatedAt TEXT NOT NULL
@@ -68,14 +70,51 @@ export async function initDatabase(): Promise<SQLite.SQLiteDatabase> {
     );
   `);
 
+  // 建立訂閱成員表
+  await db.execAsync(`
+    CREATE TABLE IF NOT EXISTS subscription_members (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      subscriptionId INTEGER NOT NULL,
+      name TEXT NOT NULL,
+      status TEXT NOT NULL DEFAULT 'unpaid',
+      lastPaymentDate TEXT,
+      createdAt TEXT NOT NULL,
+      updatedAt TEXT NOT NULL,
+      FOREIGN KEY (subscriptionId) REFERENCES subscriptions(id) ON DELETE CASCADE
+    );
+  `);
+
+  // 建立工作區表
+  await db.execAsync(`
+    CREATE TABLE IF NOT EXISTS workspaces (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      name TEXT NOT NULL,
+      icon TEXT NOT NULL,
+      isDefault INTEGER DEFAULT 0,
+      createdAt TEXT NOT NULL,
+      updatedAt TEXT NOT NULL
+    );
+  `);
+
+  // 檢查並初始化預設工作區
+  const defaultWorkspace = await db.getFirstAsync('SELECT * FROM workspaces WHERE id = 1');
+  if (!defaultWorkspace) {
+    const now = new Date().toISOString();
+    await db.runAsync(
+      `INSERT INTO workspaces (id, name, icon, isDefault, createdAt, updatedAt)
+       VALUES (?, ?, ?, ?, ?, ?)`,
+      [1, 'Personal', '👤', 1, now, now],
+    );
+  }
+
   // 檢查是否需要初始化預設設定
   const settings = await db.getFirstAsync<UserSettings>('SELECT * FROM user_settings WHERE id = 1');
 
   if (!settings) {
     const now = new Date().toISOString();
     await db.runAsync(
-      `INSERT INTO user_settings (id, mainCurrency, exchangeRates, theme, notificationsEnabled, defaultReminderTime, defaultReminderDays, createdAt, updatedAt)
-       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+      `INSERT INTO user_settings (id, mainCurrency, exchangeRates, theme, notificationsEnabled, defaultReminderTime, defaultReminderDays, currentWorkspaceId, createdAt, updatedAt)
+       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
       [
         1,
         DEFAULT_SETTINGS.MAIN_CURRENCY,
@@ -84,6 +123,7 @@ export async function initDatabase(): Promise<SQLite.SQLiteDatabase> {
         DEFAULT_SETTINGS.NOTIFICATIONS_ENABLED,
         DEFAULT_SETTINGS.REMINDER_TIME,
         DEFAULT_SETTINGS.REMINDER_DAYS,
+        1, // 預設 workspaceId
         now,
         now,
       ],
@@ -94,11 +134,15 @@ export async function initDatabase(): Promise<SQLite.SQLiteDatabase> {
       `ALTER TABLE user_settings ADD COLUMN notificationsEnabled INTEGER NOT NULL DEFAULT ${DEFAULT_SETTINGS.NOTIFICATIONS_ENABLED}`,
       `ALTER TABLE user_settings ADD COLUMN defaultReminderTime TEXT NOT NULL DEFAULT '09:00'`,
       `ALTER TABLE user_settings ADD COLUMN defaultReminderDays INTEGER NOT NULL DEFAULT 1`,
+      `ALTER TABLE user_settings ADD COLUMN currentWorkspaceId INTEGER DEFAULT 1`,
       `ALTER TABLE subscriptions ADD COLUMN calendarEventId TEXT`,
       `ALTER TABLE subscriptions ADD COLUMN startDate TEXT NOT NULL DEFAULT '2024-01-01'`,
       `ALTER TABLE subscriptions ADD COLUMN reminderEnabled INTEGER NOT NULL DEFAULT 0`,
       `ALTER TABLE subscriptions ADD COLUMN reminderTime TEXT`,
       `ALTER TABLE subscriptions ADD COLUMN reminderDays INTEGER`,
+      `ALTER TABLE subscriptions ADD COLUMN isFamilyPlan INTEGER NOT NULL DEFAULT 0`,
+      `ALTER TABLE subscriptions ADD COLUMN memberCount INTEGER`,
+      `ALTER TABLE subscriptions ADD COLUMN workspaceId INTEGER REFERENCES workspaces(id) ON DELETE CASCADE DEFAULT 1`,
     ];
 
     for (const sql of migrations) {

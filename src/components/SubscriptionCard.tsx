@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, Platform } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import * as Calendar from 'expo-calendar';
@@ -7,6 +8,7 @@ import { formatCurrency } from '../utils/currencyHelper';
 import { formatDateLocale, getDaysUntil, getUrgencyLevel } from '../utils/dateHelper';
 import i18n from '../i18n';
 import { TagChip } from './TagChip';
+import SplitBillModal from './SplitBillModal';
 
 const ALARM_OFFSET_ONE_DAY_MINS = -24 * 60;
 
@@ -121,102 +123,133 @@ export default function SubscriptionCard({
     safe: i18n.t('card.remainingDays', { days: daysUntil }),
   };
 
+  const [showSplitBill, setShowSplitBill] = useState(false);
+
   return (
-    <View
-      style={[styles.container, { backgroundColor: colors.card, borderColor: colors.borderColor }]}
-    >
-      {/* 頂部資訊 */}
-      <View style={styles.header}>
-        <View style={styles.iconContainer}>
-          <Text style={styles.icon}>{subscription.icon}</Text>
+    <>
+      <SplitBillModal
+        visible={showSplitBill}
+        onClose={() => setShowSplitBill(false)}
+        subscription={subscription}
+      />
+      <View
+        style={[
+          styles.container,
+          { backgroundColor: colors.card, borderColor: colors.borderColor },
+        ]}
+      >
+        {/* 頂部資訊 */}
+        <View style={styles.header}>
+          <View style={styles.iconContainer}>
+            <Text style={styles.icon}>{subscription.icon}</Text>
+          </View>
+
+          <View style={styles.info}>
+            <Text style={[styles.name, { color: colors.text }]}>{subscription.name}</Text>
+            <Text style={[styles.category, { color: colors.subtleText }]}>
+              {i18n.t(`categories.${subscription.category}`)}
+            </Text>
+          </View>
+
+          <View style={[styles.urgencyBadge, { backgroundColor: urgencyColors[urgency] }]}>
+            <Text style={styles.urgencyText}>{urgencyLabels[urgency]}</Text>
+          </View>
         </View>
 
-        <View style={styles.info}>
-          <Text style={[styles.name, { color: colors.text }]}>{subscription.name}</Text>
-          <Text style={[styles.category, { color: colors.subtleText }]}>
-            {i18n.t(`categories.${subscription.category}`)}
+        {/* 價格和日期 */}
+        <View style={styles.details}>
+          <View style={styles.priceContainer}>
+            <Text style={[styles.price, { color: colors.text }]}>
+              {formatCurrency(subscription.price, subscription.currency)} /{' '}
+              {subscription.billingCycle === 'monthly'
+                ? i18n.t('card.perMonth')
+                : i18n.t('card.perYear')}
+            </Text>
+            {subscription.isFamilyPlan && subscription.memberCount && (
+              <TouchableOpacity onPress={() => setShowSplitBill(true)}>
+                <Text
+                  style={[
+                    styles.perPersonPrice,
+                    { color: colors.accent, textDecorationLine: 'underline' },
+                  ]}
+                >
+                  (
+                  {formatCurrency(
+                    subscription.price / subscription.memberCount,
+                    subscription.currency,
+                  )}{' '}
+                  / {i18n.t('card.person')})
+                </Text>
+              </TouchableOpacity>
+            )}
+          </View>
+          <Text style={[styles.date, { color: colors.subtleText }]}>
+            {i18n.t('card.nextBilling')}{' '}
+            {subscription.nextBillingDate
+              ? formatDateLocale(subscription.nextBillingDate)
+              : i18n.t('card.notSet')}
           </Text>
         </View>
 
-        <View style={[styles.urgencyBadge, { backgroundColor: urgencyColors[urgency] }]}>
-          <Text style={styles.urgencyText}>{urgencyLabels[urgency]}</Text>
+        {/* 標籤 */}
+        {subscription.tags && subscription.tags.length > 0 && (
+          <View style={styles.tagsContainer}>
+            {subscription.tags.map((tag) => (
+              <TagChip key={tag.id} tag={tag} size="small" />
+            ))}
+          </View>
+        )}
+
+        {/* 操作按鈕 */}
+        <View style={styles.actions}>
+          <TouchableOpacity
+            style={[styles.actionButton, { borderColor: colors.borderColor }]}
+            onPress={onEdit}
+          >
+            <Ionicons name="pencil" size={18} color={colors.text} />
+            <Text style={[styles.actionText, { color: colors.text }]}>{i18n.t('common.edit')}</Text>
+          </TouchableOpacity>
+
+          <TouchableOpacity
+            style={[styles.actionButton, { borderColor: colors.borderColor }]}
+            onPress={onDelete}
+          >
+            <Ionicons name="trash-outline" size={18} color={colors.expense} />
+            <Text style={[styles.actionText, { color: colors.expense }]}>
+              {i18n.t('common.delete')}
+            </Text>
+          </TouchableOpacity>
         </View>
-      </View>
 
-      {/* 價格和日期 */}
-      <View style={styles.details}>
-        <Text style={[styles.price, { color: colors.text }]}>
-          {formatCurrency(subscription.price, subscription.currency)} /{' '}
-          {subscription.billingCycle === 'monthly'
-            ? i18n.t('card.perMonth')
-            : i18n.t('card.perYear')}
-        </Text>
-        <Text style={[styles.date, { color: colors.subtleText }]}>
-          {i18n.t('card.nextBilling')}{' '}
-          {subscription.nextBillingDate
-            ? formatDateLocale(subscription.nextBillingDate)
-            : i18n.t('card.notSet')}
-        </Text>
-      </View>
-
-      {/* 標籤 */}
-      {subscription.tags && subscription.tags.length > 0 && (
-        <View style={styles.tagsContainer}>
-          {subscription.tags.map((tag) => (
-            <TagChip key={tag.id} tag={tag} size="small" />
-          ))}
-        </View>
-      )}
-
-      {/* 操作按鈕 */}
-      <View style={styles.actions}>
-        <TouchableOpacity
-          style={[styles.actionButton, { borderColor: colors.borderColor }]}
-          onPress={onEdit}
-        >
-          <Ionicons name="pencil" size={18} color={colors.text} />
-          <Text style={[styles.actionText, { color: colors.text }]}>{i18n.t('common.edit')}</Text>
-        </TouchableOpacity>
-
-        <TouchableOpacity
-          style={[styles.actionButton, { borderColor: colors.borderColor }]}
-          onPress={onDelete}
-        >
-          <Ionicons name="trash-outline" size={18} color={colors.expense} />
-          <Text style={[styles.actionText, { color: colors.expense }]}>
-            {i18n.t('common.delete')}
-          </Text>
-        </TouchableOpacity>
-      </View>
-
-      {/* 日曆同步開關 */}
-      <View style={[styles.calendarSync, { borderTopColor: colors.borderColor }]}>
-        <View style={{ flex: 1 }}>
-          <Text style={[styles.calendarLabel, { color: colors.text }]}>
-            {i18n.t('calendar.syncLabel')}
-          </Text>
-          <Text style={[styles.calendarHint, { color: colors.subtleText }]}>
-            {i18n.t('calendar.syncHint')}
-          </Text>
-        </View>
-        <TouchableOpacity
-          style={[
-            styles.calendarToggle,
-            subscription.calendarEventId
-              ? { backgroundColor: colors.accent }
-              : { backgroundColor: colors.borderColor },
-          ]}
-          onPress={handleSyncToCalendar}
-        >
-          <View
+        {/* 日曆同步開關 */}
+        <View style={[styles.calendarSync, { borderTopColor: colors.borderColor }]}>
+          <View style={{ flex: 1 }}>
+            <Text style={[styles.calendarLabel, { color: colors.text }]}>
+              {i18n.t('calendar.syncLabel')}
+            </Text>
+            <Text style={[styles.calendarHint, { color: colors.subtleText }]}>
+              {i18n.t('calendar.syncHint')}
+            </Text>
+          </View>
+          <TouchableOpacity
             style={[
-              styles.calendarToggleThumb,
-              subscription.calendarEventId && styles.calendarToggleThumbActive,
+              styles.calendarToggle,
+              subscription.calendarEventId
+                ? { backgroundColor: colors.accent }
+                : { backgroundColor: colors.borderColor },
             ]}
-          />
-        </TouchableOpacity>
+            onPress={handleSyncToCalendar}
+          >
+            <View
+              style={[
+                styles.calendarToggleThumb,
+                subscription.calendarEventId && styles.calendarToggleThumbActive,
+              ]}
+            />
+          </TouchableOpacity>
+        </View>
       </View>
-    </View>
+    </>
   );
 }
 
@@ -268,10 +301,19 @@ const styles = StyleSheet.create({
   details: {
     marginBottom: 12,
   },
+  priceContainer: {
+    flexDirection: 'row',
+    alignItems: 'baseline',
+    flexWrap: 'wrap',
+    marginBottom: 4,
+    gap: 8,
+  },
   price: {
     fontSize: 18,
     fontWeight: '600',
-    marginBottom: 4,
+  },
+  perPersonPrice: {
+    fontSize: 14,
   },
   date: {
     fontSize: 13,

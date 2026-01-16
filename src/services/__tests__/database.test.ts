@@ -59,8 +59,11 @@ describe('Database Service', () => {
       await dbModule.initDatabase();
 
       const calls = mockDb.execAsync.mock.calls;
-      const createTableCall = calls.find((call: string[]) =>
-        call[0].includes('CREATE TABLE IF NOT EXISTS subscriptions'),
+      const createTableCall = calls.find(
+        (call: string[]) =>
+          call[0].includes('CREATE TABLE IF NOT EXISTS subscriptions') &&
+          call[0].includes('isFamilyPlan INTEGER NOT NULL DEFAULT 0') &&
+          call[0].includes('memberCount INTEGER'),
       );
 
       expect(createTableCall).toBeDefined();
@@ -72,6 +75,28 @@ describe('Database Service', () => {
       const calls = mockDb.execAsync.mock.calls;
       const createTableCall = calls.find((call: string[]) =>
         call[0].includes('CREATE TABLE IF NOT EXISTS user_settings'),
+      );
+
+      expect(createTableCall).toBeDefined();
+    });
+
+    it('should create subscription_members table', async () => {
+      await dbModule.initDatabase();
+
+      const calls = mockDb.execAsync.mock.calls;
+      const createTableCall = calls.find((call: string[]) =>
+        call[0].includes('CREATE TABLE IF NOT EXISTS subscription_members'),
+      );
+
+      expect(createTableCall).toBeDefined();
+    });
+
+    it('should create workspaces table', async () => {
+      await dbModule.initDatabase();
+
+      const calls = mockDb.execAsync.mock.calls;
+      const createTableCall = calls.find((call: string[]) =>
+        call[0].includes('CREATE TABLE IF NOT EXISTS workspaces'),
       );
 
       expect(createTableCall).toBeDefined();
@@ -128,6 +153,9 @@ describe('Database Service', () => {
         startDate: '2024-01-15',
         nextBillingDate: '2024-02-15',
         reminderEnabled: false,
+        isFamilyPlan: true,
+        memberCount: 4,
+        workspaceId: 1,
       };
 
       mockDb.runAsync.mockResolvedValueOnce({ lastInsertRowId: 2 });
@@ -254,7 +282,9 @@ describe('Database Service', () => {
           nextBillingDate: '2024-12-20',
           reminderEnabled: true,
           createdAt: '2024-01-01',
+          createdAt: '2024-01-01',
           updatedAt: '2024-01-01',
+          workspaceId: 1,
         },
       ];
 

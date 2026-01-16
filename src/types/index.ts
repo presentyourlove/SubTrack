@@ -36,9 +36,12 @@ export interface Subscription {
   reminderEnabled: boolean; // 是否啟用通知
   reminderTime?: string; // 通知時間 (HH:mm)
   reminderDays?: number; // 提前天數 (0-14)
+  isFamilyPlan?: boolean; // 是否為家庭共享方案
+  memberCount?: number; // 成員人數 (含自己)
   nextBillingDate: string; // ISO 日期字串 (計算得出或手動)
   calendarEventId?: string; // 日曆事件 ID (可選)
   tags?: Tag[]; // 標籤 (透過 JOIN 查詢填充)
+  workspaceId: number; //工作區 ID
   createdAt: string;
   updatedAt: string;
 }
@@ -50,6 +53,28 @@ export interface UserSettings {
   exchangeRates: string; // JSON 字串儲存的匯率設定
   theme: 'light' | 'dark';
   notificationsEnabled?: boolean; // 新增：是否啟用通知
+  currentWorkspaceId?: number; // 當前工作區 ID
+  createdAt: string;
+  updatedAt: string;
+}
+
+// 工作區
+export interface Workspace {
+  id: number;
+  name: string;
+  icon: string;
+  isDefault: boolean;
+  createdAt: string;
+  updatedAt: string;
+}
+
+// 訂閱成員
+export interface Member {
+  id: number;
+  subscriptionId: number;
+  name: string;
+  status: 'paid' | 'unpaid';
+  lastPaymentDate?: string | null;
   createdAt: string;
   updatedAt: string;
 }

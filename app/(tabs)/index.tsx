@@ -13,6 +13,7 @@ import {
   CategoryTabs,
 } from '../../src/components';
 import { TagChip } from '../../src/components/TagChip';
+import WorkspaceSwitcher from '../../src/components/WorkspaceSwitcher';
 import { calculateNextBillingDate } from '../../src/utils/dateHelper';
 import i18n from '../../src/i18n';
 
@@ -55,7 +56,13 @@ export default function SubscriptionsScreen() {
   const handleSubmitSubscription = async (
     data: Omit<
       Subscription,
-      'id' | 'createdAt' | 'updatedAt' | 'nextBillingDate' | 'calendarEventId' | 'tags'
+      | 'id'
+      | 'createdAt'
+      | 'updatedAt'
+      | 'nextBillingDate'
+      | 'calendarEventId'
+      | 'tags'
+      | 'workspaceId'
     >,
     tagIds: number[],
   ) => {
@@ -128,9 +135,12 @@ export default function SubscriptionsScreen() {
     >
       {/* Header */}
       <View style={[styles.header, { backgroundColor: colors.background }]}>
-        <Text style={[styles.headerTitle, { color: colors.text }]}>
-          {i18n.t('screen.subscriptions')}
-        </Text>
+        <View style={styles.headerLeft}>
+          <Text style={[styles.headerTitle, { color: colors.text }]}>
+            {i18n.t('screen.subscriptions')}
+          </Text>
+          <WorkspaceSwitcher />
+        </View>
         <TouchableOpacity
           style={[styles.addButton, { backgroundColor: colors.accent }]}
           onPress={handleAddPress}
@@ -254,6 +264,9 @@ const styles = StyleSheet.create({
   headerTitle: {
     fontSize: 28,
     fontWeight: 'bold',
+  },
+  headerLeft: {
+    gap: 8,
   },
   addButton: {
     width: 44,

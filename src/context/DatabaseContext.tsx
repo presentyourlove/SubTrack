@@ -1,8 +1,9 @@
 import { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 import { initializeDatabase, Database } from '../services';
-import { Subscription, UserSettings, Tag } from '../types';
+import { Subscription, UserSettings, Tag, Workspace } from '../types';
 import * as db from '../services';
 import * as tagDb from '../services/db/tags';
+import * as workspaceDb from '../services/db/workspaces';
 import { useAuth } from './AuthContext';
 import { calculateNextBillingDate } from '../utils/dateHelper';
 import { useSync } from '../hooks/useSync';
@@ -17,6 +18,8 @@ type DatabaseContextType = {
   subscriptions: Subscription[];
   tags: Tag[];
   settings: UserSettings | null;
+  currentWorkspace: Workspace | null;
+  workspaces: Workspace[];
   loading: boolean;
   isOnline: boolean;
   isSyncing: boolean;
@@ -42,6 +45,12 @@ type DatabaseContextType = {
   deleteTag: (id: number) => Promise<void>;
   getTagsForSubscription: (subscriptionId: number) => Promise<Tag[]>;
   setTagsForSubscription: (subscriptionId: number, tagIds: number[]) => Promise<void>;
+  // 工作區方法
+  workspaces: Workspace[];
+  createWorkspace: (name: string, icon: string) => Promise<void>;
+  updateWorkspace: (id: number, name: string, icon: string) => Promise<void>;
+  deleteWorkspace: (id: number) => Promise<void>;
+  switchWorkspace: (id: number) => Promise<void>;
 };
 
 const DatabaseContext = createContext<DatabaseContextType | undefined>(undefined);
@@ -52,6 +61,8 @@ export function DatabaseProvider({ children }: { children: ReactNode }) {
   const [subscriptions, setSubscriptions] = useState<Subscription[]>([]);
   const [tags, setTags] = useState<Tag[]>([]);
   const [settings, setSettings] = useState<UserSettings | null>(null);
+  const [workspaces, setWorkspaces] = useState<Workspace[]>([]);
+  const [currentWorkspace, setCurrentWorkspace] = useState<Workspace | null>(null);
   const [loading, setLoading] = useState(true);
 
   // 初始化資料庫
@@ -73,17 +84,34 @@ export function DatabaseProvider({ children }: { children: ReactNode }) {
   // 載入本地資料
   async function loadLocalData(dbInstance: Database) {
     try {
-      const [subs, sets, allTags] = await Promise.all([
+      const [subs, sets, allTags, allWorkspaces] = await Promise.all([
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        db.getAllSubscriptions(dbInstance as any),
+        db.getAllSubscriptions(dbInstance as any), // This will likely return empty if filtered by workspace, handled below
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         db.getUserSettings(dbInstance as any),
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         tagDb.getAllTags(dbInstance as any),
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        workspaceDb.getWorkspaces(dbInstance as any),
       ]);
-      setSubscriptions(subs);
+
       setSettings(sets);
       setTags(allTags);
+      setWorkspaces(allWorkspaces);
+
+      // 設定當前工作區
+      if (sets?.currentWorkspaceId) {
+        const current =
+          allWorkspaces.find((w) => w.id === sets.currentWorkspaceId) || allWorkspaces[0];
+        setCurrentWorkspace(current);
+
+        // 重新載入該工作區的訂閱
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        const workspaceSubs = await db.getAllSubscriptions(dbInstance as any, current.id);
+        setSubscriptions(workspaceSubs);
+      } else {
+        setSubscriptions(subs);
+      }
     } catch (error) {
       console.error('Failed to load local data:', error);
     }
@@ -111,6 +139,7 @@ export function DatabaseProvider({ children }: { children: ReactNode }) {
     subscription: Omit<Subscription, 'id' | 'createdAt' | 'updatedAt'>,
   ) {
     if (!database) throw new Error('Database not initialized');
+    if (!currentWorkspace) throw new Error('No active workspace');
 
     const calculatedNextBillingDate = calculateNextBillingDate(
       subscription.startDate,
@@ -120,6 +149,7 @@ export function DatabaseProvider({ children }: { children: ReactNode }) {
     const subData = {
       ...subscription,
       nextBillingDate: subscription.nextBillingDate || calculatedNextBillingDate,
+      workspaceId: currentWorkspace.id,
     };
 
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -128,7 +158,7 @@ export function DatabaseProvider({ children }: { children: ReactNode }) {
     // 如果已登入，同步到雲端
     if (isAuthenticated && user) {
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      const allSubs = await db.getAllSubscriptions(database as any);
+      const allSubs = await db.getAllSubscriptions(database as any, currentWorkspace.id);
       const newSub = allSubs.find((s) => s.id === id);
       if (newSub) {
         await syncSubscriptionToFirestore(user.uid, newSub);
@@ -162,7 +192,7 @@ export function DatabaseProvider({ children }: { children: ReactNode }) {
     // 如果已登入，同步到雲端
     if (isAuthenticated && user) {
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      const allSubs = await db.getAllSubscriptions(database as any);
+      const allSubs = await db.getAllSubscriptions(database as any, currentWorkspace?.id);
       const updatedSub = allSubs.find((s) => s.id === id);
       if (updatedSub) {
         await syncSubscriptionToFirestore(user.uid, updatedSub);
@@ -247,11 +277,47 @@ export function DatabaseProvider({ children }: { children: ReactNode }) {
     await tagDb.setTagsForSubscription(database as any, subscriptionId, tagIds);
   }
 
+  // 工作區操作
+  async function createWorkspace(name: string, icon: string) {
+    if (!database) return;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    await workspaceDb.createWorkspace(database as any, name, icon);
+    await refreshData();
+  }
+
+  async function updateWorkspace(id: number, name: string, icon: string) {
+    if (!database) return;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    await workspaceDb.updateWorkspace(database as any, id, name, icon);
+    await refreshData();
+  }
+
+  async function deleteWorkspace(id: number) {
+    if (!database) return;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    await workspaceDb.deleteWorkspace(database as any, id);
+    // 如果刪除的是當前工作區，切換回預設
+    if (currentWorkspace?.id === id) {
+      await switchWorkspace(1);
+    } else {
+      await refreshData();
+    }
+  }
+
+  async function switchWorkspace(id: number) {
+    if (!database) return;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    await workspaceDb.switchWorkspace(database as any, id);
+    await refreshData();
+  }
+
   const value = {
     database,
     subscriptions,
     tags,
     settings,
+    workspaces,
+    currentWorkspace,
     loading,
     isOnline,
     isSyncing,
@@ -267,6 +333,10 @@ export function DatabaseProvider({ children }: { children: ReactNode }) {
     deleteTag,
     getTagsForSubscription,
     setTagsForSubscription,
+    createWorkspace,
+    updateWorkspace,
+    deleteWorkspace,
+    switchWorkspace,
   };
 
   return <DatabaseContext.Provider value={value}>{children}</DatabaseContext.Provider>;

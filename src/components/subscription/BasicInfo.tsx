@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Text, StyleSheet, TextInput, TouchableOpacity } from 'react-native';
+import { View, Text, StyleSheet, TextInput, TouchableOpacity, Switch } from 'react-native';
 import { useTheme } from '../../context/ThemeContext';
 import i18n from '../../i18n';
 
@@ -8,9 +8,22 @@ type BasicInfoProps = {
   setName: (name: string) => void;
   icon: string;
   setIcon: (icon: string) => void;
+  isFamilyPlan: boolean;
+  setIsFamilyPlan: (value: boolean) => void;
+  memberCount: string;
+  setMemberCount: (value: string) => void;
 };
 
-export default function BasicInfo({ name, setName, icon, setIcon }: BasicInfoProps) {
+export default function BasicInfo({
+  name,
+  setName,
+  icon,
+  setIcon,
+  isFamilyPlan,
+  setIsFamilyPlan,
+  memberCount,
+  setMemberCount,
+}: BasicInfoProps) {
   const { colors } = useTheme();
 
   const commonIcons = ['📱', '🎬', '🎵', '📺', '💼', '📚', '🏋️', '🍔', '☁️', '🎮'];
@@ -46,6 +59,38 @@ export default function BasicInfo({ name, setName, icon, setIcon }: BasicInfoPro
           ))}
         </View>
       </View>
+
+      <View style={styles.field}>
+        <View style={styles.switchContainer}>
+          <Text style={[styles.label, { color: colors.text, marginBottom: 0 }]}>
+            {i18n.t('subscription.familyPlan')}
+          </Text>
+          <Switch
+            value={isFamilyPlan}
+            onValueChange={setIsFamilyPlan}
+            trackColor={{ false: colors.borderColor, true: colors.accent }}
+          />
+        </View>
+
+        {isFamilyPlan && (
+          <View style={styles.subField}>
+            <Text style={[styles.subLabel, { color: colors.subtleText }]}>
+              {i18n.t('subscription.memberCount')}
+            </Text>
+            <TextInput
+              style={[
+                styles.input,
+                { backgroundColor: colors.inputBackground, color: colors.text },
+              ]}
+              value={memberCount}
+              onChangeText={setMemberCount}
+              placeholder="e.g. 4"
+              placeholderTextColor={colors.subtleText}
+              keyboardType="number-pad"
+            />
+          </View>
+        )}
+      </View>
     </>
   );
 }
@@ -80,5 +125,19 @@ const styles = StyleSheet.create({
   },
   iconEmoji: {
     fontSize: 24,
+  },
+  switchContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    marginBottom: 12,
+  },
+  subField: {
+    marginTop: 8,
+    paddingLeft: 4,
+  },
+  subLabel: {
+    fontSize: 14,
+    marginBottom: 6,
   },
 });

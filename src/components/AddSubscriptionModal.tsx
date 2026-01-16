@@ -29,6 +29,8 @@ type AddSubscriptionModalProps = {
       reminderEnabled: boolean;
       reminderTime?: string;
       reminderDays?: number;
+      isFamilyPlan?: boolean;
+      memberCount?: number;
     },
     tagIds: number[],
   ) => void;
@@ -53,6 +55,8 @@ export default function AddSubscriptionModal({
   const [reminderEnabled, setReminderEnabled] = useState(false);
   const [reminderTime, setReminderTime] = useState(() => getDefaultReminderTime());
   const [reminderDays, setReminderDays] = useState(0);
+  const [isFamilyPlan, setIsFamilyPlan] = useState(false);
+  const [memberCount, setMemberCount] = useState('');
   const [selectedTagIds, setSelectedTagIds] = useState<number[]>([]);
 
   useEffect(() => {
@@ -78,6 +82,8 @@ export default function AddSubscriptionModal({
         }
 
         setReminderDays(initialData.reminderDays || 0);
+        setIsFamilyPlan(initialData.isFamilyPlan || false);
+        setMemberCount(initialData.memberCount ? initialData.memberCount.toString() : '');
 
         // 載入現有標籤
         getTagsForSubscription(initialData.id).then((existingTags) => {
@@ -94,6 +100,8 @@ export default function AddSubscriptionModal({
         setReminderEnabled(false);
         setReminderTime(getDefaultReminderTime());
         setReminderDays(0);
+        setIsFamilyPlan(false);
+        setMemberCount('');
         setSelectedTagIds([]);
       }
     }
@@ -127,6 +135,8 @@ export default function AddSubscriptionModal({
         reminderEnabled,
         reminderTime: reminderEnabled ? formattedTime : undefined,
         reminderDays: reminderEnabled ? reminderDays : undefined,
+        isFamilyPlan,
+        memberCount: isFamilyPlan && memberCount ? parseInt(memberCount, 10) : undefined,
       },
       selectedTagIds,
     );
@@ -153,7 +163,16 @@ export default function AddSubscriptionModal({
           </View>
 
           <ScrollView style={styles.content}>
-            <BasicInfo name={name} setName={setName} icon={icon} setIcon={setIcon} />
+            <BasicInfo
+              name={name}
+              setName={setName}
+              icon={icon}
+              setIcon={setIcon}
+              isFamilyPlan={isFamilyPlan}
+              setIsFamilyPlan={setIsFamilyPlan}
+              memberCount={memberCount}
+              setMemberCount={setMemberCount}
+            />
             <CategorySelector category={category} setCategory={setCategory} />
             <PaymentInfo
               price={price}
