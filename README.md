@@ -241,7 +241,11 @@ npm test -- --coverage
 * [ ] **🧠 消費心理分析 (Psychological Analysis)**：偵測「報復性訂閱」行為並給予友善提醒。
 * [ ] **🏢 企業級 SSO 登入 (Enterprise SSO)**：支援公司統編發票管理與 SAML/OIDC 登入。
 * [ ] **🔗 Web3 支付整合 (Crypto Payments)**：追蹤透過 ETH/Solana 支付的鏈上訂閱服務。
-* [ ] **💝 零頭捐款 (Charity Round-up)**：將每筆訂閱金額無條件進位，差額自動捐贈給指定公益團體。
+* [ ] **⚖️ 法律權益助手 (Legal Guardian)**：自動產生取消訂閱存證信函範本，協助用戶主張 GDPR/CCPA 資料刪除權。
+* [ ] **🏆 節省排行榜 (Savings Leaderboard)**：(匿名) 比較同類別用戶的平均支出，激勵減少不必要開銷。
+* [ ] **🌡️ 訂閱疲勞偵測 (Fatigue Detector)**：偵測過多影音服務導致的「選擇困難症」，主動建議暫停部分訂閱。
+* [ ] **🔄 帳號無縫移轉 (Account Transfer)**：協助將訂閱帳號權限安全、無縫地移轉給他人（如離職交接、分手分產）。
+* [ ] **🎮 元宇宙連動 (Metaverse Integration)**：將省下的訂閱費用轉化為虛擬替身 (Avatar) 的專屬配件或資產。
 
 ---
 
