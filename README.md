@@ -291,6 +291,11 @@ npm test -- --coverage
 * [ ] **♻️ 自定義物件池 (Object Pooling)**：針對高頻建立的元件 (如清單項目) 實作物件回收機制，大幅降低 Garbage Collection 觸發頻率。
 * [ ] **🎯 視圖層級扁平化 (View Flattening)**：利用 Yoga 引擎特性手動優化 Layout 結構，減少過度繪製 (Overdraw) 與各層級 View 合成開銷。
 * [ ] **🔮 預測性網路預載 (Predictive Prefetching)**：基於使用者行為模型 AI，預判下一個動作提前發出 API 請求，達成「零延遲」體感。
+* [ ] **🧬 CRDTs 自動衝突解決 (Conflict-free Replicated Data Types)**：實作 Yjs 或 Automerge 演算法，達成多裝置離線編輯後的完美自動合併。
+* [ ] **🖌️ C++ 樣式引擎 (Unistyles / NativeWind)**：將 Stylesheet 解析邏輯下沉至 C++ 層，讓動態樣式切換不再佔用 JS 執行與 Bridge 頻寬。
+* [ ] **🎮 GPU 運算加速 (Compute Shaders)**：利用 WebGPU / Metal 進行客戶端大數據分析 (如年度支出熱點圖)，釋放 CPU 負載。
+* [ ] **📉 差異化 OTA 更新 (Differential Updates)**：優化 EAS Update 機制，僅下載變更的 JS Chunk，將熱更新耗時從 5秒降至 0.5秒。
+* [ ] **🔬 啟動時序迴歸測試 (Startup Time Regression)**：在 CI/CD 流水線整合 Systrace，任何導致啟動慢於 200ms 的 Commit 自動退回。
 
 ---
 
