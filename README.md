@@ -229,7 +229,11 @@ npm test -- --coverage
 * [ ] **📉 使用量追蹤 (Usage Tracker)**：手動或自動 (Android) 記錄 App 開啟頻率，揪出少用的浪費項目。
 * [ ] **🔌 外部整合 (Integrations)**：支援匯入/匯出至 Notion, YNAB, Excel 等生產力工具。
 * [ ] **🌐 多國語言 (Localization)**：新增英文、日文、韓文介面支援，推向國際市場。
-* [ ] **🖥️ 桌面版 App (Desktop Support)**：推出 macOS / Windows 原生應用程式，提供更寬廣的操作視野。
+* [ ] **🤖 AI 財務助理 (AI Finance Assistant)**：內建 LLM 對話介面，直接詢問「我去年花多少錢在影音娛樂？」、「預測下個月支出」。
+* [ ] **💳 虛擬卡整合 (Virtual Cards)**：整合 Privacy.com 等服務，為每個訂閱產生專屬虛擬卡，設定扣款上限以防超收。
+* [ ] **🔔 漲價社群預警 (Community Pricing Alerts)**：群眾外包的價格監測，當 Netflix 或 Spotify 宣布漲價時第一時間通知。
+* [ ] **🌱 數位碳足跡 (Digital Carbon Footprint)**：估算訂閱服務的數位碳排放量，推廣環境永續意識。
+* [ ] **🔌 開發者 API (Public API)**：提供 REST/GraphQL API，讓進階使用者將訂閱資料整合至自己的自動化工作流 (如 Home Assistant)。
 
 ---
 
