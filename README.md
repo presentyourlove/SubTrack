@@ -262,6 +262,11 @@ npm test -- --coverage
 * [ ] **📺 跨平台內容聚合 (Content Aggregator)**：整合 Netflix/Disney+/Prime Video 片單，一鍵搜尋「想看的片在哪個平台」，避免重複訂閱。
 * [ ] **💰 訂閱轉投資 (Sub-to-Invest)**：與券商 API 串接，將每月取消訂閱省下的金額，自動轉入 ETF 定期定額投資。
 * [ ] **🖨️ 實體訂閱卡 (Printable Membership Card)**：生成 Apple Wallet / Google Pay 票卡，整合所有實體會員條碼 (如 Costco, 健身房)。
+* [ ] **📊 信用評分小幫手 (Credit Score Booster)**：(實驗性) 主動將準時繳費紀錄回報給聯徵中心，協助累積個人信用分數。
+* [ ] **🧾 稅務抵扣偵測 (Tax Deduction Hunter)**：為自由工作者標記可能可用於報稅的生產力訂閱 (如 Adobe, AWS)，並匯出會計報表。
+* [ ] **📅 影劇內容行事曆 (Content Release Calendar)**：整合訂閱平台的上映清單，避免為了「這個月沒片看」的平台付費。
+* [ ] **🛡️ 訂閱停損保險 (Renewal Protection)**：提供微型保險服務，若忘記取消試用期導致被扣款，可申請理賠。
+* [ ] **🌍 碳中和訂閱 (Carbon Neutral Sub)**：一鍵購買碳權，抵銷串流媒體運算產生的碳足跡，達成個人淨零排放。
 
 ---
 
