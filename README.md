@@ -257,6 +257,11 @@ npm test -- --coverage
 * [ ] **📦 實體訂閱追蹤 (Physical Goods)**：擴展管理範疇至「羊奶」、「雜誌」、「有機蔬菜箱」等實體配送訂閱。
 * [ ] **☕ 價值換算器 (Value Converter)**：將訂閱費用換算為「幾杯星巴克」或「需工作幾小時」，讓支出更有感。
 * [ ] **🛑 衝動消費攔截器 (Impulse Buy Blocker)**：瀏覽器擴充功能，強制對新訂閱設定 24 小時冷靜期倒數。
+* [ ] **🏥 健康數據連動 (Health Data Integration)**：讀取 Apple Health 步數，若偵測到一個月未去健身房，主動詢問是否取消 Gym 訂閱。
+* [ ] **⚖️ 道德評分系統 (Ethical Scoring)**：顯示訂閱企業的 ESG 分數與碳排放，協助用戶選擇符合價值觀的服務。
+* [ ] **📺 跨平台內容聚合 (Content Aggregator)**：整合 Netflix/Disney+/Prime Video 片單，一鍵搜尋「想看的片在哪個平台」，避免重複訂閱。
+* [ ] **💰 訂閱轉投資 (Sub-to-Invest)**：與券商 API 串接，將每月取消訂閱省下的金額，自動轉入 ETF 定期定額投資。
+* [ ] **🖨️ 實體訂閱卡 (Printable Membership Card)**：生成 Apple Wallet / Google Pay 票卡，整合所有實體會員條碼 (如 Costco, 健身房)。
 
 ---
 
