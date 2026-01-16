@@ -14,7 +14,7 @@ describe('Workspace Service', () => {
 
   it('should get all workspaces', async () => {
     const mockWorkspaces: Workspace[] = [
-      { id: 1, name: 'Personal', icon: 'üë§', isDefault: true, createdAt: '', updatedAt: '' },
+      { id: 1, name: 'Personal', icon: '?ë§', isDefault: true, createdAt: '', updatedAt: '' },
     ];
     mockDb.getAllAsync.mockResolvedValue(mockWorkspaces);
 
@@ -28,21 +28,21 @@ describe('Workspace Service', () => {
   it('should create a workspace', async () => {
     mockDb.runAsync.mockResolvedValue({ lastInsertRowId: 2 });
 
-    const id = await workspaceService.createWorkspace(mockDb as any, 'Work', 'üíº');
+    const id = await workspaceService.createWorkspace(mockDb as any, 'Work', '?íº');
 
     expect(mockDb.runAsync).toHaveBeenCalledWith(
       expect.stringContaining('INSERT INTO workspaces'),
-      expect.arrayContaining(['Work', 'üíº']),
+      expect.arrayContaining(['Work', '?íº']),
     );
     expect(id).toBe(2);
   });
 
   it('should update a workspace', async () => {
-    await workspaceService.updateWorkspace(mockDb as any, 2, 'Office', 'üè¢');
+    await workspaceService.updateWorkspace(mockDb as any, 2, 'Office', '?è¢');
 
     expect(mockDb.runAsync).toHaveBeenCalledWith(
       expect.stringContaining('UPDATE workspaces SET name = ?, icon = ?'),
-      expect.arrayContaining(['Office', 'üè¢', 2]),
+      expect.arrayContaining(['Office', '?è¢', 2]),
     );
   });
 

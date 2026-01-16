@@ -21,7 +21,7 @@ export function useSync(
   const syncTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const dailySyncIntervalRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
-  // 執行自動同步
+  // ?��??��??�步
   const autoSync = useCallback(async () => {
     if (!isAuthenticated || !user || !database || isSyncing) return;
 
@@ -31,13 +31,13 @@ export function useSync(
       setNeedsSync(false);
       setLastSyncTime(new Date());
     } catch (error) {
-      console.error('自動同步失敗:', error);
+      console.error('?��??�步失�?:', error);
     } finally {
       setIsSyncing(false);
     }
   }, [isAuthenticated, user, database, isSyncing, subscriptions, settings]);
 
-  // 設定自動同步排程 (防抖)
+  // 設�??��??�步?��? (?��?)
   const scheduleAutoSync = useCallback(() => {
     if (syncTimeoutRef.current) {
       clearTimeout(syncTimeoutRef.current);
@@ -48,13 +48,12 @@ export function useSync(
     }, 2000);
   }, [autoSync]);
 
-  // 網路狀態監聽
-  useEffect(() => {
+  // 網路?�?�監??  useEffect(() => {
     const unsubscribe = NetInfo.addEventListener((state) => {
       const online = state.isConnected === true;
       setIsOnline(online);
 
-      // 當網路恢復且有待同步資料時,觸發自動同步
+      // ?�網路恢復�??��??�步資�???觸發?��??�步
       if (online && needsSync && isAuthenticated && user) {
         scheduleAutoSync();
       }
@@ -63,7 +62,7 @@ export function useSync(
     return () => unsubscribe();
   }, [needsSync, isAuthenticated, user, scheduleAutoSync]);
 
-  // 每日定時同步 logic can be simplified or kept here.
+  // 每日定�??�步 logic can be simplified or kept here.
   // Keeping it here for now.
   useEffect(() => {
     if (!isAuthenticated || !user) return;
@@ -93,7 +92,7 @@ export function useSync(
     };
   }, [isAuthenticated, user, isOnline, autoSync]);
 
-  // 手動同步上傳
+  // ?��??�步上傳
   const syncToCloud = useCallback(async () => {
     if (!isAuthenticated || !user || !database) {
       throw new Error('User not authenticated');
@@ -107,7 +106,7 @@ export function useSync(
     }
   }, [isAuthenticated, user, database, subscriptions, settings]);
 
-  // 手動同步下載
+  // ?��??�步下�?
   const syncFromCloud = useCallback(async () => {
     if (!isAuthenticated || !user || !database) {
       throw new Error('User not authenticated');

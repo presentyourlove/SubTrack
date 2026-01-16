@@ -1,15 +1,13 @@
 /**
  * Database Service Tests
  *
- * 測試 database.ts 的所有 CRUD 操作和統計查詢功能
- * 使用簡化的 mock 策略以避免 Expo 54 測試環境問題
+ * 測試 database.ts ?��???CRUD ?��??�統計查詢�??? * 使用簡�???mock 策略以避??Expo 54 測試?��??��?
  */
 
 import type { Subscription } from '../../types';
 
 describe('Database Service', () => {
-  // Mock 資料庫物件
-  type MockDatabase = {
+  // Mock 資�?庫物�?  type MockDatabase = {
     execAsync: jest.Mock;
     runAsync: jest.Mock;
     getAllAsync: jest.Mock;
@@ -27,11 +25,10 @@ describe('Database Service', () => {
   });
 
   beforeEach(async () => {
-    // 重置 mock
+    // ?�置 mock
     jest.clearAllMocks();
 
-    // 建立 mock 資料庫物件
-    mockDb = {
+    // 建�? mock 資�?庫物�?    mockDb = {
       execAsync: jest.fn().mockResolvedValue(undefined),
       runAsync: jest.fn().mockResolvedValue({ lastInsertRowId: 1 }),
       getAllAsync: jest.fn().mockResolvedValue([]),
@@ -42,7 +39,7 @@ describe('Database Service', () => {
     const expoSqlite = await import('expo-sqlite');
     expoSqlite.openDatabaseAsync = jest.fn().mockResolvedValue(mockDb);
 
-    // 動態載入 database 模組
+    // ?��?載入 database 模�?
     jest.resetModules();
     dbModule = await import('../database');
   });
@@ -109,7 +106,7 @@ describe('Database Service', () => {
         {
           id: 1,
           name: 'Netflix',
-          icon: '📺',
+          icon: '?��',
           category: 'entertainment',
           price: 390,
           currency: 'TWD',
@@ -145,7 +142,7 @@ describe('Database Service', () => {
     it('should add subscription successfully', async () => {
       const newSubscription = {
         name: 'Spotify',
-        icon: '🎵',
+        icon: '?��',
         category: 'entertainment' as const,
         price: 149,
         currency: 'TWD',
@@ -273,7 +270,7 @@ describe('Database Service', () => {
         {
           id: 1,
           name: 'Netflix',
-          icon: '📺',
+          icon: '?��',
           category: 'entertainment',
           price: 390,
           currency: 'TWD',

@@ -1,12 +1,5 @@
 import React, { useState, useMemo, useEffect } from 'react';
-import {
-  StyleSheet,
-  View,
-  ScrollView,
-  Text,
-  TouchableOpacity,
-  RefreshControl,
-} from 'react-native';
+import { StyleSheet, View, ScrollView, Text, TouchableOpacity, RefreshControl } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
@@ -93,10 +86,7 @@ export default function SubscriptionsScreen() {
     await deleteSubscription(id);
   };
 
-  const handleSubmitSubscription = async (
-    data: Partial<Subscription>,
-    tagIds: number[],
-  ) => {
+  const handleSubmitSubscription = async (data: Partial<Subscription>, tagIds: number[]) => {
     try {
       if (editingId) {
         await updateSubscription(editingId, data);

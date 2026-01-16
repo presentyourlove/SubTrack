@@ -6,34 +6,30 @@ import { useTheme } from '../context/ThemeContext';
 import { hapticFeedback } from '../utils/haptics';
 
 export default function PrivacyToggle() {
-    const { settings, updateSettings } = useDatabase();
-    const { colors } = useTheme();
+  const { settings, updateSettings } = useDatabase();
+  const { colors } = useTheme();
 
-    const isPrivacyMode = settings?.privacyMode || false;
+  const isPrivacyMode = settings?.privacyMode || false;
 
-    const handleToggle = async () => {
-        await hapticFeedback.selection();
-        await updateSettings({ privacyMode: !isPrivacyMode });
-    };
+  const handleToggle = async () => {
+    await hapticFeedback.selection();
+    await updateSettings({ privacyMode: !isPrivacyMode });
+  };
 
-    return (
-        <TouchableOpacity
-            onPress={handleToggle}
-            style={styles.button}
-            accessibilityRole="button"
-            accessibilityLabel={isPrivacyMode ? 'Show amounts' : 'Hide amounts'}
-        >
-            <Ionicons
-                name={isPrivacyMode ? 'eye-off' : 'eye'}
-                size={24}
-                color={colors.text}
-            />
-        </TouchableOpacity>
-    );
+  return (
+    <TouchableOpacity
+      onPress={handleToggle}
+      style={styles.button}
+      accessibilityRole="button"
+      accessibilityLabel={isPrivacyMode ? 'Show amounts' : 'Hide amounts'}
+    >
+      <Ionicons name={isPrivacyMode ? 'eye-off' : 'eye'} size={24} color={colors.text} />
+    </TouchableOpacity>
+  );
 }
 
 const styles = StyleSheet.create({
-    button: {
-        padding: 8,
-    },
+  button: {
+    padding: 8,
+  },
 });
