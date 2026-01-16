@@ -144,8 +144,7 @@ export default function SyncSettings() {
               {!isAuthenticated ? (
                 <View>
                   <Text style={[styles.modalSectionTitle, { color: colors.text }]}>
-                    {i18n.t('validation.loginSuccess').replace('成功', '').replace('！', '')} /{' '}
-                    {i18n.t('validation.registerSuccess').replace('成功', '').replace('！', '')}
+                    {i18n.t('validation.login')} / {i18n.t('validation.register')}
                   </Text>
                   <TextInput
                     style={[
@@ -172,7 +171,7 @@ export default function SyncSettings() {
                         borderColor: colors.borderColor,
                       },
                     ]}
-                    placeholder="密碼"
+                    placeholder={i18n.t('common.password')}
                     placeholderTextColor={colors.subtleText}
                     value={password}
                     onChangeText={setPassword}

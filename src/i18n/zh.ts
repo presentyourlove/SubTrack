@@ -12,6 +12,7 @@ export default {
     success: '成功',
     close: '關閉',
     days: '天',
+    password: '密碼',
   },
   // 錯誤訊息
   error: {
@@ -175,6 +176,8 @@ export default {
     passwordTooShort: '密碼至少需要6個字元',
     loginSuccess: '登入成功！',
     registerSuccess: '註冊成功！',
+    login: '登入',
+    register: '註冊',
     logoutSuccess: '已登出',
     syncUploadSuccess: '資料已上傳到雲端',
     syncDownloadSuccess: '資料已從雲端下載',
