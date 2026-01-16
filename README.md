@@ -268,6 +268,15 @@ npm test -- --coverage
 * [ ] **🛡️ 訂閱停損保險 (Renewal Protection)**：提供微型保險服務，若忘記取消試用期導致被扣款，可申請理賠。
 * [ ] **🌍 碳中和訂閱 (Carbon Neutral Sub)**：一鍵購買碳權，抵銷串流媒體運算產生的碳足跡，達成個人淨零排放。
 
+### 🚀 極致效能優化 (Performance Mastery)
+
+* [ ] **⚡ FlashList 遷移**：全面導入 Shopify FlashList，在數千筆訂閱資料下維持 60 FPS 捲動流暢度。
+* [ ] **🔥 JSI 直接綁定 (JSI Bindings)**：繞過 React Native Bridge，使用 C++ 直接呼叫 SQLite，提升資料庫讀寫效能 10x。
+* [ ] **🏗️ 新架構啟用 (New Architecture)**：全面啟用 Fabric (UI) 與 TurboModules，實現同步 Layout 計算與 Native 模組按需載入。
+* [ ] **🕸️ WebAssembly (WASM)**：將複雜的加密與統計運算邏輯遷移至 Rust/WASM，優化 Web 版執行效率。
+* [ ] **📦 智慧分包 (Bundle Splitting)**：實作 Route-based splitting，大幅縮減 App 首屏載入的 JS Bundle 體積。
+* [ ] **🏎️ Hermes 靜態優化**：啟用 Static Hermes，將部分 JS 編譯為 Native Code，達成接近原生的啟動速度。
+
 ---
 
 **Author**: SubTrack Team
