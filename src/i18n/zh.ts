@@ -10,6 +10,7 @@ export default {
     loading: '載入中...',
     error: '發生錯誤',
     success: '成功',
+    close: '關閉',
   },
   // 錯誤訊息
   error: {
@@ -155,6 +156,7 @@ export default {
   // 驗證與錯誤訊息
   validation: {
     requiredFields: '請填寫所有必填欄位',
+    invalidAmount: '請輸入有效的金額',
     invalidEmail: '電子郵件格式不正確',
     passwordTooShort: '密碼至少需要6個字元',
     loginSuccess: '登入成功！',

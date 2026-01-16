@@ -149,20 +149,17 @@ export function getCurrentUser(): User | null {
 
 // 錯誤訊息轉換
 function getAuthErrorMessage(errorCode: string): string {
-  const errorMessages: { [key: string]: string } = {
-    'auth/email-already-in-use': '此電子郵件已被使用',
-    'auth/invalid-email': '電子郵件格式不正確',
-    'auth/operation-not-allowed': '此操作未被允許',
-    'auth/weak-password': '密碼強度不足（至少6個字元）',
-    'auth/user-disabled': '此帳號已被停用',
-    'auth/user-not-found': '找不到此使用者',
-    'auth/wrong-password': '密碼錯誤',
-    'auth/invalid-credential': '登入憑證無效',
-    'auth/too-many-requests': '嘗試次數過多，請稍後再試',
-    'auth/network-request-failed': '網路連線失敗',
-  };
+  // 嘗試直接使用 i18n 翻譯錯誤代碼
+  const i18nKey = `error.${errorCode}`;
+  const translated = i18n.t(i18nKey);
 
-  return errorMessages[errorCode] || '發生未知錯誤，請稍後再試';
+  // 如果翻譯結果跟 key 一樣(或包含 error. 前綴代表沒翻譯到)，代表找不到翻譯，使用未知錯誤
+  // i18n-js 的行為是找不到 key 會回傳 key 本身
+  if (translated.includes('error.auth')) {
+    return i18n.t('error.unknown');
+  }
+
+  return translated;
 }
 
 /**
@@ -202,10 +199,10 @@ export function validatePassword(password: string): {
   message: string;
 } {
   if (password.length < 6) {
-    return { isValid: false, message: '密碼至少需要6個字元' };
+    return { isValid: false, message: i18n.t('validation.passwordTooShort') };
   }
   if (password.length > 128) {
-    return { isValid: false, message: '密碼不能超過128個字元' };
+    return { isValid: false, message: i18n.t('validation.passwordTooLong') };
   }
   return { isValid: true, message: '' };
 }

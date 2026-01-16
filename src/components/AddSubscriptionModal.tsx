@@ -95,7 +95,7 @@ export default function AddSubscriptionModal({
 
     const numericPrice = parseFloat(price);
     if (isNaN(numericPrice) || numericPrice < 0) {
-      Alert.alert(i18n.t('common.error'), '請輸入有效的金額');
+      Alert.alert(i18n.t('common.error'), i18n.t('validation.invalidAmount'));
       return;
     }
 
@@ -126,7 +126,11 @@ export default function AddSubscriptionModal({
             <Text style={[styles.title, { color: colors.text }]}>
               {initialData ? i18n.t('subscription.editTitle') : i18n.t('subscription.addTitle')}
             </Text>
-            <TouchableOpacity onPress={onClose}>
+            <TouchableOpacity
+              onPress={onClose}
+              accessibilityRole="button"
+              accessibilityLabel={i18n.t('common.close')}
+            >
               <Ionicons name="close" size={24} color={colors.text} />
             </TouchableOpacity>
           </View>
@@ -162,6 +166,8 @@ export default function AddSubscriptionModal({
                 { backgroundColor: '#FF3B30', borderColor: '#FF3B30' },
               ]}
               onPress={onClose}
+              accessibilityRole="button"
+              accessibilityLabel={i18n.t('common.cancel')}
             >
               <Text style={[styles.buttonText, { color: '#ffffff' }]}>
                 {i18n.t('common.cancel')}
@@ -170,6 +176,8 @@ export default function AddSubscriptionModal({
             <TouchableOpacity
               style={[styles.button, styles.submitButton, { backgroundColor: colors.accent }]}
               onPress={handleSubmit}
+              accessibilityRole="button"
+              accessibilityLabel={initialData ? i18n.t('common.save') : i18n.t('common.confirm')}
             >
               <Text style={[styles.buttonText, { color: '#ffffff' }]}>
                 {initialData ? i18n.t('common.save') : i18n.t('common.confirm')}
