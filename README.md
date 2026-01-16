@@ -249,6 +249,10 @@ npm test -- --coverage
 * [ ] **🔐 量子抗性加密 (Post-Quantum Cryptography)**：採用與 NIST 標準相容的加密演算法，抵禦未來量子電腦夠算力破解的風險。
 * [ ] **🆔 去中心化身分 (DID Login)**：支援 ENS / Unstoppable Domains 登入，完全掌握自己的身分數據，不依賴 Google/Apple。
 * [ ] **🛒 訂閱市集 (Subscription Marketplace)**：直接在 App 內購買或轉讓（合規前提下）剩餘的訂閱會籍期間。
+* [ ] **🐳 自架後端支援 (Self-Hosted/Docker)**：提供 Docker Image，讓用戶將資料庫從 Firebase 遷移至自家的 NAS 或 VPS (Supabase/PostgreSQL)。
+* [ ] **💳 信用卡回饋最佳化 (Reward Optimizer)**：與信用卡資訊整合，自動建議「刷哪張卡」訂閱 Netflix 可獲得最高回饋 (如 5% 現金回饋)。
+* [ ] **💻 終端機介面 (CLI Tool)**：提供 `subtrack-cli`，讓黑客能透過指令列 `subtrack add --name="AWS" --price=50` 快速記帳。
+* [ ] **🌍 跨區價格偵測 (Regional Price Scanner)**：(僅供參考) 偵測同一服務在不同國家的定價差異，提供用戶精打細算的資訊。
 
 ---
 
