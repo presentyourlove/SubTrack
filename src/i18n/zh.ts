@@ -14,6 +14,7 @@ export default {
   // 錯誤訊息
   error: {
     emailInUse: '此 Email 已被註冊',
+    permissionRequired: '未授予通知權限',
     registerFailed: '註冊失敗，請稍後再試',
     invalidCredentials: '帳號或密碼錯誤',
     loginFailed: '登入失敗，請稍後再試',
@@ -44,6 +45,7 @@ export default {
   chart: {
     categoryTitle: '分類占比',
     expenseTitle: '費用統計',
+    weekPattern: '第{{week}}週',
   },
   // 畫面標題
   screen: {

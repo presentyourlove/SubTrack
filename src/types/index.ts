@@ -1,4 +1,4 @@
-﻿// 訂閱類別
+// 訂閱類別
 export type SubscriptionCategory = 'entertainment' | 'productivity' | 'lifestyle' | 'other';
 
 // 計費週期

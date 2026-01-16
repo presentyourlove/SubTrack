@@ -48,5 +48,6 @@ module.exports = {
     'jest.setup.js',
     '__mocks__',
     'coverage',
+    'scripts',
   ],
 };

@@ -111,7 +111,7 @@ export async function scheduleAllSubscriptionNotifications(
 
   const hasPermission = await requestNotificationPermissions();
   if (!hasPermission) {
-    throw new Error('未授予通知權限');
+    throw new Error(i18n.t('error.permissionRequired'));
   }
 
   // 先取消所有現有通知
@@ -131,7 +131,7 @@ export async function sendTestNotification(): Promise<void> {
 
   const hasPermission = await requestNotificationPermissions();
   if (!hasPermission) {
-    throw new Error('未授予通知權限');
+    throw new Error(i18n.t('error.permissionRequired'));
   }
 
   await Notifications.scheduleNotificationAsync({

@@ -147,7 +147,9 @@ export function getStatsByTimeRange(
       };
     });
   } else if (rangeType === 'month') {
-    const weeks = ['第1週', '第2週', '第3週', '第4週'];
+    const weeks = Array.from({ length: 4 }).map((_, i) =>
+      i18n.t('chart.weekPattern', { week: i + 1 }),
+    );
     return weeks.map((week, index) => {
       const weekStart = new Date(range.start);
       weekStart.setDate(weekStart.getDate() + index * 7);
