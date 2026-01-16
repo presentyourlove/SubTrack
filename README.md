@@ -252,7 +252,11 @@ npm test -- --coverage
 * [ ] **🐳 自架後端支援 (Self-Hosted/Docker)**：提供 Docker Image，讓用戶將資料庫從 Firebase 遷移至自家的 NAS 或 VPS (Supabase/PostgreSQL)。
 * [ ] **💳 信用卡回饋最佳化 (Reward Optimizer)**：與信用卡資訊整合，自動建議「刷哪張卡」訂閱 Netflix 可獲得最高回饋 (如 5% 現金回饋)。
 * [ ] **💻 終端機介面 (CLI Tool)**：提供 `subtrack-cli`，讓黑客能透過指令列 `subtrack add --name="AWS" --price=50` 快速記帳。
-* [ ] **🌍 跨區價格偵測 (Regional Price Scanner)**：(僅供參考) 偵測同一服務在不同國家的定價差異，提供用戶精打細算的資訊。
+* [ ] **🚗 車載系統整合 (CarPlay / Android Auto)**：在車用螢幕上快速查看「加油訂閱」或「洗車訂閱」狀態。
+* [ ] **🤖 訂閱談判機器人 (Negotiator Bot)**：(實驗性) 授權 AI 代理人自動與客服線上交涉，嘗試爭取續約折扣或取消服務。
+* [ ] **📦 實體訂閱追蹤 (Physical Goods)**：擴展管理範疇至「羊奶」、「雜誌」、「有機蔬菜箱」等實體配送訂閱。
+* [ ] **☕ 價值換算器 (Value Converter)**：將訂閱費用換算為「幾杯星巴克」或「需工作幾小時」，讓支出更有感。
+* [ ] **🛑 衝動消費攔截器 (Impulse Buy Blocker)**：瀏覽器擴充功能，強制對新訂閱設定 24 小時冷靜期倒數。
 
 ---
 
