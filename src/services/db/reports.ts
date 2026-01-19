@@ -1,11 +1,11 @@
-import * as SQLite from 'expo-sqlite';
+import { SQLiteDatabase } from '../database';
 import { CustomReport, Subscription } from '../../types';
 import { getStatsByCategory } from '../../utils/chartHelper';
 
 // CRUD Operations
 
 export async function createReport(
-  db: SQLite.SQLiteDatabase,
+  db: SQLiteDatabase,
   report: Omit<CustomReport, 'id' | 'createdAt' | 'updatedAt'>,
 ): Promise<number> {
   const now = new Date().toISOString();

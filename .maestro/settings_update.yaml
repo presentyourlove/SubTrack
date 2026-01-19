@@ -1,0 +1,10 @@
+appId: com.subtrack.app
+---
+- launchApp
+- tapOn: "Settings"
+- tapOn: "語言"
+- tapOn: "English"
+- assertVisible: "Subscriptions"
+- tapOn: "Language"
+- tapOn: "繁體中文"
+- assertVisible: "訂閱項目"

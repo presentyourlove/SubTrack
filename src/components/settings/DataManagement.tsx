@@ -17,9 +17,13 @@ import { Ionicons } from '@expo/vector-icons';
 import { useDatabase } from '../../context/DatabaseContext';
 import { exportSubscriptionsToCSV, exportSubscriptionsToPDF } from '../../services/exportService';
 import { pickImportFile, parseImportFile, ImportResult } from '../../services/importService';
-import { ImportPreviewModal } from '../ImportPreviewModal';
 import { Subscription } from '../../types';
 import i18n from '../../i18n';
+
+// 智慧分包：延遲載入重型預覽組件 (Bundle Splitting)
+const ImportPreviewModal = React.lazy(() =>
+  import('../ImportPreviewModal').then((m) => ({ default: m.ImportPreviewModal })),
+);
 
 export function DataManagement(): React.ReactElement {
   const colorScheme = useColorScheme();
@@ -286,13 +290,17 @@ export function DataManagement(): React.ReactElement {
       </View>
 
       {/* Import Preview Modal */}
-      <ImportPreviewModal
-        visible={importPreviewVisible}
-        data={importResult?.data || []}
-        errors={importResult?.errors || []}
-        onConfirm={handleConfirmImport}
-        onCancel={handleCancelImport}
-      />
+      <React.Suspense fallback={<ActivityIndicator size="large" style={styles.loader} />}>
+        {importPreviewVisible && (
+          <ImportPreviewModal
+            visible={importPreviewVisible}
+            data={importResult?.data || []}
+            errors={importResult?.errors || []}
+            onConfirm={handleConfirmImport}
+            onCancel={handleCancelImport}
+          />
+        )}
+      </React.Suspense>
     </View>
   );
 }

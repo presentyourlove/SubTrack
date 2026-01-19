@@ -1,5 +1,5 @@
 import React, { useState, useMemo, useEffect } from 'react';
-import { StyleSheet, View, ScrollView, Text, TouchableOpacity, RefreshControl } from 'react-native';
+import { StyleSheet, View, ScrollView, Text, TouchableOpacity, TextInput } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
@@ -12,7 +12,7 @@ import AddSubscriptionModal from '../../src/components/AddSubscriptionModal';
 import CategoryTabs from '../../src/components/CategoryTabs';
 import AlertCard from '../../src/components/AlertCard';
 import WorkspaceSwitcher from '../../src/components/WorkspaceSwitcher';
-import { PrivacyToggle } from '../../src/components';
+import { PrivacyToggle, OptimizedList } from '../../src/components';
 import i18n from '../../src/i18n';
 import TagChip from '../../src/components/TagChip';
 import { hapticFeedback } from '../../src/utils/haptics';
@@ -92,7 +92,7 @@ export default function SubscriptionsScreen() {
         await updateSubscription(editingId, data);
         await setTagsForSubscription(editingId, tagIds);
       } else {
-        await addSubscription(data as any, tagIds);
+        await addSubscription(data as Subscription, tagIds);
       }
       setModalVisible(false);
       setEditingId(null);
@@ -131,58 +131,66 @@ export default function SubscriptionsScreen() {
         </View>
       </View>
 
-      <ScrollView
-        style={styles.content}
-        refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
-        contentContainerStyle={{ paddingBottom: 100 }}
-      >
-        <SummaryCard />
-        <AlertCard />
-        <CategoryTabs selectedCategory={selectedCategory} onSelectCategory={setSelectedCategory} />
+      <OptimizedList<Subscription>
+        data={filteredSubscriptions}
+        keyExtractor={(item: Subscription) => item.id.toString()}
+        estimatedItemSize={180}
+        contentContainerStyle={{ paddingHorizontal: 20, paddingBottom: 100 }}
+        refreshing={refreshing}
+        onRefresh={onRefresh}
+        ListHeaderComponent={
+          <>
+            <SummaryCard />
+            <AlertCard />
+            <CategoryTabs
+              selectedCategory={selectedCategory}
+              onSelectCategory={setSelectedCategory}
+            />
 
-        {tags.length > 0 && (
-          <View style={styles.tagFilterContainer}>
-            <ScrollView
-              horizontal
-              showsHorizontalScrollIndicator={false}
-              contentContainerStyle={styles.tagFilterContent}
-            >
-              <TouchableOpacity
-                style={[
-                  styles.tagFilterChip,
-                  { borderColor: colors.borderColor },
-                  selectedTagId === null && { backgroundColor: colors.accent },
-                ]}
-                onPress={() => {
-                  hapticFeedback.selection();
-                  setSelectedTagId(null);
-                }}
-              >
-                <Text
-                  style={[
-                    styles.tagFilterText,
-                    { color: selectedTagId === null ? '#ffffff' : colors.text },
-                  ]}
+            {tags.length > 0 && (
+              <View style={styles.tagFilterContainer}>
+                <ScrollView
+                  horizontal
+                  showsHorizontalScrollIndicator={false}
+                  contentContainerStyle={styles.tagFilterContent}
                 >
-                  {i18n.t('tags.allTags')}
-                </Text>
-              </TouchableOpacity>
-              {tags.map((tag) => (
-                <TagChip
-                  key={tag.id}
-                  tag={tag}
-                  selected={selectedTagId === tag.id}
-                  onPress={() => {
-                    hapticFeedback.selection();
-                    setSelectedTagId(selectedTagId === tag.id ? null : tag.id);
-                  }}
-                />
-              ))}
-            </ScrollView>
-          </View>
-        )}
-
-        {filteredSubscriptions.length === 0 ? (
+                  <TouchableOpacity
+                    style={[
+                      styles.tagFilterChip,
+                      { borderColor: colors.borderColor },
+                      selectedTagId === null && { backgroundColor: colors.accent },
+                    ]}
+                    onPress={() => {
+                      hapticFeedback.selection();
+                      setSelectedTagId(null);
+                    }}
+                  >
+                    <Text
+                      style={[
+                        styles.tagFilterText,
+                        { color: selectedTagId === null ? '#ffffff' : colors.text },
+                      ]}
+                    >
+                      {i18n.t('tags.allTags')}
+                    </Text>
+                  </TouchableOpacity>
+                  {tags.map((tag) => (
+                    <TagChip
+                      key={tag.id}
+                      tag={tag}
+                      selected={selectedTagId === tag.id}
+                      onPress={() => {
+                        hapticFeedback.selection();
+                        setSelectedTagId(selectedTagId === tag.id ? null : tag.id);
+                      }}
+                    />
+                  ))}
+                </ScrollView>
+              </View>
+            )}
+          </>
+        }
+        ListEmptyComponent={
           <View style={styles.emptyState}>
             <Ionicons name="file-tray-outline" size={64} color={colors.subtleText} />
             <Text style={[styles.emptyText, { color: colors.subtleText }]}>
@@ -197,25 +205,21 @@ export default function SubscriptionsScreen() {
               <Text style={styles.emptyButtonText}>{i18n.t('subscription.addFirst')}</Text>
             </TouchableOpacity>
           </View>
-        ) : (
-          <View style={styles.list}>
-            {filteredSubscriptions.map((subscription) => (
-              <SubscriptionCard
-                key={subscription.id}
-                subscription={subscription}
-                onEdit={() => handleEditSubscription(subscription.id)}
-                onDelete={() => handleDeleteSubscription(subscription.id)}
-                onSyncToCalendar={() => refreshData()}
-                onUpdateCalendarId={async (eventId) => {
-                  await updateSubscription(subscription.id, {
-                    calendarEventId: eventId || undefined,
-                  });
-                }}
-              />
-            ))}
-          </View>
+        }
+        renderItem={({ item: subscription }) => (
+          <SubscriptionCard
+            subscription={subscription}
+            onEdit={() => handleEditSubscription(subscription.id)}
+            onDelete={() => handleDeleteSubscription(subscription.id)}
+            onSyncToCalendar={() => refreshData()}
+            onUpdateCalendarId={async (eventId) => {
+              await updateSubscription(subscription.id, {
+                calendarEventId: eventId || undefined,
+              });
+            }}
+          />
         )}
-      </ScrollView>
+      />
 
       <AddSubscriptionModal
         visible={modalVisible}

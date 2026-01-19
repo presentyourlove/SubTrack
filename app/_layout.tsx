@@ -1,12 +1,29 @@
 import { useEffect } from 'react';
-import { Stack } from 'expo-router';
+import { Stack, useRouter } from 'expo-router';
+import { useQuickActionCallback } from 'expo-quick-actions/hooks';
 import { ThemeProvider } from '../src/context/ThemeContext';
 import { AuthProvider } from '../src/context/AuthContext';
 import { DatabaseProvider } from '../src/context/DatabaseContext';
+import { SecurityProvider } from '../src/context/SecurityContext';
 import { ToastProvider } from '../src/context/ToastContext';
+import { LockScreen } from '../src/components/LockScreen';
 import { requestNotificationPermissions } from '../src/utils/notificationHelper';
 
 export default function RootLayout() {
+  const router = useRouter();
+
+  // 處理快速操作 (Quick Actions)
+  useQuickActionCallback((action) => {
+    if (action.id === 'shortcut_add') {
+      // 導向首頁並開啟新增 Modal (由首頁邏輯處理或直接導向特定的 Add 頁面)
+      router.push('/(tabs)');
+    } else if (action.id === 'shortcut_search') {
+      router.push('/search');
+    } else if (action.id === 'shortcut_summary') {
+      router.push('/(tabs)/reports');
+    }
+  });
+
   // 在應用程式啟動時請求通知權限
   useEffect(() => {
     const setupNotifications = async () => {
@@ -29,11 +46,14 @@ export default function RootLayout() {
     <ThemeProvider>
       <AuthProvider>
         <DatabaseProvider>
-          <ToastProvider>
-            <Stack screenOptions={{ headerShown: false }}>
-              <Stack.Screen name="(tabs)" />
-            </Stack>
-          </ToastProvider>
+          <SecurityProvider>
+            <ToastProvider>
+              <Stack screenOptions={{ headerShown: false }}>
+                <Stack.Screen name="(tabs)" />
+              </Stack>
+              <LockScreen />
+            </ToastProvider>
+          </SecurityProvider>
         </DatabaseProvider>
       </AuthProvider>
     </ThemeProvider>

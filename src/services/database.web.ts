@@ -258,6 +258,20 @@ export function importAllData(data: {
   }
 }
 
+// ==================== 報表操作 (Web 存根) ====================
+
+export async function createReport(_db: WebDatabase, _report: any): Promise<number> {
+  return 0;
+}
+
+export async function getReports(_db: WebDatabase): Promise<any[]> {
+  return [];
+}
+
+export async function deleteReport(_db: WebDatabase, _id: number): Promise<void> {
+  // 不執行操作
+}
+
 // 清除所有資料
 export function clearAllData(): void {
   localStorage.removeItem(STORAGE_KEYS.SUBSCRIPTIONS);

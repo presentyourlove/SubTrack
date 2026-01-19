@@ -14,9 +14,11 @@ import { CustomReport } from '../../src/types';
 import i18n from '../../src/i18n';
 import { Ionicons } from '@expo/vector-icons';
 import GenericChart from '../../src/components/charts/GenericChart';
-import ReportBuilderModal from '../../src/components/reports/ReportBuilderModal';
 import { executeReport } from '../../src/services/db/reports';
 import { useFocusEffect } from 'expo-router';
+
+// 智慧分包：延遲載入報表生成組件 (Bundle Splitting)
+const ReportBuilderModal = React.lazy(() => import('../../src/components/reports/ReportBuilderModal'));
 
 export default function ReportsScreen() {
   const { colors } = useTheme();
@@ -119,11 +121,15 @@ export default function ReportsScreen() {
         )}
       </ScrollView>
 
-      <ReportBuilderModal
-        visible={modalVisible}
-        onClose={() => setModalVisible(false)}
-        onSave={handleCreate}
-      />
+      <React.Suspense fallback={null}>
+        {modalVisible && (
+          <ReportBuilderModal
+            visible={modalVisible}
+            onClose={() => setModalVisible(false)}
+            onSave={handleCreate}
+          />
+        )}
+      </React.Suspense>
     </View>
   );
 }

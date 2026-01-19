@@ -1,14 +1,24 @@
-import * as SQLite from 'expo-sqlite';
+import { open } from '@op-engineering/op-sqlite';
 import { UserSettings } from '../../types';
 import { DB_NAME, DEFAULT_SETTINGS, DEFAULT_EXCHANGE_RATES } from '../../constants/AppConfig';
+import { SQLiteDatabaseCompat, wrapDatabase } from './adapter';
 
-export type SQLiteDatabase = SQLite.SQLiteDatabase;
+export type SQLiteDatabase = SQLiteDatabaseCompat;
 
 /**
  * 初始化資料庫並建立必要的資料表
  */
-export async function initDatabase(): Promise<SQLite.SQLiteDatabase> {
-  const db = await SQLite.openDatabaseAsync(DB_NAME);
+export async function initDatabase(): Promise<SQLiteDatabase> {
+  const nativeDb = open({ name: DB_NAME });
+  const db = wrapDatabase(nativeDb);
+
+  // 啟用 WAL 模式以提升讀寫併發效能
+  try {
+    await db.execAsync('PRAGMA journal_mode = WAL;');
+    await db.execAsync('PRAGMA synchronous = NORMAL;');
+  } catch (error) {
+    console.error('Failed to enable WAL mode:', error);
+  }
 
   // 建立訂閱表
   await db.execAsync(`

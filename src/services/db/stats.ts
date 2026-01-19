@@ -1,11 +1,11 @@
-import * as SQLite from 'expo-sqlite';
+import { SQLiteDatabase } from '../database';
 import { Subscription } from '../../types';
 
 /**
  * 計算總月支出
  */
 export async function getMonthlyTotal(
-  db: SQLite.SQLiteDatabase,
+  db: SQLiteDatabase,
   currency: string = 'TWD',
   workspaceId?: number,
 ): Promise<number> {
@@ -31,15 +31,13 @@ export async function getMonthlyTotal(
 
   const result = await db.getFirstAsync<{ total: number }>(query, params);
   return result?.total || 0;
-}
-return result?.total || 0;
 }
 
 /**
  * 計算總年支出
  */
 export async function getYearlyTotal(
-  db: SQLite.SQLiteDatabase,
+  db: SQLiteDatabase,
   currency: string = 'TWD',
   workspaceId?: number,
 ): Promise<number> {
@@ -66,14 +64,12 @@ export async function getYearlyTotal(
   const result = await db.getFirstAsync<{ total: number }>(query, params);
   return result?.total || 0;
 }
-return result?.total || 0;
-}
 
 /**
  * 取得即將到期的訂閱
  */
 export async function getUpcomingSubscriptions(
-  db: SQLite.SQLiteDatabase,
+  db: SQLiteDatabase,
   days: number = 7,
   workspaceId?: number,
 ): Promise<Subscription[]> {
@@ -92,6 +88,4 @@ export async function getUpcomingSubscriptions(
 
   const subscriptions = await db.getAllAsync<Subscription>(query, params);
   return subscriptions;
-}
-return subscriptions;
 }

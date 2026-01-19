@@ -13,7 +13,7 @@ export async function initializeDatabase(): Promise<Database> {
   return await database.initDatabase();
 }
 
-// 匯出所有資料庫操作
+// 匯出所有資料庫操作 (優先匯出 SQLite 目標，但 Web 會在執行時動態切換)
 export const {
   getAllSubscriptions,
   getSubscriptionsByCategory,
@@ -22,8 +22,6 @@ export const {
   deleteSubscription,
   getUserSettings,
   updateUserSettings,
-  getMonthlyTotal,
-  getYearlyTotal,
   getMonthlyTotal,
   getYearlyTotal,
   getUpcomingSubscriptions,

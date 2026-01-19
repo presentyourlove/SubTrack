@@ -1,0 +1,4 @@
+appId: com.subtrack.app
+---
+- launchApp
+- assertVisible: "SubTrack"

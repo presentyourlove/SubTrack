@@ -1,4 +1,4 @@
-import * as SQLite from 'expo-sqlite';
+import { SQLiteDatabase } from '../database';
 import { Workspace } from '../../types';
 
 /**
@@ -12,7 +12,7 @@ export async function getWorkspaces(db: SQLite.SQLiteDatabase): Promise<Workspac
  * 建立新工作區
  */
 export async function createWorkspace(
-  db: SQLite.SQLiteDatabase,
+  db: SQLiteDatabase,
   name: string,
   icon: string,
 ): Promise<number> {
@@ -29,7 +29,7 @@ export async function createWorkspace(
  * 更新工作區
  */
 export async function updateWorkspace(
-  db: SQLite.SQLiteDatabase,
+  db: SQLiteDatabase,
   id: number,
   name: string,
   icon: string,
@@ -57,10 +57,7 @@ export async function deleteWorkspace(db: SQLite.SQLiteDatabase, id: number): Pr
 /**
  * 切換當前工作區 (更新 UserSettings)
  */
-export async function switchWorkspace(
-  db: SQLite.SQLiteDatabase,
-  workspaceId: number,
-): Promise<void> {
+export async function switchWorkspace(db: SQLiteDatabase, workspaceId: number): Promise<void> {
   const now = new Date().toISOString();
   await db.runAsync(`UPDATE user_settings SET currentWorkspaceId = ?, updatedAt = ? WHERE id = 1`, [
     workspaceId,

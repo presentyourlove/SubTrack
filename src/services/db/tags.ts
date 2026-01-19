@@ -3,7 +3,7 @@
  * 標籤相關資料庫操作
  */
 
-import * as SQLite from 'expo-sqlite';
+import { SQLiteDatabase } from '../database';
 import { Tag } from '../../types';
 
 /**
@@ -25,11 +25,7 @@ export async function getTagById(db: SQLite.SQLiteDatabase, id: number): Promise
 /**
  * 建立新標籤
  */
-export async function createTag(
-  db: SQLite.SQLiteDatabase,
-  name: string,
-  color: string,
-): Promise<number> {
+export async function createTag(db: SQLiteDatabase, name: string, color: string): Promise<number> {
   const now = new Date().toISOString();
   const result = await db.runAsync(
     'INSERT INTO tags (name, color, createdAt, updatedAt) VALUES (?, ?, ?, ?)',
@@ -42,7 +38,7 @@ export async function createTag(
  * 更新標籤
  */
 export async function updateTag(
-  db: SQLite.SQLiteDatabase,
+  db: SQLiteDatabase,
   id: number,
   updates: Partial<Pick<Tag, 'name' | 'color'>>,
 ): Promise<void> {
@@ -79,7 +75,7 @@ export async function deleteTag(db: SQLite.SQLiteDatabase, id: number): Promise<
  * 取得訂閱的所有標籤
  */
 export async function getTagsForSubscription(
-  db: SQLite.SQLiteDatabase,
+  db: SQLiteDatabase,
   subscriptionId: number,
 ): Promise<Tag[]> {
   const tags = await db.getAllAsync<Tag>(
@@ -96,7 +92,7 @@ export async function getTagsForSubscription(
  * 設定訂閱的標籤 (覆蓋現有標籤)
  */
 export async function setTagsForSubscription(
-  db: SQLite.SQLiteDatabase,
+  db: SQLiteDatabase,
   subscriptionId: number,
   tagIds: number[],
 ): Promise<void> {
@@ -116,7 +112,7 @@ export async function setTagsForSubscription(
  * 新增單一標籤到訂閱
  */
 export async function addTagToSubscription(
-  db: SQLite.SQLiteDatabase,
+  db: SQLiteDatabase,
   subscriptionId: number,
   tagId: number,
 ): Promise<void> {
@@ -134,7 +130,7 @@ export async function addTagToSubscription(
  * 從訂閱移除單一標籤
  */
 export async function removeTagFromSubscription(
-  db: SQLite.SQLiteDatabase,
+  db: SQLiteDatabase,
   subscriptionId: number,
   tagId: number,
 ): Promise<void> {
@@ -148,7 +144,7 @@ export async function removeTagFromSubscription(
  * 根據標籤取得訂閱 ID 列表
  */
 export async function getSubscriptionIdsByTag(
-  db: SQLite.SQLiteDatabase,
+  db: SQLiteDatabase,
   tagId: number,
 ): Promise<number[]> {
   const results = await db.getAllAsync<{ subscriptionId: number }>(
@@ -162,7 +158,7 @@ export async function getSubscriptionIdsByTag(
  * 根據多個標籤取得訂閱 ID 列表 (AND 邏輯)
  */
 export async function getSubscriptionIdsByTags(
-  db: SQLite.SQLiteDatabase,
+  db: SQLiteDatabase,
   tagIds: number[],
 ): Promise<number[]> {
   if (tagIds.length === 0) return [];

@@ -1,0 +1,10 @@
+appId: com.subtrack.app
+---
+- launchApp
+- tapOn: "Settings"
+- tapOn: "生物辨識解鎖"
+- stopApp
+- launchApp
+- assertVisible: "立即解鎖"
+- tapOn: "立即解鎖"
+# 注意：Maestro 無法模擬實際的 FaceID 指紋，但可以測試 UI 狀態

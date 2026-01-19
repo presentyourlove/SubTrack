@@ -1,10 +1,12 @@
 import React from 'react';
 import { View, Text, StyleSheet } from 'react-native';
 import { useTheme } from '../../context/ThemeContext';
+import { getArchitectureInfo } from '../../utils/archDetection';
 import i18n from '../../i18n';
 
 export default function AboutSection() {
   const { colors } = useTheme();
+  const archInfo = getArchitectureInfo();
 
   return (
     <View style={styles.aboutSection}>
@@ -13,6 +15,9 @@ export default function AboutSection() {
       </Text>
       <Text style={[styles.aboutText, { color: colors.subtleText }]}>SubTrack v1.0.0</Text>
       <Text style={[styles.aboutText, { color: colors.subtleText }]}>訂閱管理應用程式</Text>
+      <Text style={[styles.archText, { color: colors.subtleText }]}>
+        {archInfo.name} ({archInfo.details.renderer} / {archInfo.details.nativeModules})
+      </Text>
     </View>
   );
 }
@@ -31,5 +36,10 @@ const styles = StyleSheet.create({
   aboutText: {
     fontSize: 14,
     marginBottom: 4,
+  },
+  archText: {
+    fontSize: 11,
+    marginTop: 4,
+    opacity: 0.7,
   },
 });

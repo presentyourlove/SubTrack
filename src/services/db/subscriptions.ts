@@ -1,11 +1,11 @@
-import * as SQLite from 'expo-sqlite';
+import { SQLiteDatabase } from '../database';
 import { Subscription } from '../../types';
 
 /**
  * 取得所有訂閱資料
  */
 export async function getAllSubscriptions(
-  db: SQLite.SQLiteDatabase,
+  db: SQLiteDatabase,
   workspaceId?: number,
 ): Promise<Subscription[]> {
   const query = workspaceId
@@ -21,7 +21,7 @@ export async function getAllSubscriptions(
  * 根據分類取得訂閱資料
  */
 export async function getSubscriptionsByCategory(
-  db: SQLite.SQLiteDatabase,
+  db: SQLiteDatabase,
   category: string,
 ): Promise<Subscription[]> {
   const subscriptions = await db.getAllAsync<Subscription>(
@@ -35,7 +35,7 @@ export async function getSubscriptionsByCategory(
  * 新增訂閱
  */
 export async function addSubscription(
-  db: SQLite.SQLiteDatabase,
+  db: SQLiteDatabase,
   subscription: Omit<Subscription, 'id' | 'createdAt' | 'updatedAt'>,
 ): Promise<number> {
   const now = new Date().toISOString();
@@ -68,7 +68,7 @@ export async function addSubscription(
  * 更新訂閱資料
  */
 export async function updateSubscription(
-  db: SQLite.SQLiteDatabase,
+  db: SQLiteDatabase,
   id: number,
   subscription: Partial<Omit<Subscription, 'id' | 'createdAt' | 'updatedAt'>>,
 ): Promise<void> {
@@ -91,6 +91,6 @@ export async function updateSubscription(
 /**
  * 刪除訂閱
  */
-export async function deleteSubscription(db: SQLite.SQLiteDatabase, id: number): Promise<void> {
+export async function deleteSubscription(db: SQLiteDatabase, id: number): Promise<void> {
   await db.runAsync('DELETE FROM subscriptions WHERE id = ?', [id]);
 }

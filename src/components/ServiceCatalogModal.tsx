@@ -10,7 +10,6 @@ import {
   Modal,
   TouchableOpacity,
   TextInput,
-  FlatList,
   StyleSheet,
   useColorScheme,
 } from 'react-native';
@@ -23,6 +22,7 @@ import {
 import { SubscriptionCategory } from '../types';
 import { ServiceCard } from './ServiceCard';
 import i18n from '../i18n';
+import { OptimizedList } from './common/OptimizedList';
 
 interface ServiceCatalogModalProps {
   visible: boolean;
@@ -224,12 +224,13 @@ export function ServiceCatalogModal({
 
           {/* Service List */}
           {filteredServices.length > 0 ? (
-            <FlatList
+            <OptimizedList<ServiceTemplate>
               data={filteredServices}
               renderItem={renderItem}
               keyExtractor={(item) => item.id}
               numColumns={3}
-              columnWrapperStyle={{ justifyContent: 'flex-start', gap: 12 }}
+              extraData={isDark}
+              estimatedItemSize={100}
               showsVerticalScrollIndicator={false}
               style={styles.listContainer}
             />

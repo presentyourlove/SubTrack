@@ -1,5 +1,28 @@
 export default {
   // 通用
+  calendar: {
+    webNotSupported: '日曆功能在 Web 平台不支援',
+    removed: '已從日曆移除',
+    removeFailed: '從日曆移除失敗',
+    permissionRequired: '需要日曆權限才能同步',
+    noCalendar: '找不到可用的日曆',
+    eventTitle: '%{icon} %{name} 扣款提醒',
+    syncSuccess: '已成功同步到日曆！',
+    syncFailed: '同步日曆失敗，請稍後再試',
+    syncLabel: '同步到日曆',
+    syncHint: '自動將扣款日期加入手機日曆',
+    addFailed: '新增到日曆失敗',
+    recurringFailed: '新增重複事件失敗',
+    eventNotes: '金額: {{price}} {{currency}}\n週期: {{cycle}}',
+    eventNotesPrice: '訂閱金額：%{price}',
+    sync: '同步日曆',
+    syncing: '同步中...',
+    syncError: '同步失敗',
+    lastSynced: '上次同步：%{time}',
+    syncNow: '立即雙向同步',
+    autoSync: '背景自動同步',
+    direction: '同步方向：日曆 ↔ App',
+  },
   common: {
     cancel: '取消',
     confirm: '確認',
@@ -103,23 +126,6 @@ export default {
     emptyCategory: '此分類尚無訂閱',
     addFirst: '新增第一筆訂閱',
   },
-  // 日曆
-  calendar: {
-    webNotSupported: '日曆功能在 Web 平台不支援',
-    removed: '已從日曆移除',
-    removeFailed: '從日曆移除失敗',
-    permissionRequired: '需要日曆權限才能同步',
-    noCalendar: '找不到可用的日曆',
-    eventTitle: '{{icon}} {{name}} 扣款',
-    syncSuccess: '已成功同步到日曆！',
-    syncFailed: '同步日曆失敗，請稍後再試',
-    syncLabel: '同步到日曆',
-    syncHint: '自動將扣款日期加入手機日曆',
-    addFailed: '新增到日曆失敗',
-    recurringFailed: '新增重複事件失敗',
-    eventNotes: '金額: {{price}} {{currency}}\n週期: {{cycle}}',
-    eventNotesPrice: '金額: {{price}}',
-  },
   // 通知
   notification: {
     upcomingTitle: '訂閱即將到期 📅',
@@ -183,6 +189,15 @@ export default {
       calculatedRate: '基準時薪',
       hr: '元/時',
       hoursUnit: '小時工時',
+    },
+    security: {
+      title: '安全驗證',
+      biometricTitle: '生物辨識解鎖',
+      biometricDesc: '使用 FaceID / TouchID 保護您的資料',
+      unlock: '立即解鎖',
+      lockedTitle: 'SubTrack 已鎖定',
+      lockedDesc: '請使用生物辨識解鎖以繼續存取您的財務資訊',
+      setupFailed: '啟用失敗，請確認已在系統設定生物辨識',
     },
   },
   // 日期工具

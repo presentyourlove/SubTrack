@@ -1,4 +1,4 @@
-import * as SQLite from 'expo-sqlite';
+import { SQLiteDatabase } from '../database';
 import { UserSettings } from '../../types';
 
 /**
@@ -13,7 +13,7 @@ export async function getUserSettings(db: SQLite.SQLiteDatabase): Promise<UserSe
  * 更新使用者設定
  */
 export async function updateUserSettings(
-  db: SQLite.SQLiteDatabase,
+  db: SQLiteDatabase,
   settings: Partial<Omit<UserSettings, 'id' | 'createdAt' | 'updatedAt'>>,
 ): Promise<void> {
   const now = new Date().toISOString();

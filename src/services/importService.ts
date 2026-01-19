@@ -5,9 +5,11 @@
 
 import { File } from 'expo-file-system';
 import * as DocumentPicker from 'expo-document-picker';
-import Papa from 'papaparse';
-import * as XLSX from 'xlsx';
+// 重型套件改為動態導入以優化啟動效能 (Bundle Splitting)
+// import Papa from 'papaparse';
+// import * as XLSX from 'xlsx';
 import { Subscription, SubscriptionCategory, BillingCycle } from '../types';
+import { processInChunks } from './workerService';
 
 // 欄位名稱對應 (支援多種命名)
 const FIELD_MAPPINGS: Record<string, keyof Subscription> = {
@@ -223,21 +225,38 @@ export async function parseCSV(fileUri: string): Promise<ImportResult> {
   // 移除 BOM
   const cleanContent = content.replace(/^\uFEFF/, '');
 
+  // 動態導入 papaparse
+  const { default: Papa } = await import('papaparse');
+
   const parseResult = Papa.parse<Record<string, string>>(cleanContent, {
     header: true,
     skipEmptyLines: true,
   });
 
-  const data: Partial<Subscription>[] = [];
   const errors: string[] = [];
 
-  parseResult.data.forEach((row, index) => {
-    const { subscription, error } = mapRowToSubscription(row, index);
-    if (subscription) {
-      data.push(subscription);
+  // 使用多執行緒背景分批處理資料
+  const processedData = await processInChunks(
+    parseResult.data,
+    (row) => {
+      // 注意：這裡在背景執行緒執行，不能直接捕捉非 Worklet 的變數
+      // 但 mapRowToSubscription 目前是純函式，且依賴的 Mapping 常数已在檔案頂部定義
+      // 在生產環境中，可能需要將 Mapping 傳入或確保它們被轉為 Worklet 友善形式
+      return mapRowToSubscription(row, 0); // index 會在 processInChunks 內部維護，這裡暫傳 0
+    },
+    (progress) => {
+      console.log(`Import progress: ${progress.toFixed(2)}%`);
+    },
+  );
+
+  const data: Partial<Subscription>[] = [];
+  processedData.forEach((result, index) => {
+    if (result.subscription) {
+      data.push(result.subscription);
     }
-    if (error) {
-      errors.push(error);
+    if (result.error) {
+      // 修正 Index 顯示
+      errors.push(`第 ${index + 1} 行：${result.error}`);
     }
   });
 
@@ -256,6 +275,9 @@ export async function parseExcel(fileUri: string): Promise<ImportResult> {
   const arrayBuffer = await file.arrayBuffer();
   const content = Buffer.from(arrayBuffer).toString('base64');
 
+  // 動態導入 xlsx
+  const XLSX = await import('xlsx');
+
   const workbook = XLSX.read(content, { type: 'base64' });
   const firstSheetName = workbook.SheetNames[0];
   const worksheet = workbook.Sheets[firstSheetName];
@@ -263,16 +285,24 @@ export async function parseExcel(fileUri: string): Promise<ImportResult> {
   // 轉換為 JSON
   const jsonData = XLSX.utils.sheet_to_json<Record<string, string>>(worksheet);
 
-  const data: Partial<Subscription>[] = [];
   const errors: string[] = [];
 
-  jsonData.forEach((row, index) => {
-    const { subscription, error } = mapRowToSubscription(row, index);
-    if (subscription) {
-      data.push(subscription);
+  // 使用多執行緒背景分批處理資料
+  const processedData = await processInChunks(
+    jsonData,
+    (row) => mapRowToSubscription(row, 0),
+    (progress) => {
+      console.log(`Excel Import progress: ${progress.toFixed(2)}%`);
+    },
+  );
+
+  const data: Partial<Subscription>[] = [];
+  processedData.forEach((result, index) => {
+    if (result.subscription) {
+      data.push(result.subscription);
     }
-    if (error) {
-      errors.push(error);
+    if (result.error) {
+      errors.push(`第 ${index + 1} 行：${result.error}`);
     }
   });
 

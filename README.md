@@ -55,7 +55,7 @@
 
 * **Auth**: Firebase Authentication
 * **Database (Cloud)**: Cloud Firestore
-* **Database (Local)**: `expo-sqlite` (Native) / `localStorage` (Web)
+* **Database (Local)**: `@op-engineering/op-sqlite` (JSI Enabled, Native) / `localStorage` (Web)
 
 ### Tools
 
@@ -209,39 +209,69 @@ npm test -- --coverage
 
 * [ ] **🧩 桌面小工具 (Widgets)** (V3)：在 iOS/Android 主畫面直接查看即將扣款項目。
 
-### �️ 安全與隱私 (Security & Privacy)
+### ️ 安全與隱私 (Security & Privacy)
 
-* [ ] **🔐 生物辨識解鎖 (Biometric Security)**：整合 FaceID / TouchID，保護敏感的訂閱財務資訊。
-* [ ] **🛡️ 暗網監測 (Dark Web Monitoring)**：檢查訂閱帳號密碼是否在外洩資料庫中 (整合 HaveIBeenPwned API)。
-* [ ] **� 量子抗性加密 (Post-Quantum Cryptography)**：採用與 NIST 標準相容的加密演算法，抵禦未來量子電腦夠算力破解的風險。
+* [x] **🔐 生物辨識解鎖 (Biometric Security)**：整合 FaceID / TouchID，保護敏感的訂閱財務資訊。
+* [ ] **🛡️ 暗網監測 (Dark Web Monitoring)** (V3)：檢查訂閱帳號密碼是否在外洩資料庫中 (整合 HaveIBeenPwned API)。
+* [ ] **量子抗性加密 (Post-Quantum Cryptography)** (V3)：採用與 NIST 標準相容的加密演算法，抵禦未來量子電腦夠算力破解的風險。
 
 ### 🛠️ 工程與架構 (Engineering & DevOps)
 
-* [ ] **⚡ 離線圖片快取 (Offline Image Caching)**：使用 `expo-image` 優化網路圖片載入體驗。
-* [ ] **🧪 E2E 自動化測試 (End-to-End Testing)**：引入 Maestro 進行完整的使用者流程自動化測試。
-* [ ] **� 錯誤監控 (Error Monitoring)**：整合 Sentry 即時捕捉線上 Crash 與錯誤。
-* [ ] **� 捷徑與整合 (Shortcuts & App Actions)**：支援 iOS/Android 主畫面長按捷徑 (Quick Actions)。
-* [ ] **☁️ Google Calendar 雙向同步**：除了寫入，也支援從日曆讀取既有訂閱事件。
-* [ ] **🐳 自架後端支援 (Self-Hosted/Docker)**：提供 Docker Image，讓用戶將資料庫從 Firebase 遷移至自家的 NAS 或 VPS。
+* [x] **⚡ 離線圖片快取 (Offline Image Caching)**：使用 `expo-image` 優化網路圖片載入體驗。
+* [x] **🧪 E2E 自動化測試 (End-to-End Testing)**：引入 Maestro 進行完整的使用者流程自動化測試。
+* [x] **⚡ 捷徑與整合 (Shortcuts & App Actions)**：支援 iOS/Android 主畫面長按捷徑 (Quick Actions)。
+* [x] **☁️ Google Calendar 雙向同步**：除了寫入，也支援從日曆讀取既有訂閱事件。
+* [ ] **鲲 自架後端支援 (Self-Hosted/Docker)**：提供 Docker Image，讓用戶將資料庫從 Firebase 遷移至自家的 NAS 或 VPS。 (DELETED: 不實作)
 
 ### 🚀 極致效能優化 (Performance Mastery)
 
 我們致力於挑戰移動運算的極限，以下技術將確保 SubTrack 成為市面上最流暢的應用：
 
 * **基礎優化**
-  * [ ] **⚡ FlashList 遷移**：導入 Shopify FlashList，維持千筆資料 60 FPS 捲動。
-  * [ ] **🔥 JSI 直接綁定**：使用 C++ 直接呼叫 SQLite，提升資料庫讀寫 10x。
-  * [ ] **🏗️ New Architecture**：全面啟用 Fabric (UI) 與 TurboModules。
-  * [ ] **📦 智慧分包 (Bundle Splitting)**：大幅縮減 App 首屏載入體積。
-  * [ ] **🏎️ Hermes 靜態優化**：啟用 Static Hermes 達成接近原生的啟動速度。
-  * [ ] **🖼️ 圖片客戶端壓縮**：上傳前進行 WebP 壓縮，減少傳輸流量。
-  * [ ] **� SQLite WAL 模式**：大幅提升資料庫並發讀寫能力。
+  * [x] **⚡ FlashList 遷移**：導入 Shopify FlashList，維持千筆資料 60 FPS 捲動。
+  * [x] **🔥 JSI 直接綁定**：使用 `@op-engineering/op-sqlite` 直接呼叫 SQLite，大幅提升資料庫讀寫效能。
+  * [x] **🏗️ New Architecture**：全面啟用 Fabric (UI) 與 TurboModules。
+  * [x] **📦 智慧分包 (Bundle Splitting)**：大幅縮減 App 首屏載入體積。
+  * [x] **🏎️ Hermes 靜態優化**：啟用 Static Hermes 達成接近原生的啟動速度。
+  * [x] **🗄️ SQLite WAL 模式**：大幅提升資料庫並發讀寫能力。
 
 * **進階技術**
-  * [ ] **� 多執行緒運算**：將數據處理移至 Worker Threads，釋放 UI 執行緒。
+  * [x] **多執行緒運算**：將數據處理移至 Worker Threads，釋放 UI 執行緒。
   * [ ] **🎨 Skia 繪圖引擎**：引入 GPU 加速的 120Hz 絲滑圖表動畫。
   * [ ] **🚀 HTTP/3 (QUIC)**：在弱網環境下減少 30% 連線延遲。
   * [ ] **⚡ MMKV 全面替代**：以 mmap 技術實現 100x 存儲讀寫加速。
+
+## 📝 最近變更清單 (Recent Changes)
+
+### 🆕 新增檔案
+
+- `.maestro/`: Maestro E2E 測試腳本
+* `fix_line_endings.ps1`: 行尾符號修復工具
+* `metro.config.js`: Metro 效能優化配置
+* `src/components/LockScreen.tsx`: 生物辨識鎖定介面
+* `src/components/common/CachedImage.tsx`: 高性能圖片快取組件
+* `src/components/settings/BiometricSettings.tsx`: 安全設定頁面
+* `src/components/settings/SyncDashboard.tsx`: 日曆同步與儀表板
+* `src/context/SecurityContext.tsx`: 安全狀態管理 Context
+* `src/services/calendarSyncService.ts`: Google 日曆雙向同步服務
+* `src/services/db/adapter.ts`: JSI SQLite 適配層
+* `src/services/imageService.ts`: WebP 圖片壓縮服務
+* `src/services/securityService.ts`: 生物辨識原生介面
+* `src/services/workerService.ts`: 多執行緒運算服務
+* `src/utils/archDetection.ts`: 新架構運行時偵測工具
+
+### 🛠️ 修改檔案
+
+- `README.md`: 更新發展藍圖與變更日誌
+* `app.json`: 啟用了新架構、捷徑與相關配置
+* `app/(tabs)/index.tsx`, `reports.tsx`, `settings.tsx`: 頁面功能整合
+* `app/_layout.tsx`: 全域 SecurityProvider 與捷徑監聽整合
+* `src/components/SubscriptionCard.tsx`: 支援自定義圖示渲染與 FlashList 優化
+* `src/services/db/*.ts`: 全面遷移至 JSI SQLite 驅動並優化 SQL
+* `src/services/importService.ts`: 引入多執行緒解析大量資料
+* `src/services/syncService.ts`: Firebase 延遲載入優化
+* `src/i18n/zh.ts`: 補齊翻譯字串
+* `package.json`: 新增 `react-native-multithreading`, `reanimated` 等核心依賴
   * [ ] **🔢 Protobuf 傳輸**：縮減 API Payload 體積並提升 5x 解析速度。
   * [ ] **♻️ 自定義物件池**：減少 Garbage Collection 觸發頻率。
   * [ ] **🔮 預測性網路預載**：AI 預判動作提前請求，達成零延遲體感。
@@ -263,3 +293,22 @@ npm test -- --coverage
 
 **Author**: SubTrack Team
 **Copyright**: © 2026 SubTrack. All rights reserved.
+
+---
+
+### 本次更新檔案清單 (Recent Changes List)
+
+* **MOD**: `src/services/database.ts` (型別重新定義)
+
+* **MOD**: `src/services/db/init.ts` (驅動切換至 JSI)
+* **NEW**: `src/services/db/adapter.ts` (JSI 適配層)
+* **MOD**: `src/services/db/subscriptions.ts` (API 更新)
+* **MOD**: `src/services/db/settings.ts` (API 更新)
+* **MOD**: `src/services/db/stats.ts` (API 更新與重複代碼修復)
+* **MOD**: `src/services/db/reports.ts` (API 更新)
+* **MOD**: `src/services/db/tags.ts` (API 更新)
+* **MOD**: `src/services/db/members.ts` (API 更新)
+* **MOD**: `src/services/db/workspaces.ts` (API 更新)
+* **MOD**: `src/services/index.ts` (匯出優化)
+* **MOD**: `src/services/database.web.ts` (Web 相容性補強)
+* **MOD**: `src/components/common/OptimizedList.tsx` (型別修正)

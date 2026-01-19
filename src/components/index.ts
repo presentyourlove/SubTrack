@@ -7,3 +7,4 @@ export { default as CategoryTabs } from './CategoryTabs';
 export { default as BudgetChart } from './BudgetChart';
 export { default as CategoryBreakdown } from './CategoryBreakdown';
 export { default as PrivacyToggle } from './PrivacyToggle';
+export { OptimizedList } from './common/OptimizedList';

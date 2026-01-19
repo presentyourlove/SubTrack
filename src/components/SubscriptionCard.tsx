@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, Platform } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, Platform, Image } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import * as Calendar from 'expo-calendar';
 import { useTheme } from '../context/ThemeContext';
@@ -13,8 +13,7 @@ import { TagChip } from './TagChip';
 import SplitBillModal from './SplitBillModal';
 import { usePrivacy } from '../hooks/usePrivacy';
 import { hapticFeedback } from '../utils/haptics';
-
-const ALARM_OFFSET_ONE_DAY_MINS = -24 * 60;
+import { calendarSyncService } from '../services/calendarSyncService';
 
 type SubscriptionCardProps = {
   subscription: Subscription;
@@ -74,37 +73,12 @@ export default function SubscriptionCard({
         return;
       }
 
-      // 請求日曆權限
-      const { status } = await Calendar.requestCalendarPermissionsAsync();
-      if (status !== 'granted') {
-        alert(i18n.t('calendar.permissionRequired'));
-        return;
-      }
+      const eventId = await calendarSyncService.upsertEvent(subscription);
 
-      const calendars = await Calendar.getCalendarsAsync(Calendar.EntityTypes.EVENT);
-      const defaultCalendar = calendars.find((cal) => cal.allowsModifications) || calendars[0];
-
-      if (!defaultCalendar) {
+      if (!eventId) {
         alert(i18n.t('calendar.noCalendar'));
         return;
       }
-
-      const eventDate = new Date(subscription.nextBillingDate);
-      const endDate = new Date(eventDate);
-      endDate.setHours(endDate.getHours() + 1);
-
-      const eventId = await Calendar.createEventAsync(defaultCalendar.id, {
-        title: i18n.t('calendar.eventTitle', {
-          icon: subscription.icon,
-          name: subscription.name,
-        }),
-        startDate: eventDate,
-        endDate: endDate,
-        notes: i18n.t('calendar.eventNotesPrice', {
-          price: formatCurrency(subscription.price, subscription.currency),
-        }),
-        alarms: [{ relativeOffset: ALARM_OFFSET_ONE_DAY_MINS }], // 提前 1 天提醒
-      });
 
       // 儲存 eventId 到資料庫
       if (onUpdateCalendarId) {
@@ -153,7 +127,11 @@ export default function SubscriptionCard({
         {/* 頂部資訊 */}
         <View style={styles.header}>
           <View style={styles.iconContainer}>
-            <Text style={styles.icon}>{subscription.icon}</Text>
+            {subscription.icon.startsWith('file://') ? (
+              <Image source={{ uri: subscription.icon }} style={styles.iconImage} />
+            ) : (
+              <Text style={styles.icon}>{subscription.icon}</Text>
+            )}
           </View>
 
           <View style={styles.info}>
@@ -308,6 +286,11 @@ const styles = StyleSheet.create({
   },
   icon: {
     fontSize: 24,
+  },
+  iconImage: {
+    width: 32,
+    height: 32,
+    borderRadius: 16,
   },
   info: {
     flex: 1,

@@ -8,7 +8,9 @@ import CurrencySettings from '../../src/components/settings/CurrencySettings';
 import NotificationSettings from '../../src/components/settings/NotificationSettings';
 import ValueConverterSettings from '../../src/components/settings/ValueConverterSettings';
 import SyncSettings from '../../src/components/settings/SyncSettings';
+import BiometricSettings from '../../src/components/settings/BiometricSettings';
 import { DataManagement } from '../../src/components/settings/DataManagement';
+import SyncDashboard from '../../src/components/settings/SyncDashboard';
 import AboutSection from '../../src/components/settings/AboutSection';
 
 export default function SettingsScreen() {
@@ -27,6 +29,8 @@ export default function SettingsScreen() {
           <NotificationSettings />
           <ValueConverterSettings />
           <SyncSettings />
+          <BiometricSettings />
+          <SyncDashboard />
           <DataManagement />
         </View>
         <AboutSection />

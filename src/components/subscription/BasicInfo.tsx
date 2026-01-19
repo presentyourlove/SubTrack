@@ -1,7 +1,9 @@
-import React from 'react';
-import { View, Text, StyleSheet, TextInput, TouchableOpacity, Switch } from 'react-native';
+import { View, Text, StyleSheet, TextInput, TouchableOpacity, Switch, Image } from 'react-native';
+import * as ImagePicker from 'expo-image-picker';
 import { useTheme } from '../../context/ThemeContext';
+import { compressAndConvertImage } from '../../services/imageService';
 import i18n from '../../i18n';
+import { Ionicons } from '@expo/vector-icons';
 
 type BasicInfoProps = {
   name: string;
@@ -44,6 +46,42 @@ export default function BasicInfo({
       <View style={styles.field}>
         <Text style={[styles.label, { color: colors.text }]}>{i18n.t('subscription.icon')}</Text>
         <View style={styles.iconGrid}>
+          {/* 自定義圖片按鈕 */}
+          <TouchableOpacity
+            style={[
+              styles.iconButton,
+              { backgroundColor: colors.inputBackground },
+              icon.startsWith('file://') && { backgroundColor: colors.accent },
+            ]}
+            onPress={async () => {
+              const result = await ImagePicker.launchImageLibraryAsync({
+                mediaTypes: ['images'],
+                allowsEditing: true,
+                aspect: [1, 1],
+                quality: 1,
+              });
+
+              if (!result.canceled && result.assets && result.assets.length > 0) {
+                try {
+                  const processed = await compressAndConvertImage(result.assets[0].uri);
+                  setIcon(processed.uri);
+                } catch (error) {
+                  console.error('Failed to process image:', error);
+                }
+              }
+            }}
+          >
+            {icon.startsWith('file://') ? (
+              <Image source={{ uri: icon }} style={styles.customIconPreview} />
+            ) : (
+              <Ionicons
+                name="image-outline"
+                size={24}
+                color={icon.startsWith('file://') ? '#fff' : colors.text}
+              />
+            )}
+          </TouchableOpacity>
+
           {commonIcons.map((emoji) => (
             <TouchableOpacity
               key={emoji}
@@ -139,5 +177,10 @@ const styles = StyleSheet.create({
   subLabel: {
     fontSize: 14,
     marginBottom: 6,
+  },
+  customIconPreview: {
+    width: '100%',
+    height: '100%',
+    borderRadius: 22,
   },
 });

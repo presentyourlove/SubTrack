@@ -1,13 +1,10 @@
-import * as SQLite from 'expo-sqlite';
+import { SQLiteDatabase } from '../database';
 import { Member } from '../../types';
 
 /**
  * 取得訂閱的所有成員
  */
-export async function getMembers(
-  db: SQLite.SQLiteDatabase,
-  subscriptionId: number,
-): Promise<Member[]> {
+export async function getMembers(db: SQLiteDatabase, subscriptionId: number): Promise<Member[]> {
   return await db.getAllAsync<Member>(
     'SELECT * FROM subscription_members WHERE subscriptionId = ? ORDER BY id ASC',
     [subscriptionId],
@@ -18,7 +15,7 @@ export async function getMembers(
  * 新增成員
  */
 export async function addMember(
-  db: SQLite.SQLiteDatabase,
+  db: SQLiteDatabase,
   subscriptionId: number,
   name: string,
 ): Promise<number> {
@@ -35,7 +32,7 @@ export async function addMember(
  * 更新成員狀態
  */
 export async function updateMemberStatus(
-  db: SQLite.SQLiteDatabase,
+  db: SQLiteDatabase,
   memberId: number,
   status: 'paid' | 'unpaid',
 ): Promise<void> {
@@ -63,7 +60,7 @@ export async function deleteMember(db: SQLite.SQLiteDatabase, memberId: number):
  * 如果 DB 成員多於 memberCount, 自動刪除多餘的 (從後面刪)
  */
 export async function syncMemberCount(
-  db: SQLite.SQLiteDatabase,
+  db: SQLiteDatabase,
   subscriptionId: number,
   targetCount: number,
 ): Promise<void> {

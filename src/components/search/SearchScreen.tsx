@@ -1,5 +1,5 @@
 import React, { useState, useMemo } from 'react';
-import { View, Text, StyleSheet, TextInput, FlatList, TouchableOpacity } from 'react-native';
+import { View, Text, StyleSheet, TextInput, TouchableOpacity } from 'react-native';
 import { useTheme } from '../../context/ThemeContext';
 import { useDatabase } from '../../context/DatabaseContext';
 import SubscriptionCard from '../SubscriptionCard';
@@ -9,6 +9,7 @@ import { useRouter } from 'expo-router';
 import { Subscription } from '../../types';
 import AddSubscriptionModal from '../AddSubscriptionModal';
 import { hapticFeedback } from '../../utils/haptics';
+import { OptimizedList } from '../common/OptimizedList';
 
 export default function SearchScreen() {
   const { colors } = useTheme();
@@ -79,10 +80,11 @@ export default function SearchScreen() {
       </View>
 
       {/* Results */}
-      <FlatList
+      <OptimizedList<Subscription>
         data={filteredSubscriptions}
         keyExtractor={(item) => item.id.toString()}
-        renderItem={({ item }) => (
+        estimatedItemSize={150}
+        renderItem={({ item }: { item: Subscription }) => (
           <SubscriptionCard
             subscription={item}
             onEdit={() => setEditingSubscription(item)}
