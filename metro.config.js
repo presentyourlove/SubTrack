@@ -12,9 +12,15 @@ config.transformer = {
   getTransformOptions: async () => ({
     transform: {
       experimentalImportSupport: false,
-      inlineRequires: true, // 啟用 Inline Requires 減少啟動壓力
+      inlineRequires: true, // 啟用 Inline Requires，讓 Hermes 能僅加載需要的模組 (Bytecode Streaming 基礎)
     },
   }),
+};
+
+// 啟用 RAM Bundles 支援 (Indexed RAM Bundle)
+config.serializer = {
+  ...config.serializer,
+  // 保持默認 Expo serializer，它已針對 Hermes 優化
 };
 
 // 配置解決方案以過濾重型依賴

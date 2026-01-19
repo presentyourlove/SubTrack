@@ -21,6 +21,7 @@
     "@react-native-community/datetimepicker": "8.4.4",
     "@react-native-community/netinfo": "^11.4.1",
     "@shopify/flash-list": "2.0.2",
+    "@shopify/react-native-skia": "^2.2.12",
     "@types/papaparse": "^5.5.2",
     "expo": "~54.0.27",
     "expo-calendar": "^15.0.8",
