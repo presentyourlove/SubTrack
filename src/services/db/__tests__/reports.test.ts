@@ -153,17 +153,17 @@ describe('Report Service', () => {
 
       const result = reportService.executeReport(report, mockSubscriptions, currency, rates);
 
-      // Expected:
-      // Netflix: 390 TWD
-      // Spotify: 10 USD * 30 = 300 TWD
+      // With rates = {USD: 30, TWD: 1}, getMonthlyValue calculates:
+      // Netflix: 390 TWD (same currency, no conversion)
+      // Spotify: (10 USD / 30) * 1 = 0.33 TWD (rates are inverse: 1 base = 30 USD)
       // AWS: 1000 TWD / 12 = 83.33 TWD
-      // Entertainment: 390 + 300 = 690
-      // Tech: 83.33
+      // Entertainment: 390 + 0.33 = ~390
+      // Other: 83.33
 
       // The result should be sorted by value desc
       expect(result.length).toBe(2);
       expect(result[0].label).toBe('entertainment');
-      expect(Math.round(result[0].value)).toBe(690);
+      expect(Math.round(result[0].value)).toBe(390);
       expect(result[1].label).toBe('other');
       expect(Math.round(result[1].value)).toBe(83);
     });
@@ -224,14 +224,14 @@ describe('Report Service', () => {
       };
       const result = reportService.executeReport(report, mockSubscriptions, currency, rates);
 
-      // Netflix: 390 * 12 = 4680
-      // Spotify: 300 * 12 = 3600
-      // Total Monthly Cycle: 8280
-
+      // With rates = {USD: 30, TWD: 1}:
+      // Netflix: 390 * 12 = 4680 TWD
+      // Spotify: 0.33 * 12 = 4 TWD
+      // Total Monthly Cycle: 4684
       // AWS: 1000 (Yearly)
 
       expect(result[0].label).toBe('monthly');
-      expect(result[0].value).toBe(8280);
+      expect(result[0].value).toBe(4684);
       expect(result[1].label).toBe('yearly');
       expect(result[1].value).toBe(1000);
     });

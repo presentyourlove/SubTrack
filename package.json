@@ -61,6 +61,7 @@
     "@types/react": "~19.1.0",
     "@typescript-eslint/eslint-plugin": "^8.50.0",
     "@typescript-eslint/parser": "^8.50.0",
+    "babel-preset-expo": "^54.0.9",
     "eslint": "^8.57.0",
     "eslint-config-prettier": "^10.1.8",
     "eslint-plugin-prettier": "^5.5.4",
@@ -72,6 +73,7 @@
     "jest-expo": "^54.0.16",
     "lint-staged": "^16.2.7",
     "prettier": "^3.7.4",
+    "react-native-worklets-core": "^1.6.2",
     "react-test-renderer": "^19.1.0",
     "typescript": "~5.9.2"
   },

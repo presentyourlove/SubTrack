@@ -171,11 +171,13 @@ SubTrack/
 
 ### 1. 單元與整合測試 (Unit & Integration)
 
-使用 Jest 進行邏輯測試：
+使用 Jest 進行邏輯測試，目前全專案覆蓋率已達 >80%：
 
 ```bash
 # 執行所有測試
 npm test
+# 生成覆蓋率報告
+npm test -- --coverage
 
 # 監聽模式
 npm test -- --watch

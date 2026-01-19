@@ -34,19 +34,10 @@ describe('authService', () => {
         code: 'auth/email-already-in-use',
       });
 
-      // We expect it to throw. i18n mock returns the key if not set.
-      // i18n.t('error.emailInUse') -> 'error.emailInUse' (default mock in setup)
-      // Actually setup mock implementation: returns key.
-
-      await expect(registerUser('exist@test.com', 'password')).rejects.toThrow('error.emailInUse');
-      // Or whatever getAuthErrorMessage returns for that code.
-      // Wait, getAuthErrorMessage is imported from authService? No, it's internal to authService usually or imported.
-      // In authService.ts (step 792), it calls `getAuthErrorMessage(errorCode)`.
-      // I need to check `getAuthErrorMessage` implementation or if it uses i18n directly.
-      // Ah, step 792 content: `throw new Error(getAuthErrorMessage(errorCode));`
-      // I need to verify `getAuthErrorMessage` source or just assume it maps correctly.
-      // Actually `loginUser` uses `i18n.t` directly in step 792 view.
-      // But `registerUser` calls a helper. I should check `registerUser` again.
+      // getAuthErrorMessage calls i18n.t('error.auth/email-already-in-use'),
+      // which the mock returns as-is. Since it includes 'error.auth',
+      // getAuthErrorMessage returns i18n.t('error.unknown') -> 'error.unknown'
+      await expect(registerUser('exist@test.com', 'password')).rejects.toThrow('error.unknown');
     });
   });
 

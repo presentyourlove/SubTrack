@@ -1,14 +1,125 @@
 // Mock standard libraries
-// jest.mock('react-native/Libraries/Animated/NativeAnimatedHelper'); // Removed as it caused resolution error
+global.ReanimatedDataMock = {
+  now: () => 0,
+};
 
-// Mock Expo modules
-jest.mock('expo', () => ({
-  registerRootComponent: jest.fn(),
+// Mock Skia
+jest.mock('@shopify/react-native-skia', () => {
+  const React = require('react');
+  const View = require('react-native').View;
+  return {
+    Canvas: (props) => React.createElement(View, props, props.children),
+    Path: () => null,
+    Rect: () => null,
+    Group: ({ children }) => children,
+    Skia: {
+      Path: {
+        Make: () => ({
+          addArc: jest.fn(),
+          reset: jest.fn(),
+          moveTo: jest.fn(),
+          arcToOval: jest.fn(),
+          close: jest.fn(),
+          addCircle: jest.fn(),
+        }),
+      },
+      Color: jest.fn(),
+    },
+    useFont: () => ({}),
+    vec: jest.fn(),
+  };
+});
+
+// @op-engineering/op-sqlite is mocked via __mocks__/@op-engineering/op-sqlite.js
+
+// Mock react-native-worklets (must be before reanimated)
+jest.mock('react-native-worklets', () => ({
+  Worklets: {
+    createRunInContextFn: jest.fn(),
+    createRunAsync: jest.fn(),
+    createContext: jest.fn(),
+  },
 }));
+
+// Mock react-native-reanimated (comprehensive manual mock)
+jest.mock('react-native-reanimated', () => {
+  const React = require('react');
+  const View = require('react-native').View;
+
+  return {
+    default: {
+      View,
+      Text: View,
+      Image: View,
+      ScrollView: View,
+      FlatList: View,
+      call: () => { },
+      createAnimatedComponent: (component) => component,
+    },
+    useSharedValue: (init) => ({ value: init }),
+    useDerivedValue: (fn) => ({ value: fn() }),
+    useAnimatedStyle: () => ({}),
+    useAnimatedProps: () => ({}),
+    withTiming: (val) => val,
+    withSpring: (val) => val,
+    withDelay: (_, val) => val,
+    withSequence: (...vals) => vals[vals.length - 1],
+    withRepeat: (val) => val,
+    Easing: {
+      linear: (x) => x,
+      ease: (x) => x,
+      in: () => (x) => x,
+      out: () => (x) => x,
+      inOut: () => (x) => x,
+      bezier: () => (x) => x,
+      cubic: (x) => x,
+      exp: (x) => x,
+    },
+    runOnJS: (fn) => fn,
+    runOnUI: (fn) => fn,
+    interpolate: (val) => val,
+    Extrapolate: { CLAMP: 'clamp', EXTEND: 'extend', IDENTITY: 'identity' },
+    cancelAnimation: jest.fn(),
+    createAnimatedComponent: (component) => component,
+    View,
+    Text: View,
+    Image: View,
+    ScrollView: View,
+    FlatList: View,
+  };
+});
 
 jest.mock('expo-font', () => ({
   isLoaded: jest.fn().mockReturnValue(true),
   loadAsync: jest.fn(),
+}));
+
+jest.mock('expo-haptics', () => ({
+  impactAsync: jest.fn(),
+  notificationAsync: jest.fn(),
+  selectionAsync: jest.fn(),
+  ImpactFeedbackStyle: {
+    Light: 'light',
+    Medium: 'medium',
+    Heavy: 'heavy',
+  },
+  NotificationFeedbackType: {
+    Success: 'success',
+    Warning: 'warning',
+    Error: 'error',
+  },
+}));
+
+jest.mock('expo-image-manipulator', () => ({
+  manipulateAsync: jest.fn().mockResolvedValue({ uri: 'file:///mock-image.jpg' }),
+  SaveFormat: { JPEG: 'jpeg', PNG: 'png' },
+  FlipType: { Horizontal: 'horizontal', Vertical: 'vertical' },
+}));
+
+jest.mock('expo-image-picker', () => ({
+  launchImageLibraryAsync: jest.fn().mockResolvedValue({ canceled: true, assets: [] }),
+  launchCameraAsync: jest.fn().mockResolvedValue({ canceled: true, assets: [] }),
+  MediaTypeOptions: { Images: 'images', All: 'all' },
 }));
 
 jest.mock('expo-file-system', () => ({
@@ -92,6 +203,12 @@ jest.mock('firebase/firestore', () => ({
 jest.mock('@react-native-async-storage/async-storage', () =>
   require('@react-native-async-storage/async-storage/jest/async-storage-mock'),
 );
+
+// Mock firebaseConfig to prevent env var errors
+jest.mock('./src/services/firebaseConfig', () => ({
+  auth: {},
+  db: {},
+}));
 
 // Mock DateTimePicker
 jest.mock('@react-native-community/datetimepicker', () => {

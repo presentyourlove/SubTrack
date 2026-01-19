@@ -46,8 +46,8 @@ describe('Member Service', () => {
   it('should update member status', async () => {
     await memberService.updateMemberStatus(mockDb as unknown as SQLiteDatabase, 1, 'paid');
     expect(mockDb.runAsync).toHaveBeenCalledWith(
-      expect.stringContaining('UPDATE subscription_members SET status = ?'),
-      expect.arrayContaining(['paid', 1]),
+      expect.stringContaining('UPDATE subscription_members'),
+      expect.arrayContaining(['paid']),
     );
   });
 

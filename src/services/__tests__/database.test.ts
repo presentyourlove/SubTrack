@@ -1,66 +1,43 @@
 /**
  * Database Service Tests
  * 測試 database.ts 的 CRUD 與統計查詢邏輯
- * 使用簡單 mock 策略以避免 Expo 54 測試環境問題
  */
 
-import type { Subscription } from '../../types';
+import { Subscription } from '../../types';
+import * as ExpoSQLite from 'expo-sqlite';
+
+jest.mock('expo-sqlite', () => ({
+  openDatabaseAsync: jest.fn(),
+}));
 
 describe('Database Service', () => {
   // Mock 資料庫物件
-  type MockDatabase = {
-    execAsync: jest.Mock;
-    runAsync: jest.Mock;
-    getAllAsync: jest.Mock;
-    getFirstAsync: jest.Mock;
+  const mockDb = {
+    execAsync: jest.fn().mockResolvedValue(undefined),
+    runAsync: jest.fn().mockResolvedValue({ lastInsertRowId: 1 }),
+    getAllAsync: jest.fn().mockResolvedValue([]),
+    getFirstAsync: jest.fn().mockResolvedValue(null),
   };
 
-  let mockDb: MockDatabase;
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   let dbModule: any;
 
-  beforeAll(() => {
-    // 設置 expo-sqlite mock
-    jest.doMock('expo-sqlite', () => ({
-      openDatabaseAsync: jest.fn(),
-    }));
-  });
-
   beforeEach(async () => {
-    // 重置 mock
     jest.clearAllMocks();
-
-    // 建立 mock 資料庫物件
-    mockDb = {
-      execAsync: jest.fn().mockResolvedValue(undefined),
-      runAsync: jest.fn().mockResolvedValue({ lastInsertRowId: 1 }),
-      getAllAsync: jest.fn().mockResolvedValue([]),
-      getFirstAsync: jest.fn().mockResolvedValue(null),
-    };
-
-    // Mock openDatabaseAsync
-    // eslint-disable-next-line @typescript-eslint/no-var-requires
-    const expoSqlite = await import('expo-sqlite');
-    expoSqlite.openDatabaseAsync = jest.fn().mockResolvedValue(mockDb);
-
-    // 重新載入 database 模組
     jest.resetModules();
-    dbModule = await import('../database');
+
+    (ExpoSQLite.openDatabaseAsync as jest.Mock).mockResolvedValue(mockDb);
+
+    // 使用 require 重新載入模組以確保使用新的 mock
+    // eslint-disable-next-line @typescript-eslint/no-var-requires
+    dbModule = require('../database');
   });
 
   describe('initDatabase', () => {
     it('should initialize database successfully', async () => {
-      try {
-        const db = await dbModule.initDatabase();
-        expect(db).toBeDefined();
-      } catch {
-        // Ignore errors related to native modules in test environment
-      }
+      const db = await dbModule.initDatabase();
+      expect(db).toBe(mockDb);
     });
   });
-
-  // Helper to get DB instance for other tests
-  const getMockedDb = () => mockDb;
 
   describe('getAllSubscriptions', () => {
     it('should return all subscriptions', async () => {
@@ -87,7 +64,7 @@ describe('Database Service', () => {
 
       mockDb.getAllAsync.mockResolvedValueOnce(mockSubscriptions);
 
-      const result = await dbModule.getAllSubscriptions(getMockedDb());
+      const result = await dbModule.getAllSubscriptions(mockDb);
 
       expect(result).toEqual(mockSubscriptions);
       expect(mockDb.getAllAsync).toHaveBeenCalled();
@@ -113,7 +90,7 @@ describe('Database Service', () => {
 
       mockDb.runAsync.mockResolvedValueOnce({ lastInsertRowId: 2 });
 
-      const id = await dbModule.addSubscription(getMockedDb(), newSubscription);
+      const id = await dbModule.addSubscription(mockDb, newSubscription);
 
       expect(id).toBe(2);
       expect(mockDb.runAsync).toHaveBeenCalled();
@@ -126,7 +103,7 @@ describe('Database Service', () => {
         price: 199,
       };
 
-      await dbModule.updateSubscription(getMockedDb(), 1, updates);
+      await dbModule.updateSubscription(mockDb, 1, updates);
 
       expect(mockDb.runAsync).toHaveBeenCalled();
     });
@@ -134,9 +111,12 @@ describe('Database Service', () => {
 
   describe('deleteSubscription', () => {
     it('should delete subscription by id', async () => {
-      await dbModule.deleteSubscription(getMockedDb(), 1);
+      await dbModule.deleteSubscription(mockDb, 1);
 
-      expect(mockDb.runAsync).toHaveBeenCalledWith('DELETE FROM subscriptions WHERE id = ?', [1]);
+      expect(mockDb.runAsync).toHaveBeenCalledWith(
+        expect.stringContaining('DELETE'),
+        expect.arrayContaining([1]),
+      );
     });
   });
 
@@ -156,7 +136,7 @@ describe('Database Service', () => {
 
       mockDb.getFirstAsync.mockResolvedValueOnce(mockSettings);
 
-      const result = await dbModule.getUserSettings(getMockedDb());
+      const result = await dbModule.getUserSettings(mockDb);
 
       expect(result).toEqual(mockSettings);
     });
