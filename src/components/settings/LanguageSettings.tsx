@@ -9,11 +9,11 @@ export default function LanguageSettings() {
   const { colors } = useTheme();
   const { settings, updateSettings } = useDatabase();
 
-  // ?��?語�? (?��?使用設�??? ?��?使用 i18n ?��???
+  // 取得語言 (優先使用設定，否則使用 i18n 初始值)
   const currentLanguage = settings?.language || (i18n.locale.startsWith('zh') ? 'zh' : 'en');
 
   const languages = [
-    { code: 'zh', label: '繁�?中�?', icon: '?? },
+    { code: 'zh', label: '繁體中文', icon: '文' },
     { code: 'en', label: 'English', icon: 'A' },
   ] as const;
 

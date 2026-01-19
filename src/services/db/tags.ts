@@ -9,7 +9,7 @@ import { Tag } from '../../types';
 /**
  * 取得所有標籤
  */
-export async function getAllTags(db: SQLite.SQLiteDatabase): Promise<Tag[]> {
+export async function getAllTags(db: SQLiteDatabase): Promise<Tag[]> {
   const tags = await db.getAllAsync<Tag>('SELECT * FROM tags ORDER BY name ASC');
   return tags;
 }
@@ -17,7 +17,7 @@ export async function getAllTags(db: SQLite.SQLiteDatabase): Promise<Tag[]> {
 /**
  * 根據 ID 取得標籤
  */
-export async function getTagById(db: SQLite.SQLiteDatabase, id: number): Promise<Tag | null> {
+export async function getTagById(db: SQLiteDatabase, id: number): Promise<Tag | null> {
   const tag = await db.getFirstAsync<Tag>('SELECT * FROM tags WHERE id = ?', [id]);
   return tag || null;
 }
@@ -66,7 +66,7 @@ export async function updateTag(
 /**
  * 刪除標籤
  */
-export async function deleteTag(db: SQLite.SQLiteDatabase, id: number): Promise<void> {
+export async function deleteTag(db: SQLiteDatabase, id: number): Promise<void> {
   // 關聯表會因 ON DELETE CASCADE 自動清除
   await db.runAsync('DELETE FROM tags WHERE id = ?', [id]);
 }

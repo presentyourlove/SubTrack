@@ -1,126 +1,79 @@
-import { useState, useEffect, useRef, useCallback } from 'react';
-import NetInfo from '@react-native-community/netinfo';
-import { Database } from '../services';
+import { useState, useEffect, useCallback, useRef } from 'react';
 import { Subscription, UserSettings } from '../types';
+import { Database } from '../services';
 import { uploadLocalDataToFirestore, downloadFirestoreDataToLocal } from '../services/syncService';
-import { User } from 'firebase/auth'; // Ensure correct type import if needed, or just use any/User type context provides
 
 export function useSync(
   isAuthenticated: boolean,
-  user: User | null,
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  user: any,
   database: Database | null,
   subscriptions: Subscription[],
   settings: UserSettings | null,
   setSubscriptions: (subs: Subscription[]) => void,
-  setSettings: (settings: UserSettings | null) => void,
+  setSettings: (settings: UserSettings) => void,
 ) {
-  const [isOnline, setIsOnline] = useState(true);
+  const [isOnline] = useState(true); // TODO: ä½¿ç”¨ NetInfo
   const [isSyncing, setIsSyncing] = useState(false);
   const [lastSyncTime, setLastSyncTime] = useState<Date | null>(null);
   const [needsSync, setNeedsSync] = useState(false);
-  const syncTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
-  const dailySyncIntervalRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
-  // ?·è??ªå??Œæ­¥
-  const autoSync = useCallback(async () => {
-    if (!isAuthenticated || !user || !database || isSyncing) return;
+  const dailySyncIntervalRef = useRef<NodeJS.Timeout | null>(null);
 
+  // å®šç¾©é€™å…©å€‹å‡½å¼çš„ refï¼Œé¿å…å¾ªç’°ä¾è³´
+  const autoSyncRef = useRef<() => Promise<void>>(undefined);
+
+  const syncToCloud = useCallback(async () => {
+    if (!isAuthenticated || !user || !database) return;
+    setIsSyncing(true);
     try {
-      setIsSyncing(true);
-      await uploadLocalDataToFirestore(user.uid, subscriptions, settings!);
-      setNeedsSync(false);
+      if (settings) {
+        await uploadLocalDataToFirestore(user.uid, subscriptions, settings);
+      }
       setLastSyncTime(new Date());
+      setNeedsSync(false);
     } catch (error) {
-      console.error('?ªå??Œæ­¥å¤±æ?:', error);
+      console.error('Failed to sync to cloud:', error);
     } finally {
       setIsSyncing(false);
     }
-  }, [isAuthenticated, user, database, isSyncing, subscriptions, settings]);
-
-  // è¨­å??ªå??Œæ­¥?’ç? (?²æ?)
-  const scheduleAutoSync = useCallback(() => {
-    if (syncTimeoutRef.current) {
-      clearTimeout(syncTimeoutRef.current);
-    }
-
-    syncTimeoutRef.current = setTimeout(() => {
-      autoSync();
-    }, 2000);
-  }, [autoSync]);
-
-  // ç¶²è·¯?€?‹ç›£??  useEffect(() => {
-    const unsubscribe = NetInfo.addEventListener((state) => {
-      const online = state.isConnected === true;
-      setIsOnline(online);
-
-      // ?¶ç¶²è·¯æ¢å¾©ä??‰å??Œæ­¥è³‡æ???è§¸ç™¼?ªå??Œæ­¥
-      if (online && needsSync && isAuthenticated && user) {
-        scheduleAutoSync();
-      }
-    });
-
-    return () => unsubscribe();
-  }, [needsSync, isAuthenticated, user, scheduleAutoSync]);
-
-  // æ¯æ—¥å®šæ??Œæ­¥ logic can be simplified or kept here.
-  // Keeping it here for now.
-  useEffect(() => {
-    if (!isAuthenticated || !user) return;
-
-    const scheduleDailySync = () => {
-      const now = new Date();
-      const tomorrow = new Date(now);
-      tomorrow.setDate(tomorrow.getDate() + 1);
-      tomorrow.setHours(0, 0, 0, 0); // Midnight
-
-      const msUntilMidnight = tomorrow.getTime() - now.getTime();
-
-      dailySyncIntervalRef.current = setTimeout(() => {
-        if (isOnline && isAuthenticated && user) {
-          autoSync();
-        }
-        scheduleDailySync();
-      }, msUntilMidnight);
-    };
-
-    scheduleDailySync();
-
-    return () => {
-      if (dailySyncIntervalRef.current) {
-        clearTimeout(dailySyncIntervalRef.current);
-      }
-    };
-  }, [isAuthenticated, user, isOnline, autoSync]);
-
-  // ?‹å??Œæ­¥ä¸Šå‚³
-  const syncToCloud = useCallback(async () => {
-    if (!isAuthenticated || !user || !database) {
-      throw new Error('User not authenticated');
-    }
-
-    try {
-      await uploadLocalDataToFirestore(user.uid, subscriptions, settings!);
-    } catch (error) {
-      console.error('Failed to sync to cloud:', error);
-      throw error;
-    }
   }, [isAuthenticated, user, database, subscriptions, settings]);
 
-  // ?‹å??Œæ­¥ä¸‹è?
-  const syncFromCloud = useCallback(async () => {
-    if (!isAuthenticated || !user || !database) {
-      throw new Error('User not authenticated');
+  const autoSync = useCallback(async () => {
+    if (isOnline && isAuthenticated && user && needsSync) {
+      await syncToCloud();
     }
+  }, [isOnline, isAuthenticated, user, needsSync, syncToCloud]);
 
+  // æ›´æ–° ref
+  useEffect(() => {
+    autoSyncRef.current = autoSync;
+  }, [autoSync]);
+
+  const scheduleAutoSync = useCallback(() => {
+    if (dailySyncIntervalRef.current) {
+      clearTimeout(dailySyncIntervalRef.current);
+    }
+    // Debounce sync for 5 seconds
+    dailySyncIntervalRef.current = setTimeout(() => {
+      if (autoSyncRef.current) autoSyncRef.current();
+    }, 5000);
+  }, []);
+
+  const syncFromCloud = useCallback(async () => {
+    if (!isAuthenticated || !user || !database) return;
+    setIsSyncing(true);
     try {
       const cloudData = await downloadFirestoreDataToLocal(user.uid);
       setSubscriptions(cloudData.subscriptions);
       if (cloudData.settings) {
         setSettings(cloudData.settings);
       }
+      setLastSyncTime(new Date());
     } catch (error) {
       console.error('Failed to sync from cloud:', error);
-      throw error;
+    } finally {
+      setIsSyncing(false);
     }
   }, [isAuthenticated, user, database, setSubscriptions, setSettings]);
 
@@ -137,7 +90,8 @@ export function useSync(
     if (isAuthenticated && user && database) {
       syncFromCloud();
     }
-  }, [isAuthenticated, user, database, syncFromCloud]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isAuthenticated, user, database]);
 
   return {
     isOnline,
@@ -145,6 +99,6 @@ export function useSync(
     lastSyncTime,
     syncToCloud,
     syncFromCloud,
-    triggerSync, // Expose this to be called after CRUD
+    triggerSync,
   };
 }

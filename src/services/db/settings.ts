@@ -4,7 +4,7 @@ import { UserSettings } from '../../types';
 /**
  * 取得使用者設定
  */
-export async function getUserSettings(db: SQLite.SQLiteDatabase): Promise<UserSettings | null> {
+export async function getUserSettings(db: SQLiteDatabase): Promise<UserSettings | null> {
   const settings = await db.getFirstAsync<UserSettings>('SELECT * FROM user_settings WHERE id = 1');
   return settings;
 }

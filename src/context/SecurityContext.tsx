@@ -1,7 +1,7 @@
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { AppState, AppStateStatus } from 'react-native';
-import { isBiometricSupported, authenticateBiometric } from '../services/securityService';
+import { authenticateBiometric } from '../services/securityService';
 
 const BIOMETRIC_ENABLED_KEY = '@subtrack_biometric_enabled';
 

@@ -34,11 +34,7 @@
       "bundler": "metro",
       "output": "single"
     },
-    "plugins": [
-      "expo-router",
-      "expo-localization",
-      "expo-quick-actions"
-    ],
+    "plugins": ["expo-router", "expo-localization", "expo-quick-actions"],
     "extra": {
       "expoQuickActions": {
         "androidIcons": {

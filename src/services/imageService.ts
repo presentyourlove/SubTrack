@@ -10,10 +10,10 @@ const baseDir = FileSystem.documentDirectory || '';
  */
 
 export interface ProcessedImage {
-    uri: string;
-    width: number;
-    height: number;
-    fileSize?: number;
+  uri: string;
+  width: number;
+  height: number;
+  fileSize?: number;
 }
 
 const MAX_IMAGE_SIZE = 512;
@@ -24,36 +24,36 @@ const MAX_IMAGE_SIZE = 512;
  * @returns 處理後的圖片資訊
  */
 export async function compressAndConvertImage(uri: string): Promise<ProcessedImage> {
-    try {
-        const result = await ImageManipulator.manipulateAsync(
-            uri,
-            [{ resize: { width: MAX_IMAGE_SIZE } }],
-            {
-                compress: 0.8,
-                format: ImageManipulator.SaveFormat.WEBP,
-            },
-        );
+  try {
+    const result = await ImageManipulator.manipulateAsync(
+      uri,
+      [{ resize: { width: MAX_IMAGE_SIZE } }],
+      {
+        compress: 0.8,
+        format: ImageManipulator.SaveFormat.WEBP,
+      },
+    );
 
-        const fileName = `custom_icon_${Date.now()}.webp`;
-        const destPath = `${baseDir}${fileName}`;
+    const fileName = `custom_icon_${Date.now()}.webp`;
+    const destPath = `${baseDir}${fileName}`;
 
-        await FileSystem.copyAsync({
-            from: result.uri,
-            to: destPath,
-        });
+    await FileSystem.copyAsync({
+      from: result.uri,
+      to: destPath,
+    });
 
-        const fileInfo = await FileSystem.getInfoAsync(destPath);
+    const fileInfo = await FileSystem.getInfoAsync(destPath);
 
-        return {
-            uri: destPath,
-            width: result.width,
-            height: result.height,
-            fileSize: fileInfo.exists ? fileInfo.size : undefined,
-        };
-    } catch (error) {
-        console.error('Image compression failed:', error);
-        throw error;
-    }
+    return {
+      uri: destPath,
+      width: result.width,
+      height: result.height,
+      fileSize: fileInfo.exists ? fileInfo.size : undefined,
+    };
+  } catch (error) {
+    console.error('Image compression failed:', error);
+    throw error;
+  }
 }
 
 /**
@@ -61,14 +61,14 @@ export async function compressAndConvertImage(uri: string): Promise<ProcessedIma
  * @param uri 檔案路徑
  */
 export async function deleteCustomIcon(uri: string): Promise<void> {
-    try {
-        if (uri.startsWith(baseDir) && baseDir !== '') {
-            const fileInfo = await FileSystem.getInfoAsync(uri);
-            if (fileInfo.exists) {
-                await FileSystem.deleteAsync(uri);
-            }
-        }
-    } catch (error) {
-        console.error('Failed to delete custom icon:', error);
+  try {
+    if (uri.startsWith(baseDir) && baseDir !== '') {
+      const fileInfo = await FileSystem.getInfoAsync(uri);
+      if (fileInfo.exists) {
+        await FileSystem.deleteAsync(uri);
+      }
     }
+  } catch (error) {
+    console.error('Failed to delete custom icon:', error);
+  }
 }

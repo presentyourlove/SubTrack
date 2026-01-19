@@ -1,8 +1,8 @@
 import React, { useEffect } from 'react';
 import { StyleSheet, View, Text, TouchableOpacity, SafeAreaView } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
-import { useSecurity } from '../../context/SecurityContext';
-import { useTheme } from '../../context/ThemeContext';
+import { useSecurity } from '../context/SecurityContext';
+import { useTheme } from '../context/ThemeContext';
 
 export const LockScreen = () => {
   const { unlock, isLocked } = useSecurity();
@@ -12,7 +12,7 @@ export const LockScreen = () => {
     if (isLocked) {
       unlock();
     }
-  }, [isLocked]);
+  }, [isLocked, unlock]);
 
   if (!isLocked) return null;
 

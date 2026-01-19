@@ -1,10 +1,10 @@
 appId: com.subtrack.app
 ---
 - launchApp
-- tapOn: "add" # 假設 '+' 按鈕的 accessibilityLabel 是 'add'
-- tapOn: "Netflix"
-- tapOn: "price-input"
-- inputText: "390"
-- tapOn: "save"
-- assertVisible: "Netflix"
-- assertVisible: "$390.00"
+- tapOn: 'add' # 假設 '+' 按鈕的 accessibilityLabel 是 'add'
+- tapOn: 'Netflix'
+- tapOn: 'price-input'
+- inputText: '390'
+- tapOn: 'save'
+- assertVisible: 'Netflix'
+- assertVisible: '$390.00'

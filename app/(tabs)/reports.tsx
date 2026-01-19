@@ -18,7 +18,9 @@ import { executeReport } from '../../src/services/db/reports';
 import { useFocusEffect } from 'expo-router';
 
 // 智慧分包：延遲載入報表生成組件 (Bundle Splitting)
-const ReportBuilderModal = React.lazy(() => import('../../src/components/reports/ReportBuilderModal'));
+const ReportBuilderModal = React.lazy(
+  () => import('../../src/components/reports/ReportBuilderModal'),
+);
 
 export default function ReportsScreen() {
   const { colors } = useTheme();

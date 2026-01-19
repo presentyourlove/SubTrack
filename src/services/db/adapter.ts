@@ -14,7 +14,7 @@ export interface SQLiteDatabaseCompat extends DB {
  * 將 op-sqlite 的 DB 實例封裝為相容 expo-sqlite API 的物件
  */
 export function wrapDatabase(db: DB): SQLiteDatabaseCompat {
-  const compat = db as any;
+  const compat = db as unknown as SQLiteDatabaseCompat;
 
   // 封裝 getAllAsync
   compat.getAllAsync = async <T>(query: string, params: Scalar[] = []) => {

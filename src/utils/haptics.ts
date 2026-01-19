@@ -8,7 +8,7 @@ export const hapticFeedback = {
     if (isWeb) return;
     try {
       await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-    } catch (e) {
+    } catch {
       // Ignore web or unsupported
     }
   },
@@ -16,7 +16,7 @@ export const hapticFeedback = {
     if (isWeb) return;
     try {
       await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
-    } catch (e) {
+    } catch {
       // Ignore
     }
   },
@@ -24,7 +24,7 @@ export const hapticFeedback = {
     if (isWeb) return;
     try {
       await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Heavy);
-    } catch (e) {
+    } catch {
       // Ignore
     }
   },
@@ -32,7 +32,7 @@ export const hapticFeedback = {
     if (isWeb) return;
     try {
       await Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
-    } catch (e) {
+    } catch {
       // Ignore
     }
   },
@@ -40,7 +40,7 @@ export const hapticFeedback = {
     if (isWeb) return;
     try {
       await Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error);
-    } catch (e) {
+    } catch {
       // Ignore
     }
   },
@@ -48,7 +48,7 @@ export const hapticFeedback = {
     if (isWeb) return;
     try {
       await Haptics.selectionAsync();
-    } catch (e) {
+    } catch {
       // Ignore
     }
   },

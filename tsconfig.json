@@ -10,7 +10,9 @@
     "**/*.tsx",
     ".expo/types/**/*.ts",
     "expo-env.d.ts",
+    "metro.config.js",
     "jest.config.js",
     "jest.setup.js"
-  ]
+  ],
+  "exclude": ["node_modules", "dist", ".expo"]
 }

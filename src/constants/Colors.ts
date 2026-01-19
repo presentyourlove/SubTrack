@@ -13,6 +13,8 @@ export const Colors = {
     tabIconDefault: '#9CA3AF',
     tabIconSelected: '#6366F1',
     inputBackground: '#F9FAFB', // 輸入框背景
+    primary: '#6366F1', // Primary color (alias for accent)
+    textSecondary: '#6B7280', // Alias for subtleText
   },
   dark: {
     background: '#1a1a1a',
@@ -28,6 +30,8 @@ export const Colors = {
     tabIconDefault: '#6b7280',
     tabIconSelected: '#818cf8',
     notification: '#ef4444',
+    primary: '#6366f1', // Primary color (alias for accent)
+    textSecondary: '#a0a0a0', // Alias for subtleText
   },
 };
 

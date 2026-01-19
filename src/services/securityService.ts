@@ -6,11 +6,6 @@ export const isBiometricSupported = async (): Promise<boolean> => {
   return hasHardware && isEnrolled;
 };
 
-export const getSupportedTypes =
-  async (): Promise<LocalAuthentication.AuthenticationSecurityLevel> => {
-    return await LocalAuthentication.getSecurityLevelAsync();
-  };
-
 export const authenticateBiometric = async (
   reason: string = '請進行身份驗證以解鎖 SubTrack',
 ): Promise<boolean> => {

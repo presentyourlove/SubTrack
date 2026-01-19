@@ -1,4 +1,5 @@
-import { Member } from '../../types';
+import { Member } from '../../../types';
+import { SQLiteDatabase } from '../../database';
 import * as memberService from '../members';
 
 // Mock DB
@@ -14,7 +15,7 @@ describe('Member Service', () => {
 
   it('should add a member', async () => {
     mockDb.runAsync.mockResolvedValue({ lastInsertRowId: 1 });
-    const id = await memberService.addMember(mockDb as any, 1, 'Test Member');
+    const id = await memberService.addMember(mockDb as unknown as SQLiteDatabase, 1, 'Test Member');
     expect(mockDb.runAsync).toHaveBeenCalledWith(
       expect.stringContaining('INSERT INTO subscription_members'),
       expect.arrayContaining([1, 'Test Member']),
@@ -34,7 +35,7 @@ describe('Member Service', () => {
       },
     ];
     mockDb.getAllAsync.mockResolvedValue(mockMembers);
-    const members = await memberService.getMembers(mockDb as any, 1);
+    const members = await memberService.getMembers(mockDb as unknown as SQLiteDatabase, 1);
     expect(mockDb.getAllAsync).toHaveBeenCalledWith(
       expect.stringContaining('SELECT * FROM subscription_members'),
       [1],
@@ -43,7 +44,7 @@ describe('Member Service', () => {
   });
 
   it('should update member status', async () => {
-    await memberService.updateMemberStatus(mockDb as any, 1, 'paid');
+    await memberService.updateMemberStatus(mockDb as unknown as SQLiteDatabase, 1, 'paid');
     expect(mockDb.runAsync).toHaveBeenCalledWith(
       expect.stringContaining('UPDATE subscription_members SET status = ?'),
       expect.arrayContaining(['paid', 1]),
@@ -51,7 +52,7 @@ describe('Member Service', () => {
   });
 
   it('should delete member', async () => {
-    await memberService.deleteMember(mockDb as any, 1);
+    await memberService.deleteMember(mockDb as unknown as SQLiteDatabase, 1);
     expect(mockDb.runAsync).toHaveBeenCalledWith(
       expect.stringContaining('DELETE FROM subscription_members'),
       [1],
@@ -61,7 +62,7 @@ describe('Member Service', () => {
   it('should sync member count (add missing)', async () => {
     // Mock existing members (0)
     mockDb.getAllAsync.mockResolvedValue([]);
-    await memberService.syncMemberCount(mockDb as any, 1, 2);
+    await memberService.syncMemberCount(mockDb as unknown as SQLiteDatabase, 1, 2);
 
     // Should call addMember 2 times
     expect(mockDb.runAsync).toHaveBeenCalledTimes(2);
@@ -76,7 +77,7 @@ describe('Member Service', () => {
     ];
     mockDb.getAllAsync.mockResolvedValue(mockMembers);
 
-    await memberService.syncMemberCount(mockDb as any, 1, 1);
+    await memberService.syncMemberCount(mockDb as unknown as SQLiteDatabase, 1, 1);
 
     // Should delete 2 members (id 2 and 3)
     expect(mockDb.runAsync).toHaveBeenCalledTimes(2);

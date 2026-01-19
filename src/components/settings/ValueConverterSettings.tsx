@@ -19,25 +19,25 @@ export default function ValueConverterSettings() {
 
   useEffect(() => {
     if (settings) {
-      if (settings.conversionEnabled !== conversionEnabled) {
-        setConversionEnabled(settings.conversionEnabled || false);
+      if (settings.conversionEnabled !== undefined) {
+        setConversionEnabled(settings.conversionEnabled);
       }
-      if (settings.salaryType && settings.salaryType !== salaryType) {
+      if (settings.salaryType) {
         setSalaryType(settings.salaryType);
       }
-      const newAmount = settings.salaryAmount ? settings.salaryAmount.toString() : '';
-      if (newAmount !== salaryAmount) {
-        setSalaryAmount(newAmount);
+      if (settings.salaryAmount !== undefined) {
+        setSalaryAmount(settings.salaryAmount.toString());
       }
-      const newDays = settings.workDaysPerMonth ? settings.workDaysPerMonth.toString() : '22';
-      if (newDays !== workDaysPerMonth) {
-        setWorkDaysPerMonth(newDays);
+      if (settings.workDaysPerMonth !== undefined) {
+        setWorkDaysPerMonth(settings.workDaysPerMonth.toString());
       }
-      const newHours = settings.workHoursPerDay ? settings.workHoursPerDay.toString() : '8';
-      if (newHours !== workHoursPerDay) {
-        setWorkHoursPerDay(newHours);
+      if (settings.workHoursPerDay !== undefined) {
+        setWorkHoursPerDay(settings.workHoursPerDay.toString());
       }
     }
+    // Only run when settings object reference changes (loaded/updated from DB)
+    // We intentionally ignore state setters and specific properties to avoid loops
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [settings]);
 
   const handleSave = async (updates: Partial<UserSettings>) => {

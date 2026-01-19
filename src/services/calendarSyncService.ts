@@ -75,7 +75,7 @@ export const calendarSyncService = {
         try {
           await Calendar.updateEventAsync(subscription.calendarEventId, eventData);
           return subscription.calendarEventId;
-        } catch (e) {
+        } catch {
           // 如果事件不存在，則建立新的
           return await Calendar.createEventAsync(defaultCalendar.id, eventData);
         }

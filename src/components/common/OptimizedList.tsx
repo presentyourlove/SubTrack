@@ -33,6 +33,7 @@ export function OptimizedList<T>(props: OptimizedListProps<T>) {
     );
   }, [loading]);
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const ListComponent = FlashList as any;
 
   return (

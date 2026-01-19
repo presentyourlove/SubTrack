@@ -50,7 +50,7 @@ export async function updateMemberStatus(
 /**
  * 刪除成員
  */
-export async function deleteMember(db: SQLite.SQLiteDatabase, memberId: number): Promise<void> {
+export async function deleteMember(db: SQLiteDatabase, memberId: number): Promise<void> {
   await db.runAsync('DELETE FROM subscription_members WHERE id = ?', [memberId]);
 }
 

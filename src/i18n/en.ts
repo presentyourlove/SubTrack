@@ -125,7 +125,7 @@ export default {
   notification: {
     upcomingTitle: 'Subscription Renewing Soon ??',
     upcomingBody: '{{name}} will charge {{price}} {{currency}} in {{days}} days',
-    testTitle: 'Test Notification ??,
+    testTitle: 'Test Notification 🔔',
     testBody: 'Notifications are working!',
     permissionRequired: 'Notification permission not granted',
   },

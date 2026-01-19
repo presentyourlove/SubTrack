@@ -17,14 +17,14 @@ export async function createReport(
   return result.lastInsertRowId;
 }
 
-export async function getReports(db: SQLite.SQLiteDatabase): Promise<CustomReport[]> {
+export async function getReports(db: SQLiteDatabase): Promise<CustomReport[]> {
   const reports = await db.getAllAsync<CustomReport>(
     'SELECT * FROM custom_reports ORDER BY createdAt DESC',
   );
   return reports;
 }
 
-export async function deleteReport(db: SQLite.SQLiteDatabase, id: number): Promise<void> {
+export async function deleteReport(db: SQLiteDatabase, id: number): Promise<void> {
   await db.runAsync('DELETE FROM custom_reports WHERE id = ?', [id]);
 }
 

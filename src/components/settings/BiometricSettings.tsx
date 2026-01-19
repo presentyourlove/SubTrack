@@ -17,7 +17,7 @@ export default function BiometricSettings() {
   };
 
   return (
-    <View style={[styles.container, { borderBottomColor: colors.border }]}>
+    <View style={[styles.container, { borderBottomColor: colors.borderColor }]}>
       <View style={styles.header}>
         <Ionicons name="finger-print" size={24} color={colors.primary} style={styles.icon} />
         <View style={styles.textContainer}>

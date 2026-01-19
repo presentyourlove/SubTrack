@@ -260,11 +260,11 @@ export function importAllData(data: {
 
 // ==================== 報表操作 (Web 存根) ====================
 
-export async function createReport(_db: WebDatabase, _report: any): Promise<number> {
+export async function createReport(_db: WebDatabase, _report: unknown): Promise<number> {
   return 0;
 }
 
-export async function getReports(_db: WebDatabase): Promise<any[]> {
+export async function getReports(_db: WebDatabase): Promise<unknown[]> {
   return [];
 }
 

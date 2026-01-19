@@ -4,6 +4,7 @@ import { Ionicons } from '@expo/vector-icons';
 import { useTheme } from '../context/ThemeContext';
 import { Member, Subscription } from '../types';
 import * as MemberService from '../services/db/members';
+import { SQLiteDatabase } from '../services/database';
 import { useDatabase } from '../context/DatabaseContext';
 import { formatCurrency } from '../utils/currencyHelper';
 import i18n from '../i18n';
@@ -29,11 +30,17 @@ export default function SplitBillModal({
     const loadMembers = async () => {
       if (!db) return;
       try {
-        // 確保成員數量符合
         if (subscription.memberCount && subscription.memberCount > 0) {
-          await MemberService.syncMemberCount(db as any, subscription.id, subscription.memberCount);
+          await MemberService.syncMemberCount(
+            db as unknown as SQLiteDatabase,
+            subscription.id,
+            subscription.memberCount,
+          );
         }
-        const data = await MemberService.getMembers(db as any, subscription.id);
+        const data = await MemberService.getMembers(
+          db as unknown as SQLiteDatabase,
+          subscription.id,
+        );
         setMembers(data);
       } catch (error) {
         console.error('Failed to load members:', error);
@@ -49,10 +56,10 @@ export default function SplitBillModal({
   const handleToggleStatus = async (member: Member) => {
     if (!db) return;
     const newStatus = member.status === 'paid' ? 'unpaid' : 'paid';
-    await MemberService.updateMemberStatus(db as any, member.id, newStatus);
+    await MemberService.updateMemberStatus(db as unknown as SQLiteDatabase, member.id, newStatus);
 
     // Reload members
-    const data = await MemberService.getMembers(db as any, subscription.id);
+    const data = await MemberService.getMembers(db as unknown as SQLiteDatabase, subscription.id);
     setMembers(data);
 
     if (onUpdate) onUpdate();

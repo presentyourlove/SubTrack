@@ -4,7 +4,7 @@ import { Workspace } from '../../types';
 /**
  * 取得所有工作區
  */
-export async function getWorkspaces(db: SQLite.SQLiteDatabase): Promise<Workspace[]> {
+export async function getWorkspaces(db: SQLiteDatabase): Promise<Workspace[]> {
   return await db.getAllAsync<Workspace>('SELECT * FROM workspaces ORDER BY createdAt ASC');
 }
 
@@ -47,7 +47,7 @@ export async function updateWorkspace(
  * 刪除工作區 (會連帶刪除底下的訂閱，因設定了 ON DELETE CASCADE)
  * 預設工作區 (id=1) 不可刪除
  */
-export async function deleteWorkspace(db: SQLite.SQLiteDatabase, id: number): Promise<void> {
+export async function deleteWorkspace(db: SQLiteDatabase, id: number): Promise<void> {
   if (id === 1) {
     throw new Error('Cannot delete default workspace');
   }
