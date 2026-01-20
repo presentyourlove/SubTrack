@@ -5,9 +5,8 @@
 
 import { File } from 'expo-file-system';
 import * as DocumentPicker from 'expo-document-picker';
-// 重型套件改為動態導入以優化啟動效能 (Bundle Splitting)
-// import Papa from 'papaparse';
-// import * as XLSX from 'xlsx';
+import Papa from 'papaparse';
+import * as XLSX from 'xlsx';
 import { Subscription, SubscriptionCategory, BillingCycle } from '../types';
 import { processInChunks } from './workerService';
 
@@ -225,9 +224,6 @@ export async function parseCSV(fileUri: string): Promise<ImportResult> {
   // 移除 BOM
   const cleanContent = content.replace(/^\uFEFF/, '');
 
-  // 動態導入 papaparse
-  const { default: Papa } = await import('papaparse');
-
   const parseResult = Papa.parse<Record<string, string>>(cleanContent, {
     header: true,
     skipEmptyLines: true,
@@ -274,9 +270,6 @@ export async function parseExcel(fileUri: string): Promise<ImportResult> {
   const file = new File(fileUri);
   const arrayBuffer = await file.arrayBuffer();
   const content = Buffer.from(arrayBuffer).toString('base64');
-
-  // 動態導入 xlsx
-  const XLSX = await import('xlsx');
 
   const workbook = XLSX.read(content, { type: 'base64' });
   const firstSheetName = workbook.SheetNames[0];

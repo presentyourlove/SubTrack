@@ -1,5 +1,14 @@
-// 智慧分包：Firebase 模組改為動態導入 (Bundle Splitting)
-// import { ... } from 'firebase/firestore';
+import {
+  collection,
+  query,
+  orderBy,
+  getDocs,
+  doc,
+  setDoc,
+  deleteDoc,
+  getDoc,
+  Timestamp,
+} from 'firebase/firestore';
 import { db } from './firebaseConfig';
 import { Subscription, UserSettings } from '../types';
 import { DEFAULT_EXCHANGE_RATES } from '../constants/AppConfig';
@@ -11,7 +20,6 @@ export async function syncSubscriptionToFirestore(
   userId: string,
   subscription: Subscription,
 ): Promise<void> {
-  const { doc, setDoc, Timestamp } = await import('firebase/firestore');
   const subscriptionRef = doc(db, 'users', userId, 'subscriptions', subscription.id.toString());
 
   await setDoc(subscriptionRef, {
@@ -22,7 +30,6 @@ export async function syncSubscriptionToFirestore(
 
 // 從 Firestore 取得所有訂閱
 export async function getSubscriptionsFromFirestore(userId: string): Promise<Subscription[]> {
-  const { collection, query, orderBy, getDocs } = await import('firebase/firestore');
   const subscriptionsRef = collection(db, 'users', userId, 'subscriptions');
   const q = query(subscriptionsRef, orderBy('nextBillingDate', 'asc'));
   const querySnapshot = await getDocs(q);
@@ -43,7 +50,6 @@ export async function deleteSubscriptionFromFirestore(
   userId: string,
   subscriptionId: number,
 ): Promise<void> {
-  const { doc, deleteDoc } = await import('firebase/firestore');
   const subscriptionRef = doc(db, 'users', userId, 'subscriptions', subscriptionId.toString());
   await deleteDoc(subscriptionRef);
 }
@@ -55,7 +61,6 @@ export async function syncUserSettingsToFirestore(
   userId: string,
   settings: UserSettings,
 ): Promise<void> {
-  const { doc, setDoc, Timestamp } = await import('firebase/firestore');
   const settingsRef = doc(db, 'users', userId, 'settings', 'default');
 
   await setDoc(settingsRef, {
@@ -66,7 +71,6 @@ export async function syncUserSettingsToFirestore(
 
 // 從 Firestore 取得使用者設定
 export async function getUserSettingsFromFirestore(userId: string): Promise<UserSettings | null> {
-  const { doc, getDoc } = await import('firebase/firestore');
   const settingsRef = doc(db, 'users', userId, 'settings', 'default');
   const settingsDoc = await getDoc(settingsRef);
 
