@@ -63,7 +63,8 @@ type DatabaseContextType = {
 
 const DatabaseContext = createContext<DatabaseContextType | undefined>(undefined);
 
-export function DatabaseProvider({ children }: { children: ReactNode }) {
+export const DatabaseProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+  console.log('DatabaseProvider is running');
   const { user, isAuthenticated } = useAuth();
   const [database, setDatabase] = useState<Database | null>(null);
   const [subscriptions, setSubscriptions] = useState<Subscription[]>([]);
@@ -379,7 +380,7 @@ export function DatabaseProvider({ children }: { children: ReactNode }) {
   }
 
   return <DatabaseContext.Provider value={value}>{children}</DatabaseContext.Provider>;
-}
+};
 
 export function useDatabase() {
   const context = useContext(DatabaseContext);
