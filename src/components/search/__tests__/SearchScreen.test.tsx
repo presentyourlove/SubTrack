@@ -62,8 +62,20 @@ jest.mock('../../../context/ThemeContext', () => ({
 
 // Mock SubscriptionCard
 jest.mock('../../SubscriptionCard', () => {
-  const { View: MockView, Text: MockText, TouchableOpacity: MockTouchableOpacity } = jest.requireActual('react-native');
-  const MockSubscriptionCard = ({ subscription, onEdit, onDelete }: { subscription: Subscription; onEdit: () => void; onDelete: () => void }) => (
+  const {
+    View: MockView,
+    Text: MockText,
+    TouchableOpacity: MockTouchableOpacity,
+  } = jest.requireActual('react-native');
+  const MockSubscriptionCard = ({
+    subscription,
+    onEdit,
+    onDelete,
+  }: {
+    subscription: Subscription;
+    onEdit: () => void;
+    onDelete: () => void;
+  }) => (
     <MockView testID={`subscription-card-${subscription.id}`}>
       <MockText>{subscription.name}</MockText>
       <MockTouchableOpacity onPress={onEdit} testID={`edit-btn-${subscription.id}`}>
