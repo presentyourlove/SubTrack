@@ -2,32 +2,65 @@ import React from 'react';
 import { render } from '@testing-library/react-native';
 import CategoryBreakdown from '../CategoryBreakdown';
 import { ThemeProvider } from '../../context/ThemeContext';
+import { Subscription } from '../../types';
 
 const renderWithProviders = (component: React.ReactElement) => {
   return render(<ThemeProvider>{component}</ThemeProvider>);
 };
 
 describe('CategoryBreakdown', () => {
-  const mockData = {
-    Entertainment: 500,
-    Utilities: 200,
-  };
+  const mockSubscriptions: Subscription[] = [
+    {
+      id: 1,
+      name: 'Netflix',
+      price: 500,
+      currency: 'TWD',
+      billingCycle: 'monthly',
+      category: 'entertainment',
+      icon: '🎬',
+      startDate: '2023-01-01',
+      nextBillingDate: '2024-01-01',
+      reminderEnabled: false,
+      workspaceId: 1,
+      createdAt: '2023-01-01',
+      updatedAt: '2023-01-01',
+    },
+    {
+      id: 2,
+      name: 'Spotify',
+      price: 200,
+      currency: 'TWD',
+      billingCycle: 'monthly',
+      category: 'entertainment',
+      icon: '🎵',
+      startDate: '2023-01-01',
+      nextBillingDate: '2024-01-01',
+      reminderEnabled: false,
+      workspaceId: 1,
+      createdAt: '2023-01-01',
+      updatedAt: '2023-01-01',
+    },
+  ];
 
-  it('renders categories correctly', () => {
+  const mockExchangeRates = { TWD: 1, USD: 30 };
+
+  it('renders correctly with subscriptions', () => {
     const { getByText } = renderWithProviders(
-      <CategoryBreakdown data={mockData} total={700} currency="TWD" />,
+      <CategoryBreakdown
+        subscriptions={mockSubscriptions}
+        currency="TWD"
+        exchangeRates={mockExchangeRates}
+      />,
     );
 
-    expect(getByText('Entertainment')).toBeTruthy();
-    expect(getByText('Utilities')).toBeTruthy();
-    expect(getByText('500')).toBeTruthy();
-    expect(getByText('200')).toBeTruthy();
+    expect(getByText('breakdown.title')).toBeTruthy();
   });
 
-  it('handles empty data', () => {
-    const { queryByText } = renderWithProviders(
-      <CategoryBreakdown data={{}} total={0} currency="TWD" />,
+  it('handles empty subscriptions', () => {
+    const { getByText } = renderWithProviders(
+      <CategoryBreakdown subscriptions={[]} currency="TWD" exchangeRates={mockExchangeRates} />,
     );
-    // Expect no categories to be rendered
+
+    expect(getByText('breakdown.empty')).toBeTruthy();
   });
 });

@@ -3,7 +3,10 @@ import {
   getMonthlyAmount,
   getYearlyAmount,
   getStatsByCategory,
+  getStatsByApp,
+  getStatsByTimeRange,
   getTotalSummary,
+  getExpenseStatistics,
   CATEGORY_COLORS,
 } from '../chartHelper';
 import { Subscription } from '../../types';
@@ -51,10 +54,9 @@ describe('chartHelper', () => {
       expect(getMonthlyAmount(yearly)).toBe(100);
     });
 
-    // Implementation note: getMonthlyAmount treats all non-monthly cycles as yearly/12
     it('divides non-monthly price by 12', () => {
       const quarterly = { ...mockSubscription, billingCycle: 'quarterly' as const, price: 300 };
-      expect(getMonthlyAmount(quarterly)).toBe(25); // 300/12 = 25
+      expect(getMonthlyAmount(quarterly)).toBe(25);
     });
   });
 
@@ -89,6 +91,61 @@ describe('chartHelper', () => {
     });
   });
 
+  describe('getStatsByApp', () => {
+    const subscriptions: Subscription[] = [
+      { ...mockSubscription, name: 'Netflix', price: 100 },
+      { ...mockSubscription, id: 2, name: 'Spotify', price: 200, category: 'entertainment' },
+    ];
+
+    it('returns stats for each subscription', () => {
+      const result = getStatsByApp(subscriptions, 'TWD', { TWD: 1 });
+      expect(result.length).toBe(2);
+    });
+
+    it('includes name, icon, monthlyAmount, yearlyAmount', () => {
+      const result = getStatsByApp(subscriptions, 'TWD', { TWD: 1 });
+      expect(result[0]).toHaveProperty('name');
+      expect(result[0]).toHaveProperty('icon');
+      expect(result[0]).toHaveProperty('monthlyAmount');
+      expect(result[0]).toHaveProperty('yearlyAmount');
+      expect(result[0]).toHaveProperty('percentage');
+    });
+
+    it('calculates correct percentage', () => {
+      const result = getStatsByApp(subscriptions, 'TWD', { TWD: 1 });
+      const totalPercentage = result.reduce((sum, r) => sum + r.percentage, 0);
+      expect(Math.round(totalPercentage)).toBe(100);
+    });
+  });
+
+  describe('getStatsByTimeRange', () => {
+    const subscriptions: Subscription[] = [
+      { ...mockSubscription, price: 100 },
+      { ...mockSubscription, id: 2, price: 200 },
+    ];
+
+    it('returns weekly stats', () => {
+      const result = getStatsByTimeRange(subscriptions, 'week', 'TWD', { TWD: 1 });
+      expect(result.length).toBe(7); // 7 days
+    });
+
+    it('returns monthly stats', () => {
+      const result = getStatsByTimeRange(subscriptions, 'month', 'TWD', { TWD: 1 });
+      expect(result.length).toBeGreaterThanOrEqual(4); // 4-5 weeks
+    });
+
+    it('returns yearly stats', () => {
+      const result = getStatsByTimeRange(subscriptions, 'year', 'TWD', { TWD: 1 });
+      expect(result.length).toBe(12); // 12 months
+    });
+
+    it('returns chart data points', () => {
+      const result = getStatsByTimeRange(subscriptions, 'week', 'TWD', { TWD: 1 });
+      expect(result[0]).toHaveProperty('label');
+      expect(result[0]).toHaveProperty('value');
+    });
+  });
+
   describe('getTotalSummary', () => {
     const subscriptions: Subscription[] = [
       { ...mockSubscription, price: 100 },
@@ -113,6 +170,44 @@ describe('chartHelper', () => {
     it('calculates average monthly', () => {
       const result = getTotalSummary(subscriptions, 'TWD', { TWD: 1 });
       expect(result.avgMonthly).toBe(150);
+    });
+
+    it('handles empty subscription array', () => {
+      const result = getTotalSummary([], 'TWD', { TWD: 1 });
+      expect(result.monthly).toBe(0);
+      expect(result.yearly).toBe(0);
+      expect(result.count).toBe(0);
+      expect(result.avgMonthly).toBe(0);
+    });
+  });
+
+  describe('getExpenseStatistics', () => {
+    const subscriptions: Subscription[] = [
+      { ...mockSubscription, price: 100, category: 'entertainment' },
+      { ...mockSubscription, id: 2, price: 200, category: 'productivity' },
+    ];
+
+    it('returns 3 time range entries (weekly, monthly, yearly)', () => {
+      const result = getExpenseStatistics(subscriptions, 'TWD', { TWD: 1 });
+      expect(result.length).toBe(3);
+    });
+
+    it('includes breakdown for each time range', () => {
+      const result = getExpenseStatistics(subscriptions, 'TWD', { TWD: 1 });
+      expect(result[0]).toHaveProperty('breakdown');
+      expect(Array.isArray(result[0].breakdown)).toBe(true);
+    });
+
+    it('calculates correct values for different time ranges', () => {
+      const result = getExpenseStatistics(subscriptions, 'TWD', { TWD: 1 });
+      const weekly = result[0];
+      const monthly = result[1];
+      const yearly = result[2];
+
+      // Monthly should be higher than weekly
+      expect(monthly.value).toBeGreaterThan(weekly.value);
+      // Yearly should be higher than monthly
+      expect(yearly.value).toBeGreaterThan(monthly.value);
     });
   });
 });

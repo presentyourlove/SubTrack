@@ -1,4 +1,13 @@
+# Maestro E2E 測試設定
+# 文件：https://maestro.mobile.dev/
+
+# 應用程式 ID
 appId: com.subtrack.app
----
-- launchApp
-- assertVisible: 'SubTrack'
+
+# 預設等待超時（毫秒）
+initFlow: flows/init.yaml
+
+# 環境變數
+env:
+  TEST_EMAIL: test@example.com
+  TEST_PASSWORD: testpassword123

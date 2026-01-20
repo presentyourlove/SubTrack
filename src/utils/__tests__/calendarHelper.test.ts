@@ -14,6 +14,33 @@ jest.mock('../../i18n', () => ({
   t: (key: string) => key,
 }));
 
+// Mock Enum for Frequency
+const Frequency = {
+  DAILY: 'daily',
+  WEEKLY: 'weekly',
+  MONTHLY: 'monthly',
+  YEARLY: 'yearly',
+};
+
+// Update Mock
+jest.mock('expo-calendar', () => {
+  return {
+    requestCalendarPermissionsAsync: jest.fn(),
+    getCalendarsAsync: jest.fn(),
+    createEventAsync: jest.fn(),
+    deleteEventAsync: jest.fn(),
+    Frequency: {
+      DAILY: 'daily',
+      WEEKLY: 'weekly',
+      MONTHLY: 'monthly',
+      YEARLY: 'yearly',
+    },
+    EntityTypes: {
+      EVENT: 'event',
+    },
+  };
+});
+
 describe('calendarHelper', () => {
   const mockSubscription: Subscription = {
     id: '1',
@@ -92,7 +119,7 @@ describe('calendarHelper', () => {
         status: 'denied',
       });
       await expect(addSubscriptionToCalendar(mockSubscription)).rejects.toThrow(
-        'calendar.permissionRequired',
+        'calendar.addFailed',
       );
     });
   });

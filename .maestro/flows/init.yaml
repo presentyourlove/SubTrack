@@ -1,0 +1,6 @@
+# 初始化流程 - 等待 App 載入完成
+appId: com.subtrack.app
+---
+- launchApp:
+    clearState: true
+- waitForAnimationToEnd

@@ -1,0 +1,35 @@
+# 主頁面流程 E2E 測試
+appId: com.subtrack.app
+---
+- launchApp
+- waitForAnimationToEnd
+
+# 驗證首頁元素
+- assertVisible:
+    text: "本月支出"
+    optional: true
+
+- assertVisible:
+    text: "今年支出"
+    optional: true
+
+# 驗證底部導航
+- assertVisible:
+    id: "home-tab"
+- assertVisible:
+    id: "reports-tab"
+- assertVisible:
+    id: "settings-tab"
+
+# 導航到報表頁
+- tapOn:
+    id: "reports-tab"
+- waitForAnimationToEnd
+
+# 返回首頁
+- tapOn:
+    id: "home-tab"
+- waitForAnimationToEnd
+
+# 截圖
+- takeScreenshot: "home_page"

@@ -223,3 +223,26 @@ jest.mock('@react-native-community/datetimepicker', () => {
     },
   };
 });
+
+// Mock expo-notifications
+jest.mock('expo-notifications', () => ({
+  requestPermissionsAsync: jest.fn(() => Promise.resolve({ status: 'granted' })),
+  getPermissionsAsync: jest.fn(() => Promise.resolve({ status: 'granted' })),
+  scheduleNotificationAsync: jest.fn(() => Promise.resolve('notification-id')),
+  cancelScheduledNotificationAsync: jest.fn(() => Promise.resolve()),
+  cancelAllScheduledNotificationsAsync: jest.fn(() => Promise.resolve()),
+  setNotificationHandler: jest.fn(),
+  addNotificationReceivedListener: jest.fn(() => ({ remove: jest.fn() })),
+  addNotificationResponseReceivedListener: jest.fn(() => ({ remove: jest.fn() })),
+  AndroidImportance: { MAX: 5, HIGH: 4, DEFAULT: 3, LOW: 2, MIN: 1 },
+}));
+
+// Mock expo-local-authentication
+jest.mock('expo-local-authentication', () => ({
+  hasHardwareAsync: jest.fn(() => Promise.resolve(true)),
+  isEnrolledAsync: jest.fn(() => Promise.resolve(true)),
+  authenticateAsync: jest.fn(() => Promise.resolve({ success: true })),
+  supportedAuthenticationTypesAsync: jest.fn(() => Promise.resolve([1, 2])),
+  AuthenticationType: { FINGERPRINT: 1, FACIAL_RECOGNITION: 2 },
+}));
+

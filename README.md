@@ -185,12 +185,35 @@ npm test -- --watch
 
 ### 2. E2E 自動化測試 (End-to-End)
 
-使用 Maestro 進行完整流程驗證 (APK/IPA)：
+使用 Maestro 進行完整流程驗證：
 
 ```bash
-# 需先安裝 Maestro CLI
-maestro test .maestro/flow.yaml
+# 安裝 Maestro CLI (macOS/Linux)
+curl -Ls "https://get.maestro.mobile.dev" | bash
+
+# Windows 使用者需先安裝 WSL
+# wsl --install (需系統管理員權限並重啟)
+# 然後在 WSL 中執行上述 curl 指令
+
+# 執行所有 E2E 測試
+maestro test .maestro/flows/
+
+# 執行單一測試流程
+maestro test .maestro/flows/add_subscription.yaml
+
+# 持續監控模式 (開發用)
+maestro test --continuous .maestro/flows/
 ```
+
+**可用測試流程：**
+
+| 流程                      | 說明                   |
+| ------------------------- | ---------------------- |
+| `init.yaml`               | App 初始化與載入       |
+| `home.yaml`               | 首頁導航與頁面切換     |
+| `add_subscription.yaml`   | 新增訂閱完整流程       |
+| `search.yaml`             | 搜尋功能與結果驗證     |
+| `settings.yaml`           | 設定頁面與主題切換     |
 
 ### 3. 各平台測試指南
 

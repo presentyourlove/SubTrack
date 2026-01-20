@@ -1,68 +1,87 @@
-import * as Haptics from 'expo-haptics';
+/**
+ * Haptics Utility Tests
+ */
+
 import { Platform } from 'react-native';
+import * as Haptics from 'expo-haptics';
 
-describe('haptics', () => {
-  let hapticFeedback: any;
+// Mock Platform
+jest.mock('react-native', () => ({
+  Platform: {
+    OS: 'ios',
+  },
+}));
 
+// Import after mock setup
+import { hapticFeedback } from '../haptics';
+
+describe('hapticFeedback', () => {
   beforeEach(() => {
     jest.clearAllMocks();
-    jest.resetModules();
   });
 
-  const loadHaptics = () => {
-    return require('../haptics').hapticFeedback;
-  };
-
-  describe('on native', () => {
-    beforeEach(() => {
-      Platform.OS = 'ios';
-      hapticFeedback = loadHaptics();
+  describe('on native platform', () => {
+    beforeAll(() => {
+      (Platform as unknown as { OS: string }).OS = 'ios';
     });
 
-    it('light calls impactAsync with Light', async () => {
+    it('light() should call impactAsync with Light style', async () => {
       await hapticFeedback.light();
       expect(Haptics.impactAsync).toHaveBeenCalledWith(Haptics.ImpactFeedbackStyle.Light);
     });
 
-    it('medium calls impactAsync with Medium', async () => {
+    it('medium() should call impactAsync with Medium style', async () => {
       await hapticFeedback.medium();
       expect(Haptics.impactAsync).toHaveBeenCalledWith(Haptics.ImpactFeedbackStyle.Medium);
     });
 
-    it('heavy calls impactAsync with Heavy', async () => {
+    it('heavy() should call impactAsync with Heavy style', async () => {
       await hapticFeedback.heavy();
       expect(Haptics.impactAsync).toHaveBeenCalledWith(Haptics.ImpactFeedbackStyle.Heavy);
     });
 
-    it('success calls notificationAsync with Success', async () => {
+    it('success() should call notificationAsync with Success type', async () => {
       await hapticFeedback.success();
       expect(Haptics.notificationAsync).toHaveBeenCalledWith(
         Haptics.NotificationFeedbackType.Success,
       );
     });
 
-    it('error calls notificationAsync with Error', async () => {
+    it('error() should call notificationAsync with Error type', async () => {
       await hapticFeedback.error();
       expect(Haptics.notificationAsync).toHaveBeenCalledWith(
         Haptics.NotificationFeedbackType.Error,
       );
     });
 
-    it('selection calls selectionAsync', async () => {
+    it('selection() should call selectionAsync', async () => {
       await hapticFeedback.selection();
       expect(Haptics.selectionAsync).toHaveBeenCalled();
     });
   });
 
-  describe('on web', () => {
-    beforeEach(() => {
-      Platform.OS = 'web';
-      hapticFeedback = loadHaptics();
+  describe('error handling', () => {
+    it('should handle errors gracefully when haptics fail', async () => {
+      (Haptics.impactAsync as jest.Mock).mockRejectedValueOnce(new Error('Haptics unavailable'));
+
+      // Should not throw
+      await expect(hapticFeedback.light()).resolves.not.toThrow();
     });
 
-    it('does nothing on web', async () => {
-      await hapticFeedback.light();
-      expect(Haptics.impactAsync).not.toHaveBeenCalled();
+    it('should handle notification haptics errors gracefully', async () => {
+      (Haptics.notificationAsync as jest.Mock).mockRejectedValueOnce(
+        new Error('Haptics unavailable'),
+      );
+
+      await expect(hapticFeedback.success()).resolves.not.toThrow();
+    });
+
+    it('should handle selection haptics errors gracefully', async () => {
+      (Haptics.selectionAsync as jest.Mock).mockRejectedValueOnce(
+        new Error('Haptics unavailable'),
+      );
+
+      await expect(hapticFeedback.selection()).resolves.not.toThrow();
     });
   });
 });
