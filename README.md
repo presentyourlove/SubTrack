@@ -216,27 +216,30 @@ maestro test --continuous .maestro/flows/
 | `search.yaml`           | 搜尋功能與結果驗證 |
 | `settings.yaml`         | 設定頁面與主題切換 |
 
-### 3. 各平台測試指南
-
 ### 3. 各平台測試指南 (Cross-Platform Testing Guide)
 
-本專案依賴 Native Modules (如 `op-sqlite`)，建議使用 **Development Build** 進行測試以確保 Native 功能正常運作。
+> [!IMPORTANT]
+> 本專案使用 **`op-sqlite`** (Native JSI Module)，**不支援** App Store / Play Store 下載的標準版 **Expo Go**。
+> 您必須使用 **Development Build (開發版用戶端)** 才能掃瞄 QR Code 進行實機測試。
 
 - **Android (APK)**
   - **模擬器**: 執行 `npm run android`。
-  - **實機**:
-    1. 透過 EAS Build 打包開發版: `eas build --profile development --platform android`
-    2. 安裝 APK 後，啟動開發伺服器: `npx expo start --dev-client`
+  - **實機 (Development Build)**:
+    1. 打包開發版: `eas build --profile development --platform android`
+    2. 安裝 .apk 到手機。
+    3. 執行 `npx expo start --dev-client` 產生 QR Code。
+    4. 開發版 App 開啟後，掃描終端機的 QR Code 連線。
 
 - **iOS (SideStore IPA)**
-  - **實機 (SideStore)**:
-    1. 透過 EAS Build 打包: `eas build --profile development --platform ios`
-    2. 下載 IPA 並透過 SideStore 安裝。
-    3. 手機端開啟 App，確認同一區域網路下執行: `npx expo start --dev-client`
+  - **實機 (Development Build)**:
+    1. 打包開發版: `eas build --profile development --platform ios`
+    2. 透過 SideStore / AltStore 安裝 .ipa。
+    3. 執行 `npx expo start --dev-client` 產生 QR Code。
+    4. 開發版 App 開啟後，掃描或選擇連線。
   - **模擬器 (Mac Only)**: 執行 `npm run ios`。
 
 - **Web (PWA)**
-  - 執行 `npm run web` 測試響應式佈局與降級處理 (Op-SQLite 在 Web 會 fallback 到 LocalStorage)。
+  - 執行 `npm run web` (Op-SQLite 自動降級為 LocalStorage)。
 
 ---
 
