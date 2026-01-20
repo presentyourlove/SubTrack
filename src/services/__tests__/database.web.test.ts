@@ -116,7 +116,7 @@ describe('Web Database Service', () => {
         nextBillingDate: new Date().toISOString(),
         reminderEnabled: false,
         isFamilyPlan: false,
-      } as Subscription;
+      } as unknown as Subscription;
       const id = await addSubscription(db, sub);
 
       await updateSubscription(db, id, { price: 12.99 });
@@ -141,7 +141,7 @@ describe('Web Database Service', () => {
         nextBillingDate: new Date().toISOString(),
         reminderEnabled: false,
         isFamilyPlan: false,
-      } as Subscription;
+      } as unknown as Subscription;
       const id = await addSubscription(db, sub);
 
       await deleteSubscription(db, id);
