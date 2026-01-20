@@ -68,6 +68,7 @@ export default function SearchScreen() {
           />
           {query.length > 0 && (
             <TouchableOpacity
+              testID="clear-search-button"
               onPress={() => {
                 hapticFeedback.selection();
                 setQuery('');

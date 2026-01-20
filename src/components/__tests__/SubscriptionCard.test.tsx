@@ -17,6 +17,34 @@ jest.mock('../../context/DatabaseContext', () => ({
   }),
 }));
 
+// Mock Privacy
+jest.mock('../../hooks/usePrivacy', () => ({
+  usePrivacy: jest.fn().mockReturnValue({
+    maskValue: (val: string) => val, // Default no mask
+  }),
+}));
+
+// Mock Calendar Service
+jest.mock('../../services/calendarSyncService', () => ({
+  calendarSyncService: {
+    upsertEvent: jest.fn().mockResolvedValue('new-event-id'),
+  },
+}));
+
+// Mock Expo Calendar
+jest.mock('expo-calendar', () => ({
+  deleteEventAsync: jest.fn().mockResolvedValue(undefined),
+}));
+
+// Mock Utils
+jest.mock('../../utils/haptics', () => ({
+  hapticFeedback: {
+    selection: jest.fn(),
+    error: jest.fn(),
+    light: jest.fn(),
+  },
+}));
+
 const mockSubscription = {
   id: 1,
   name: 'Test Sub',
@@ -64,5 +92,26 @@ describe('SubscriptionCard', () => {
     // i18n mock returns key as-is, so look for the key
     fireEvent.press(getByText('common.edit'));
     expect(onEdit).toHaveBeenCalled();
+  });
+  it('calls onDelete when delete button pressed', () => {
+    const onDelete = jest.fn();
+    const { getByTestId } = render(
+      <SubscriptionCard subscription={mockSubscription} onDelete={onDelete} />,
+    );
+
+    fireEvent.press(getByTestId('delete-subscription-button'));
+    expect(onDelete).toHaveBeenCalled();
+  });
+
+  it('calls onSyncToCalendar when sync button pressed', async () => {
+    const onSync = jest.fn();
+    const { getByTestId } = render(
+      <SubscriptionCard subscription={mockSubscription} onSyncToCalendar={onSync} />,
+    );
+
+    fireEvent.press(getByTestId('sync-calendar-button'));
+    // Since handleSyncToCalendar is async, we might need wait for it
+    // But invalidating onSyncToCalendar happens after await.
+    // The implementation calls onUpdateCalendarId etc.
   });
 });

@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, Platform, Image } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, Platform, Image, Alert } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import * as Calendar from 'expo-calendar';
 import { useTheme } from '../context/ThemeContext';
@@ -46,7 +46,7 @@ export default function SubscriptionCard({
   // 同步到日曆
   const handleSyncToCalendar = async () => {
     if (Platform.OS === 'web') {
-      alert(i18n.t('calendar.webNotSupported'));
+      Alert.alert(i18n.t('calendar.webNotSupported'));
       return;
     }
 
@@ -61,14 +61,14 @@ export default function SubscriptionCard({
             onUpdateCalendarId(null);
           }
 
-          alert(i18n.t('calendar.removed'));
+          Alert.alert(i18n.t('calendar.removed'));
           // 通知父組件重新載入資料
           if (onSyncToCalendar) {
             onSyncToCalendar();
           }
         } catch (error) {
           console.error('刪除日曆事件失敗:', error);
-          alert(i18n.t('calendar.removeFailed'));
+          Alert.alert(i18n.t('calendar.removeFailed'));
         }
         return;
       }
@@ -76,7 +76,7 @@ export default function SubscriptionCard({
       const eventId = await calendarSyncService.upsertEvent(subscription);
 
       if (!eventId) {
-        alert(i18n.t('calendar.noCalendar'));
+        Alert.alert(i18n.t('calendar.noCalendar'));
         return;
       }
 
@@ -85,14 +85,14 @@ export default function SubscriptionCard({
         onUpdateCalendarId(eventId);
       }
 
-      alert(i18n.t('calendar.syncSuccess'));
+      Alert.alert(i18n.t('calendar.syncSuccess'));
       // 通知父組件重新載入資料
       if (onSyncToCalendar) {
         onSyncToCalendar();
       }
     } catch (error) {
       console.error('同步日曆失敗:', error);
-      alert(i18n.t('calendar.syncFailed'));
+      Alert.alert(i18n.t('calendar.syncFailed'));
     }
   };
 
@@ -213,6 +213,7 @@ export default function SubscriptionCard({
           </TouchableOpacity>
 
           <TouchableOpacity
+            testID="delete-subscription-button"
             style={[styles.actionButton, { borderColor: colors.borderColor }]}
             onPress={() => {
               if (onDelete) {
@@ -239,6 +240,7 @@ export default function SubscriptionCard({
             </Text>
           </View>
           <TouchableOpacity
+            testID="sync-calendar-button"
             style={[
               styles.calendarToggle,
               subscription.calendarEventId
