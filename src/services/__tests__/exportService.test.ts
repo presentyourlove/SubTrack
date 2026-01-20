@@ -86,7 +86,16 @@ describe('exportService', () => {
       // Verify unparse was called with array data
       const callArgs = mockPapa.unparse.mock.calls[0][0];
       expect(Array.isArray(callArgs)).toBe(true);
-      expect(callArgs[0]).toEqual(['名稱', '分類', '金額', '幣種', '週期', '開始日期', '下次扣款日', '圖示']);
+      expect(callArgs[0]).toEqual([
+        '名稱',
+        '分類',
+        '金額',
+        '幣種',
+        '週期',
+        '開始日期',
+        '下次扣款日',
+        '圖示',
+      ]);
     });
 
     it('throws error when sharing is not available', async () => {
@@ -142,7 +151,7 @@ describe('exportService', () => {
     });
 
     it('includes total amount in PDF HTML', async () => {
-      await exportSubscriptionsToPDF(mockSubscriptions, 100.50, 'EUR');
+      await exportSubscriptionsToPDF(mockSubscriptions, 100.5, 'EUR');
 
       const htmlArg = mockPrint.printToFileAsync.mock.calls[0][0].html;
       expect(htmlArg).toContain('EUR 100.50');
@@ -158,9 +167,9 @@ describe('exportService', () => {
     it('throws error when sharing is not available', async () => {
       mockSharing.isAvailableAsync.mockResolvedValue(false);
 
-      await expect(
-        exportSubscriptionsToPDF(mockSubscriptions, 25.98, 'USD'),
-      ).rejects.toThrow('Sharing is not available on this device');
+      await expect(exportSubscriptionsToPDF(mockSubscriptions, 25.98, 'USD')).rejects.toThrow(
+        'Sharing is not available on this device',
+      );
     });
 
     it('generates valid HTML structure', async () => {
