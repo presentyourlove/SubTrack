@@ -12,7 +12,9 @@ jest.mock('../adapter', () => ({
 }));
 
 describe('Database Initialization', () => {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     let mockNativeDb: any;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     let mockDb: any;
 
     beforeEach(() => {
