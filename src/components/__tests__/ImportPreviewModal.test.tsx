@@ -6,7 +6,14 @@ describe('ImportPreviewModal', () => {
   const defaultProps = {
     visible: true,
     data: [
-      { name: 'Netflix', icon: '🎬', price: 15.99, currency: 'USD', category: 'entertainment', billingCycle: 'monthly' },
+      {
+        name: 'Netflix',
+        icon: '🎬',
+        price: 15.99,
+        currency: 'USD',
+        category: 'entertainment',
+        billingCycle: 'monthly',
+      },
     ],
     errors: [],
     onConfirm: jest.fn(),

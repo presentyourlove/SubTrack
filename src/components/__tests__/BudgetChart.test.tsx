@@ -15,12 +15,10 @@ jest.mock('../../context/ThemeContext', () => ({
 }));
 
 jest.mock('../../utils/chartHelper', () => ({
-  getStatsByCategory: jest.fn().mockReturnValue([
-    { label: 'Entertainment', value: 100, color: '#ff0000' },
-  ]),
-  getExpenseStatistics: jest.fn().mockReturnValue([
-    { label: 'Jan', value: 200, color: '#00ff00' },
-  ]),
+  getStatsByCategory: jest
+    .fn()
+    .mockReturnValue([{ label: 'Entertainment', value: 100, color: '#ff0000' }]),
+  getExpenseStatistics: jest.fn().mockReturnValue([{ label: 'Jan', value: 200, color: '#00ff00' }]),
 }));
 
 jest.mock('../charts/SkiaPieChart', () => ({
@@ -39,17 +37,13 @@ describe('BudgetChart', () => {
   };
 
   it('renders category pie chart correctly', () => {
-    const { getByText } = render(
-      <BudgetChart {...defaultProps} chartType="category" />
-    );
+    const { getByText } = render(<BudgetChart {...defaultProps} chartType="category" />);
     expect(getByText('chart.categoryTitle')).toBeTruthy();
     expect(getByText('Entertainment')).toBeTruthy();
   });
 
   it('renders expense bar chart correctly', () => {
-    const { getByText } = render(
-      <BudgetChart {...defaultProps} chartType="timeline" />
-    );
+    const { getByText } = render(<BudgetChart {...defaultProps} chartType="timeline" />);
     expect(getByText('chart.expenseTitle')).toBeTruthy();
   });
 });

@@ -91,7 +91,9 @@ describe('SummaryCard - Default settings', () => {
   beforeEach(() => {
     jest.doMock('../../context/DatabaseContext', () => ({
       useDatabase: () => ({
-        subscriptions: [{ id: 1, name: 'Test', price: 10, currency: 'TWD', billingCycle: 'monthly' }],
+        subscriptions: [
+          { id: 1, name: 'Test', price: 10, currency: 'TWD', billingCycle: 'monthly' },
+        ],
         settings: null,
       }),
     }));
