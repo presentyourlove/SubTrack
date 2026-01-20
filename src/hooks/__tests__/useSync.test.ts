@@ -4,230 +4,210 @@ import * as syncService from '../../services/syncService';
 
 // Mock syncService
 jest.mock('../../services/syncService', () => ({
-    uploadLocalDataToFirestore: jest.fn(),
-    downloadFirestoreDataToLocal: jest.fn(),
+  uploadLocalDataToFirestore: jest.fn(),
+  downloadFirestoreDataToLocal: jest.fn(),
 }));
 
 // Mock Database
 jest.mock('../../services', () => ({
-    Database: jest.fn(),
+  Database: jest.fn(),
 }));
 
 const mockUpload = syncService.uploadLocalDataToFirestore as jest.Mock;
 const mockDownload = syncService.downloadFirestoreDataToLocal as jest.Mock;
 
 describe('useSync', () => {
-    const mockUser = { uid: 'test-uid', email: 'test@test.com' };
-    const mockDatabase = {} as any;
-    const mockSubscriptions = [
-        { id: '1', name: 'Netflix', price: 15.99 },
-    ] as any[];
-    const mockSettings = { currency: 'USD' } as any;
-    const mockSetSubscriptions = jest.fn();
-    const mockSetSettings = jest.fn();
+  const mockUser = { uid: 'test-uid', email: 'test@test.com' };
+  const mockDatabase = {} as any;
+  const mockSubscriptions = [{ id: '1', name: 'Netflix', price: 15.99 }] as any[];
+  const mockSettings = { currency: 'USD' } as any;
+  const mockSetSubscriptions = jest.fn();
+  const mockSetSettings = jest.fn();
 
-    beforeEach(() => {
-        jest.clearAllMocks();
-        mockDownload.mockResolvedValue({
-            subscriptions: [],
-            settings: null,
-        });
+  beforeEach(() => {
+    jest.clearAllMocks();
+    mockDownload.mockResolvedValue({
+      subscriptions: [],
+      settings: null,
+    });
+  });
+
+  it('returns initial state correctly', () => {
+    const { result } = renderHook(() =>
+      useSync(false, null, null, [], null, mockSetSubscriptions, mockSetSettings),
+    );
+
+    expect(result.current.isOnline).toBe(true);
+    expect(result.current.isSyncing).toBe(false);
+    expect(result.current.lastSyncTime).toBeNull();
+  });
+
+  it('syncToCloud uploads data when authenticated', async () => {
+    mockUpload.mockResolvedValue(undefined);
+
+    const { result } = renderHook(() =>
+      useSync(
+        true,
+        mockUser,
+        mockDatabase,
+        mockSubscriptions,
+        mockSettings,
+        mockSetSubscriptions,
+        mockSetSettings,
+      ),
+    );
+
+    await act(async () => {
+      await result.current.syncToCloud();
     });
 
-    it('returns initial state correctly', () => {
-        const { result } = renderHook(() =>
-            useSync(
-                false,
-                null,
-                null,
-                [],
-                null,
-                mockSetSubscriptions,
-                mockSetSettings,
-            ),
-        );
+    expect(mockUpload).toHaveBeenCalledWith('test-uid', mockSubscriptions, mockSettings);
+    expect(result.current.lastSyncTime).not.toBeNull();
+  });
 
-        expect(result.current.isOnline).toBe(true);
-        expect(result.current.isSyncing).toBe(false);
-        expect(result.current.lastSyncTime).toBeNull();
+  it('syncToCloud does nothing when not authenticated', async () => {
+    const { result } = renderHook(() =>
+      useSync(
+        false,
+        null,
+        mockDatabase,
+        mockSubscriptions,
+        mockSettings,
+        mockSetSubscriptions,
+        mockSetSettings,
+      ),
+    );
+
+    await act(async () => {
+      await result.current.syncToCloud();
     });
 
-    it('syncToCloud uploads data when authenticated', async () => {
-        mockUpload.mockResolvedValue(undefined);
+    expect(mockUpload).not.toHaveBeenCalled();
+  });
 
-        const { result } = renderHook(() =>
-            useSync(
-                true,
-                mockUser,
-                mockDatabase,
-                mockSubscriptions,
-                mockSettings,
-                mockSetSubscriptions,
-                mockSetSettings,
-            ),
-        );
+  it('syncFromCloud downloads and sets data', async () => {
+    const cloudData = {
+      subscriptions: [{ id: '2', name: 'Spotify' }],
+      settings: { currency: 'EUR' },
+    };
+    mockDownload.mockResolvedValue(cloudData);
 
-        await act(async () => {
-            await result.current.syncToCloud();
-        });
+    const { result } = renderHook(() =>
+      useSync(
+        true,
+        mockUser,
+        mockDatabase,
+        mockSubscriptions,
+        mockSettings,
+        mockSetSubscriptions,
+        mockSetSettings,
+      ),
+    );
 
-        expect(mockUpload).toHaveBeenCalledWith(
-            'test-uid',
-            mockSubscriptions,
-            mockSettings,
-        );
-        expect(result.current.lastSyncTime).not.toBeNull();
+    await act(async () => {
+      await result.current.syncFromCloud();
     });
 
-    it('syncToCloud does nothing when not authenticated', async () => {
-        const { result } = renderHook(() =>
-            useSync(
-                false,
-                null,
-                mockDatabase,
-                mockSubscriptions,
-                mockSettings,
-                mockSetSubscriptions,
-                mockSetSettings,
-            ),
-        );
+    expect(mockDownload).toHaveBeenCalledWith('test-uid');
+    expect(mockSetSubscriptions).toHaveBeenCalledWith(cloudData.subscriptions);
+    expect(mockSetSettings).toHaveBeenCalledWith(cloudData.settings);
+  });
 
-        await act(async () => {
-            await result.current.syncToCloud();
-        });
+  it('syncFromCloud does nothing when not authenticated', async () => {
+    const { result } = renderHook(() =>
+      useSync(
+        false,
+        null,
+        mockDatabase,
+        mockSubscriptions,
+        mockSettings,
+        mockSetSubscriptions,
+        mockSetSettings,
+      ),
+    );
 
-        expect(mockUpload).not.toHaveBeenCalled();
+    // Clear initial call from useEffect
+    mockDownload.mockClear();
+
+    await act(async () => {
+      await result.current.syncFromCloud();
     });
 
-    it('syncFromCloud downloads and sets data', async () => {
-        const cloudData = {
-            subscriptions: [{ id: '2', name: 'Spotify' }],
-            settings: { currency: 'EUR' },
-        };
-        mockDownload.mockResolvedValue(cloudData);
+    expect(mockDownload).not.toHaveBeenCalled();
+  });
 
-        const { result } = renderHook(() =>
-            useSync(
-                true,
-                mockUser,
-                mockDatabase,
-                mockSubscriptions,
-                mockSettings,
-                mockSetSubscriptions,
-                mockSetSettings,
-            ),
-        );
+  it('triggerSync sets needsSync and schedules sync', async () => {
+    jest.useFakeTimers();
 
-        await act(async () => {
-            await result.current.syncFromCloud();
-        });
+    const { result } = renderHook(() =>
+      useSync(
+        true,
+        mockUser,
+        mockDatabase,
+        mockSubscriptions,
+        mockSettings,
+        mockSetSubscriptions,
+        mockSetSettings,
+      ),
+    );
 
-        expect(mockDownload).toHaveBeenCalledWith('test-uid');
-        expect(mockSetSubscriptions).toHaveBeenCalledWith(cloudData.subscriptions);
-        expect(mockSetSettings).toHaveBeenCalledWith(cloudData.settings);
+    act(() => {
+      result.current.triggerSync();
     });
 
-    it('syncFromCloud does nothing when not authenticated', async () => {
-        const { result } = renderHook(() =>
-            useSync(
-                false,
-                null,
-                mockDatabase,
-                mockSubscriptions,
-                mockSettings,
-                mockSetSubscriptions,
-                mockSetSettings,
-            ),
-        );
-
-        // Clear initial call from useEffect
-        mockDownload.mockClear();
-
-        await act(async () => {
-            await result.current.syncFromCloud();
-        });
-
-        expect(mockDownload).not.toHaveBeenCalled();
+    // Fast-forward past debounce time
+    await act(async () => {
+      jest.advanceTimersByTime(6000);
     });
 
-    it('triggerSync sets needsSync and schedules sync', async () => {
-        jest.useFakeTimers();
+    jest.useRealTimers();
+  });
 
-        const { result } = renderHook(() =>
-            useSync(
-                true,
-                mockUser,
-                mockDatabase,
-                mockSubscriptions,
-                mockSettings,
-                mockSetSubscriptions,
-                mockSetSettings,
-            ),
-        );
+  it('handles syncToCloud error gracefully', async () => {
+    const consoleSpy = jest.spyOn(console, 'error').mockImplementation();
+    mockUpload.mockRejectedValue(new Error('Upload failed'));
 
-        act(() => {
-            result.current.triggerSync();
-        });
+    const { result } = renderHook(() =>
+      useSync(
+        true,
+        mockUser,
+        mockDatabase,
+        mockSubscriptions,
+        mockSettings,
+        mockSetSubscriptions,
+        mockSetSettings,
+      ),
+    );
 
-        // Fast-forward past debounce time
-        await act(async () => {
-            jest.advanceTimersByTime(6000);
-        });
-
-        jest.useRealTimers();
+    await act(async () => {
+      await result.current.syncToCloud();
     });
 
-    it('handles syncToCloud error gracefully', async () => {
-        const consoleSpy = jest.spyOn(console, 'error').mockImplementation();
-        mockUpload.mockRejectedValue(new Error('Upload failed'));
+    expect(consoleSpy).toHaveBeenCalledWith('Failed to sync to cloud:', expect.any(Error));
+    consoleSpy.mockRestore();
+  });
 
-        const { result } = renderHook(() =>
-            useSync(
-                true,
-                mockUser,
-                mockDatabase,
-                mockSubscriptions,
-                mockSettings,
-                mockSetSubscriptions,
-                mockSetSettings,
-            ),
-        );
+  it('handles syncFromCloud error gracefully', async () => {
+    const consoleSpy = jest.spyOn(console, 'error').mockImplementation();
+    mockDownload.mockRejectedValue(new Error('Download failed'));
 
-        await act(async () => {
-            await result.current.syncToCloud();
-        });
+    const { result } = renderHook(() =>
+      useSync(
+        true,
+        mockUser,
+        mockDatabase,
+        mockSubscriptions,
+        mockSettings,
+        mockSetSubscriptions,
+        mockSetSettings,
+      ),
+    );
 
-        expect(consoleSpy).toHaveBeenCalledWith(
-            'Failed to sync to cloud:',
-            expect.any(Error),
-        );
-        consoleSpy.mockRestore();
+    await act(async () => {
+      await result.current.syncFromCloud();
     });
 
-    it('handles syncFromCloud error gracefully', async () => {
-        const consoleSpy = jest.spyOn(console, 'error').mockImplementation();
-        mockDownload.mockRejectedValue(new Error('Download failed'));
-
-        const { result } = renderHook(() =>
-            useSync(
-                true,
-                mockUser,
-                mockDatabase,
-                mockSubscriptions,
-                mockSettings,
-                mockSetSubscriptions,
-                mockSetSettings,
-            ),
-        );
-
-        await act(async () => {
-            await result.current.syncFromCloud();
-        });
-
-        expect(consoleSpy).toHaveBeenCalledWith(
-            'Failed to sync from cloud:',
-            expect.any(Error),
-        );
-        consoleSpy.mockRestore();
-    });
+    expect(consoleSpy).toHaveBeenCalledWith('Failed to sync from cloud:', expect.any(Error));
+    consoleSpy.mockRestore();
+  });
 });
