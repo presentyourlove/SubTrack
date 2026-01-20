@@ -24,7 +24,7 @@ jest.mock('../../../context/DatabaseContext', () => ({
   useDatabase: () => ({
     settings: {
       mainCurrency: 'TWD',
-      exchangeRates: JSON.stringify({ USD: 32.5, JPY: 0.21 })
+      exchangeRates: JSON.stringify({ USD: 32.5, JPY: 0.21 }),
     },
     updateSettings: mockUpdateSettings,
   }),
@@ -100,9 +100,11 @@ describe('CurrencySettings', () => {
     fireEvent.press(getByText('編輯匯率與新增幣別'));
 
     fireEvent.press(getByTestId('save-rates-button'));
-    expect(mockUpdateSettings).toHaveBeenCalledWith(expect.objectContaining({
-      exchangeRates: expect.stringContaining('"USD":32.5')
-    }));
+    expect(mockUpdateSettings).toHaveBeenCalledWith(
+      expect.objectContaining({
+        exchangeRates: expect.stringContaining('"USD":32.5'),
+      }),
+    );
   });
 
   it('shows error when saving invalid rates', async () => {

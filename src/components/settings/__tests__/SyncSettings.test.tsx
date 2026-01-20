@@ -9,43 +9,43 @@ const mockSyncToCloud = jest.fn();
 const mockSyncFromCloud = jest.fn();
 
 jest.mock('../../../context/ThemeContext', () => ({
-    useTheme: () => ({
-        colors: {
-            card: '#ffffff',
-            borderColor: '#e0e0e0',
-            accent: '#007AFF',
-            text: '#000000',
-            subtleText: '#666666',
-            background: '#f5f5f5',
-            expense: '#ef4444',
-        },
-    }),
+  useTheme: () => ({
+    colors: {
+      card: '#ffffff',
+      borderColor: '#e0e0e0',
+      accent: '#007AFF',
+      text: '#000000',
+      subtleText: '#666666',
+      background: '#f5f5f5',
+      expense: '#ef4444',
+    },
+  }),
 }));
 
 jest.mock('../../../context/AuthContext', () => ({
-    useAuth: () => ({
-        user: null,
-        isAuthenticated: false,
-    }),
+  useAuth: () => ({
+    user: null,
+    isAuthenticated: false,
+  }),
 }));
 
 jest.mock('../../../context/DatabaseContext', () => ({
-    useDatabase: () => ({
-        syncToCloud: mockSyncToCloud,
-        syncFromCloud: mockSyncFromCloud,
-    }),
+  useDatabase: () => ({
+    syncToCloud: mockSyncToCloud,
+    syncFromCloud: mockSyncFromCloud,
+  }),
 }));
 
 jest.mock('../../../context/ToastContext', () => ({
-    useToast: () => ({
-        showToast: mockShowToast,
-    }),
+  useToast: () => ({
+    showToast: mockShowToast,
+  }),
 }));
 
 jest.mock('../../../services/authService', () => ({
-    loginUser: jest.fn(),
-    registerUser: jest.fn(),
-    logoutUser: jest.fn(),
+  loginUser: jest.fn(),
+  registerUser: jest.fn(),
+  logoutUser: jest.fn(),
 }));
 
 const mockLogin = authService.loginUser as jest.Mock;
@@ -53,125 +53,125 @@ const mockRegister = authService.registerUser as jest.Mock;
 const mockLogout = authService.logoutUser as jest.Mock;
 
 describe('SyncSettings', () => {
-    beforeEach(() => {
-        jest.clearAllMocks();
+  beforeEach(() => {
+    jest.clearAllMocks();
+  });
+
+  describe('Unauthenticated state', () => {
+    it('renders sync settings button', () => {
+      const { getByText } = render(<SyncSettings />);
+
+      expect(getByText('settings.sync')).toBeTruthy();
+      expect(getByText('settings.loginToSync')).toBeTruthy();
     });
 
-    describe('Unauthenticated state', () => {
-        it('renders sync settings button', () => {
-            const { getByText } = render(<SyncSettings />);
+    it('opens modal when button is pressed', () => {
+      const { getByText, getAllByText } = render(<SyncSettings />);
 
-            expect(getByText('settings.sync')).toBeTruthy();
-            expect(getByText('settings.loginToSync')).toBeTruthy();
-        });
+      const button = getByText('settings.sync').parent?.parent;
+      if (button) {
+        fireEvent.press(button);
+      }
 
-        it('opens modal when button is pressed', () => {
-            const { getByText, getAllByText } = render(<SyncSettings />);
+      // Modal should show login form
+      expect(getAllByText(/validation.login/).length).toBeGreaterThanOrEqual(1);
+    });
+  });
 
-            const button = getByText('settings.sync').parent?.parent;
-            if (button) {
-                fireEvent.press(button);
-            }
+  describe('Login functionality', () => {
+    it('calls login with email and password', async () => {
+      mockLogin.mockResolvedValue(undefined);
 
-            // Modal should show login form
-            expect(getAllByText(/validation.login/).length).toBeGreaterThanOrEqual(1);
-        });
+      const { getByText, getByPlaceholderText } = render(<SyncSettings />);
+
+      // Open modal
+      const button = getByText('settings.sync').parent?.parent;
+      if (button) {
+        fireEvent.press(button);
+      }
+
+      // Fill in form
+      const emailInput = getByPlaceholderText('Email');
+      const passwordInput = getByPlaceholderText('common.password');
+
+      fireEvent.changeText(emailInput, 'test@test.com');
+      fireEvent.changeText(passwordInput, 'password123');
+
+      // Press login
+      const loginButton = getByText('登入');
+      fireEvent.press(loginButton);
+
+      await waitFor(() => {
+        expect(mockLogin).toHaveBeenCalledWith('test@test.com', 'password123');
+      });
     });
 
-    describe('Login functionality', () => {
-        it('calls login with email and password', async () => {
-            mockLogin.mockResolvedValue(undefined);
+    it('shows error toast on login failure', async () => {
+      mockLogin.mockRejectedValue(new Error('Invalid credentials'));
 
-            const { getByText, getByPlaceholderText } = render(<SyncSettings />);
+      const { getByText, getByPlaceholderText } = render(<SyncSettings />);
 
-            // Open modal
-            const button = getByText('settings.sync').parent?.parent;
-            if (button) {
-                fireEvent.press(button);
-            }
+      // Open modal
+      const button = getByText('settings.sync').parent?.parent;
+      if (button) {
+        fireEvent.press(button);
+      }
 
-            // Fill in form
-            const emailInput = getByPlaceholderText('Email');
-            const passwordInput = getByPlaceholderText('common.password');
+      // Fill in form
+      fireEvent.changeText(getByPlaceholderText('Email'), 'test@test.com');
+      fireEvent.changeText(getByPlaceholderText('common.password'), 'wrong');
 
-            fireEvent.changeText(emailInput, 'test@test.com');
-            fireEvent.changeText(passwordInput, 'password123');
+      // Press login
+      fireEvent.press(getByText('登入'));
 
-            // Press login
-            const loginButton = getByText('登入');
-            fireEvent.press(loginButton);
-
-            await waitFor(() => {
-                expect(mockLogin).toHaveBeenCalledWith('test@test.com', 'password123');
-            });
-        });
-
-        it('shows error toast on login failure', async () => {
-            mockLogin.mockRejectedValue(new Error('Invalid credentials'));
-
-            const { getByText, getByPlaceholderText } = render(<SyncSettings />);
-
-            // Open modal
-            const button = getByText('settings.sync').parent?.parent;
-            if (button) {
-                fireEvent.press(button);
-            }
-
-            // Fill in form
-            fireEvent.changeText(getByPlaceholderText('Email'), 'test@test.com');
-            fireEvent.changeText(getByPlaceholderText('common.password'), 'wrong');
-
-            // Press login
-            fireEvent.press(getByText('登入'));
-
-            await waitFor(() => {
-                expect(mockShowToast).toHaveBeenCalledWith('Invalid credentials', 'error');
-            });
-        });
+      await waitFor(() => {
+        expect(mockShowToast).toHaveBeenCalledWith('Invalid credentials', 'error');
+      });
     });
+  });
 
-    describe('Register functionality', () => {
-        it('calls register when register button is pressed', async () => {
-            mockRegister.mockResolvedValue(undefined);
+  describe('Register functionality', () => {
+    it('calls register when register button is pressed', async () => {
+      mockRegister.mockResolvedValue(undefined);
 
-            const { getByText, getByPlaceholderText } = render(<SyncSettings />);
+      const { getByText, getByPlaceholderText } = render(<SyncSettings />);
 
-            // Open modal
-            const button = getByText('settings.sync').parent?.parent;
-            if (button) {
-                fireEvent.press(button);
-            }
+      // Open modal
+      const button = getByText('settings.sync').parent?.parent;
+      if (button) {
+        fireEvent.press(button);
+      }
 
-            // Fill in form
-            fireEvent.changeText(getByPlaceholderText('Email'), 'new@test.com');
-            fireEvent.changeText(getByPlaceholderText('common.password'), 'newpass123');
+      // Fill in form
+      fireEvent.changeText(getByPlaceholderText('Email'), 'new@test.com');
+      fireEvent.changeText(getByPlaceholderText('common.password'), 'newpass123');
 
-            // Press register
-            const registerButton = getByText('settings.registerNow');
-            fireEvent.press(registerButton);
+      // Press register
+      const registerButton = getByText('settings.registerNow');
+      fireEvent.press(registerButton);
 
-            await waitFor(() => {
-                expect(mockRegister).toHaveBeenCalledWith('new@test.com', 'newpass123');
-            });
-        });
+      await waitFor(() => {
+        expect(mockRegister).toHaveBeenCalledWith('new@test.com', 'newpass123');
+      });
     });
+  });
 });
 
 // Test authenticated state separately
 describe('SyncSettings - Authenticated', () => {
-    beforeEach(() => {
-        jest.clearAllMocks();
-        // Override mock for authenticated state
-        jest.doMock('../../../context/AuthContext', () => ({
-            useAuth: () => ({
-                user: { email: 'user@test.com' },
-                isAuthenticated: true,
-            }),
-        }));
-    });
+  beforeEach(() => {
+    jest.clearAllMocks();
+    // Override mock for authenticated state
+    jest.doMock('../../../context/AuthContext', () => ({
+      useAuth: () => ({
+        user: { email: 'user@test.com' },
+        isAuthenticated: true,
+      }),
+    }));
+  });
 
-    it('renders with proper structure', () => {
-        const { toJSON } = render(<SyncSettings />);
-        expect(toJSON()).toBeTruthy();
-    });
+  it('renders with proper structure', () => {
+    const { toJSON } = render(<SyncSettings />);
+    expect(toJSON()).toBeTruthy();
+  });
 });
