@@ -53,7 +53,7 @@ jest.mock('react-native-reanimated', () => {
       Image: View,
       ScrollView: View,
       FlatList: View,
-      call: () => { },
+      call: () => {},
       createAnimatedComponent: (component) => component,
     },
     useSharedValue: (init) => ({ value: init }),
@@ -245,4 +245,3 @@ jest.mock('expo-local-authentication', () => ({
   supportedAuthenticationTypesAsync: jest.fn(() => Promise.resolve([1, 2])),
   AuthenticationType: { FINGERPRINT: 1, FACIAL_RECOGNITION: 2 },
 }));
-

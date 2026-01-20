@@ -1,13 +1,23 @@
 import React from 'react';
-import { render, act, renderHook, waitFor, fireEvent } from '@testing-library/react-native';
+import { render, fireEvent, renderHook } from '@testing-library/react-native';
 import { ToastProvider, useToast } from '../ToastContext';
 import { Text, Button } from 'react-native';
 
 // Mock Toast component to avoid testing UI details and animations
 jest.mock('../../components/Toast', () => {
+  // eslint-disable-next-line @typescript-eslint/no-require-imports
   const React = require('react');
+  // eslint-disable-next-line @typescript-eslint/no-require-imports
   const { View, Text } = require('react-native');
-  return ({ visible, message, type, testID }: any) => {
+  const MockToast = ({
+    visible,
+    message,
+    type,
+  }: {
+    visible: boolean;
+    message: string;
+    type: string;
+  }) => {
     if (!visible) return null;
     return (
       <View testID="mock-toast">
@@ -16,6 +26,8 @@ jest.mock('../../components/Toast', () => {
       </View>
     );
   };
+  MockToast.displayName = 'MockToast';
+  return MockToast;
 });
 
 describe('ToastContext', () => {

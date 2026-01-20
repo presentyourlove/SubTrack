@@ -77,9 +77,7 @@ describe('hapticFeedback', () => {
     });
 
     it('should handle selection haptics errors gracefully', async () => {
-      (Haptics.selectionAsync as jest.Mock).mockRejectedValueOnce(
-        new Error('Haptics unavailable'),
-      );
+      (Haptics.selectionAsync as jest.Mock).mockRejectedValueOnce(new Error('Haptics unavailable'));
 
       await expect(hapticFeedback.selection()).resolves.not.toThrow();
     });

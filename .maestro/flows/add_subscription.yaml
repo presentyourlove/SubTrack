@@ -7,37 +7,37 @@ appId: com.subtrack.app
 
 # 點擊新增按鈕（FAB 按鈕）
 - tapOn:
-    id: "add-subscription-button"
+    id: 'add-subscription-button'
 
 # 等待模態視窗出現
 - waitForAnimationToEnd
 
 # 從服務目錄選擇 Netflix
-- tapOn: "影音娛樂"
-- tapOn: "Netflix"
+- tapOn: '影音娛樂'
+- tapOn: 'Netflix'
 
 # 填寫金額
 - tapOn:
-    id: "price-input"
-- inputText: "390"
+    id: 'price-input'
+- inputText: '390'
 
 # 選擇幣種（如果需要）
 - tapOn:
-    id: "currency-selector"
-- tapOn: "TWD"
+    id: 'currency-selector'
+- tapOn: 'TWD'
 
 # 選擇週期
 - tapOn:
-    id: "billing-cycle-selector"
-- tapOn: "每月"
+    id: 'billing-cycle-selector'
+- tapOn: '每月'
 
 # 儲存
-- tapOn: "儲存"
+- tapOn: '儲存'
 
 # 驗證訂閱已新增
 - waitForAnimationToEnd
-- assertVisible: "Netflix"
-- assertVisible: "$390"
+- assertVisible: 'Netflix'
+- assertVisible: '$390'
 
 # 截圖
-- takeScreenshot: "add_subscription_success"
+- takeScreenshot: 'add_subscription_success'

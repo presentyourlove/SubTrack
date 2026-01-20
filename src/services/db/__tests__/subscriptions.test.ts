@@ -73,11 +73,11 @@ describe('subscriptions service', () => {
     it('inserts subscription and returns id', async () => {
       (mockDb.runAsync as jest.Mock).mockResolvedValue({ lastInsertRowId: 10 });
       const newSub = { ...mockSubscription };
-      // @ts-ignore
+      // @ts-expect-error - Testing invalid input
       delete newSub.id;
-      // @ts-ignore
+      // @ts-expect-error - Testing invalid input
       delete newSub.createdAt;
-      // @ts-ignore
+      // @ts-expect-error - Testing invalid input
       delete newSub.updatedAt;
 
       const id = await addSubscription(mockDb, newSub);

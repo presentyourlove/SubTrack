@@ -1,5 +1,6 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import React from 'react';
-import { render, fireEvent, waitFor } from '@testing-library/react-native';
+import { render, fireEvent } from '@testing-library/react-native';
 import SearchScreen from '../SearchScreen';
 import { ThemeProvider } from '../../../context/ThemeContext';
 import { DatabaseProvider } from '../../../context/DatabaseContext';
@@ -15,7 +16,15 @@ jest.mock('../../../utils/haptics', () => ({
 
 // Mock OptimizedList as it might be complex
 jest.mock('../../common/OptimizedList', () => ({
-  OptimizedList: ({ data, renderItem, ListEmptyComponent }: any) => (
+  OptimizedList: ({
+    data,
+    renderItem,
+    ListEmptyComponent,
+  }: {
+    data: any[];
+    renderItem: any;
+    ListEmptyComponent: any;
+  }) => (
     <>
       {ListEmptyComponent && data.length === 0 ? ListEmptyComponent : null}
       {data.map((item: any) => renderItem({ item }))}
@@ -24,9 +33,17 @@ jest.mock('../../common/OptimizedList', () => ({
 }));
 
 jest.mock('../../SubscriptionCard', () => {
-  // eslint-disable-next-line @typescript-eslint/no-var-requires
+  // eslint-disable-next-line @typescript-eslint/no-require-imports
   const { Text, TouchableOpacity } = require('react-native');
-  return ({ subscription, onEdit, onDelete }: any) => (
+  const MockSubscriptionCard = ({
+    subscription,
+    onEdit,
+    onDelete,
+  }: {
+    subscription: any;
+    onEdit: () => void;
+    onDelete: () => void;
+  }) => (
     <TouchableOpacity testID={`sub-${subscription.id}`} onPress={onEdit}>
       <Text>{subscription.name}</Text>
       <TouchableOpacity onPress={onDelete} testID={`delete-${subscription.id}`}>
@@ -34,12 +51,17 @@ jest.mock('../../SubscriptionCard', () => {
       </TouchableOpacity>
     </TouchableOpacity>
   );
+  MockSubscriptionCard.displayName = 'MockSubscriptionCard';
+  return MockSubscriptionCard;
 });
 
 jest.mock('../../AddSubscriptionModal', () => {
   // eslint-disable-next-line @typescript-eslint/no-require-imports
   const { View } = require('react-native');
-  return ({ visible }: any) => (visible ? <View testID="add-modal" /> : null);
+  const MockAddSubscriptionModal = ({ visible }: { visible: boolean }) =>
+    visible ? <View testID="add-modal" /> : null;
+  MockAddSubscriptionModal.displayName = 'MockAddSubscriptionModal';
+  return MockAddSubscriptionModal;
 });
 
 // Mock Contexts
@@ -54,7 +76,7 @@ jest.mock('../../../context/DatabaseContext', () => ({
     updateSubscription: jest.fn(),
     deleteSubscription: jest.fn(),
   }),
-  DatabaseProvider: ({ children }: any) => children,
+  DatabaseProvider: ({ children }: { children: React.ReactNode }) => children,
 }));
 
 const renderWithProviders = (component: React.ReactElement) => {

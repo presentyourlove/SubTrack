@@ -69,7 +69,9 @@ describe('authService', () => {
 
     it('should throw error on weak password', async () => {
       (signInWithEmailAndPassword as jest.Mock).mockRejectedValue({ code: 'auth/weak-password' });
-      await expect(loginUser('test@test.com', '123')).rejects.toThrow('validation.passwordTooShort');
+      await expect(loginUser('test@test.com', '123')).rejects.toThrow(
+        'validation.passwordTooShort',
+      );
     });
 
     it('should throw generic error on unknown error', async () => {
@@ -141,4 +143,3 @@ describe('authService', () => {
     });
   });
 });
-

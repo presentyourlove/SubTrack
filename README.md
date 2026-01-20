@@ -115,7 +115,8 @@ npm run ios
 
 ### Tools
 
-- **Testing**: Jest, React Native Testing Library, Maestro (E2E)
+- **2026-01-20**: Comprehensive linting and type error fixes across test suite (29 files).
+- **2026-01-20**: Boosted test coverage to >60% (Added tests for SummaryCard, AlertCard, PrivacyToggle, etc).(E2E)
 - **Linting**: ESLint, Prettier
 - **Build**: EAS (Expo Application Services)
 
@@ -207,13 +208,13 @@ maestro test --continuous .maestro/flows/
 
 **可用測試流程：**
 
-| 流程                      | 說明                   |
-| ------------------------- | ---------------------- |
-| `init.yaml`               | App 初始化與載入       |
-| `home.yaml`               | 首頁導航與頁面切換     |
-| `add_subscription.yaml`   | 新增訂閱完整流程       |
-| `search.yaml`             | 搜尋功能與結果驗證     |
-| `settings.yaml`           | 設定頁面與主題切換     |
+| 流程                    | 說明               |
+| ----------------------- | ------------------ |
+| `init.yaml`             | App 初始化與載入   |
+| `home.yaml`             | 首頁導航與頁面切換 |
+| `add_subscription.yaml` | 新增訂閱完整流程   |
+| `search.yaml`           | 搜尋功能與結果驗證 |
+| `settings.yaml`         | 設定頁面與主題切換 |
 
 ### 3. 各平台測試指南
 

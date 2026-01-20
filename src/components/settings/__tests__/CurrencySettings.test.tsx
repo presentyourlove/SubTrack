@@ -1,5 +1,5 @@
 import React from 'react';
-import { render, fireEvent, act, waitFor } from '@testing-library/react-native';
+import { render, fireEvent, waitFor } from '@testing-library/react-native';
 import CurrencySettings from '../CurrencySettings';
 import { useDatabase } from '../../../context/DatabaseContext';
 
@@ -56,7 +56,7 @@ describe('CurrencySettings', () => {
   });
 
   it('opens modal on press', () => {
-    const { getByText, getByRole } = render(<CurrencySettings />);
+    const { getByText } = render(<CurrencySettings />);
 
     // Find the touchable by text or other means.
     // Since the structure is Touchable -> View -> Text('settings.currency')

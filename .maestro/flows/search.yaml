@@ -6,28 +6,28 @@ appId: com.subtrack.app
 
 # 導航到搜尋頁面（假設有底部導航）
 - tapOn:
-    id: "search-tab"
-    
+    id: 'search-tab'
+
 - waitForAnimationToEnd
 
 # 輸入搜尋關鍵字
 - tapOn:
-    id: "search-input"
-- inputText: "Net"
+    id: 'search-input'
+- inputText: 'Net'
 
 # 驗證搜尋結果
 - waitForAnimationToEnd
-- assertVisible: "Netflix"
+- assertVisible: 'Netflix'
 
 # 清除搜尋並輸入不存在的關鍵字
 - clearText:
-    id: "search-input"
-- inputText: "不存在的訂閱"
+    id: 'search-input'
+- inputText: '不存在的訂閱'
 
 # 驗證顯示空結果
 - assertVisible:
-    text: "沒有找到相關訂閱"
+    text: '沒有找到相關訂閱'
     optional: true
 
 # 截圖
-- takeScreenshot: "search_results"
+- takeScreenshot: 'search_results'

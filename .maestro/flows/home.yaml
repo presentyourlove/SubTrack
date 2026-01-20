@@ -6,30 +6,30 @@ appId: com.subtrack.app
 
 # 驗證首頁元素
 - assertVisible:
-    text: "本月支出"
+    text: '本月支出'
     optional: true
 
 - assertVisible:
-    text: "今年支出"
+    text: '今年支出'
     optional: true
 
 # 驗證底部導航
 - assertVisible:
-    id: "home-tab"
+    id: 'home-tab'
 - assertVisible:
-    id: "reports-tab"
+    id: 'reports-tab'
 - assertVisible:
-    id: "settings-tab"
+    id: 'settings-tab'
 
 # 導航到報表頁
 - tapOn:
-    id: "reports-tab"
+    id: 'reports-tab'
 - waitForAnimationToEnd
 
 # 返回首頁
 - tapOn:
-    id: "home-tab"
+    id: 'home-tab'
 - waitForAnimationToEnd
 
 # 截圖
-- takeScreenshot: "home_page"
+- takeScreenshot: 'home_page'

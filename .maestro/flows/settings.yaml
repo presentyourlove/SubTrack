@@ -6,37 +6,37 @@ appId: com.subtrack.app
 
 # 導航到設定頁面
 - tapOn:
-    id: "settings-tab"
+    id: 'settings-tab'
 
 - waitForAnimationToEnd
 
 # 驗證設定頁面元素可見
-- assertVisible: "主題"
-- assertVisible: "語言"
-- assertVisible: "幣種"
-- assertVisible: "通知"
+- assertVisible: '主題'
+- assertVisible: '語言'
+- assertVisible: '幣種'
+- assertVisible: '通知'
 
 # 測試主題切換
-- tapOn: "主題"
+- tapOn: '主題'
 - waitForAnimationToEnd
-- assertVisible: "深色"
-- assertVisible: "淺色"
-- assertVisible: "跟隨系統"
+- assertVisible: '深色'
+- assertVisible: '淺色'
+- assertVisible: '跟隨系統'
 
 # 選擇深色主題
-- tapOn: "深色"
+- tapOn: '深色'
 - waitForAnimationToEnd
 
 # 返回設定頁面
 - tapOn:
-    id: "back-button"
+    id: 'back-button'
     optional: true
 
 # 測試語言設定
-- tapOn: "語言"
+- tapOn: '語言'
 - waitForAnimationToEnd
-- assertVisible: "繁體中文"
-- assertVisible: "English"
+- assertVisible: '繁體中文'
+- assertVisible: 'English'
 
 # 截圖
-- takeScreenshot: "settings_page"
+- takeScreenshot: 'settings_page'
