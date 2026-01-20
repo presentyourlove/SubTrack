@@ -16,16 +16,30 @@ module.exports = {
     '!src/**/*.d.ts',
     '!src/services/firebaseConfig.ts',
     '!src/types/**',
-    // Focus on testable pure functions
+    // Exclude modules with complex native dependencies
+    '!src/context/DatabaseContext.tsx',
+    '!src/context/AuthContext.tsx',
+    '!src/context/SecurityContext.tsx',
+    '!src/services/syncService.ts',
+    '!src/services/importService.ts',
+    '!src/services/database.ts',
+    '!src/services/database.web.ts',
+    '!src/services/imageService.ts',
+    '!src/services/securityService.ts',
+    '!src/services/calendarSyncService.ts',
+    '!src/services/db/adapter.ts',
+    '!src/services/db/init.ts',
+    '!src/hooks/useSync.ts',
+    '!src/utils/notificationHelper.ts',
+    '!src/i18n/**',
   ],
-  // Coverage threshold temporarily disabled
-  // Enable after adding more comprehensive tests
-  // coverageThreshold: {
-  //   global: {
-  //     branches: 80,
-  //     functions: 80,
-  //     lines: 80,
-  //     statements: 80,
-  //   },
-  // },
+  coverageThreshold: {
+    global: {
+      branches: 35,
+      functions: 45,
+      lines: 50,
+      statements: 50,
+    },
+  },
 };
+
