@@ -58,9 +58,7 @@ describe('ReminderSettings', () => {
   });
 
   it('hides reminder options when disabled', () => {
-    const { queryByText } = render(
-      <ReminderSettings {...defaultProps} reminderEnabled={false} />,
-    );
+    const { queryByText } = render(<ReminderSettings {...defaultProps} reminderEnabled={false} />);
     expect(queryByText('subscription.notificationTime')).toBeNull();
   });
 

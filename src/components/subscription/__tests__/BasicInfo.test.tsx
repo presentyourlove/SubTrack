@@ -109,17 +109,13 @@ describe('BasicInfo', () => {
   });
 
   it('hides member count input when family plan is disabled', () => {
-    const { queryByText } = render(
-      <BasicInfo {...defaultProps} isFamilyPlan={false} />,
-    );
+    const { queryByText } = render(<BasicInfo {...defaultProps} isFamilyPlan={false} />);
 
     expect(queryByText('subscription.memberCount')).toBeNull();
   });
 
   it('calls setMemberCount when member count changes', () => {
-    const { getByDisplayValue } = render(
-      <BasicInfo {...defaultProps} isFamilyPlan={true} />,
-    );
+    const { getByDisplayValue } = render(<BasicInfo {...defaultProps} isFamilyPlan={true} />);
 
     const input = getByDisplayValue('1');
     fireEvent.changeText(input, '4');
@@ -128,9 +124,7 @@ describe('BasicInfo', () => {
   });
 
   it('renders with custom image icon', () => {
-    const { toJSON } = render(
-      <BasicInfo {...defaultProps} icon="file://custom-icon.webp" />,
-    );
+    const { toJSON } = render(<BasicInfo {...defaultProps} icon="file://custom-icon.webp" />);
 
     expect(toJSON()).toBeTruthy();
   });

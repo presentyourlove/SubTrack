@@ -122,17 +122,13 @@ describe('PaymentInfo', () => {
   });
 
   it('handles string date format in props', () => {
-    const { getByText } = render(
-      <PaymentInfo {...defaultProps} startDate="2026-01-15" />,
-    );
+    const { getByText } = render(<PaymentInfo {...defaultProps} startDate="2026-01-15" />);
     // Should render without error
     expect(getByText(new Date('2026-01-15').toLocaleDateString())).toBeTruthy();
   });
 
   it('uses default currency TWD if undefined', () => {
-    const { getByText } = render(
-      <PaymentInfo {...defaultProps} currency="" />,
-    );
+    const { getByText } = render(<PaymentInfo {...defaultProps} currency="" />);
     expect(getByText('TWD')).toBeTruthy();
   });
 });
