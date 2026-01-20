@@ -269,6 +269,7 @@ export default function CurrencySettings() {
                     keyboardType="decimal-pad"
                   />
                   <TouchableOpacity
+                    testID="add-currency-button"
                     style={[styles.addButton, { backgroundColor: colors.accent }]}
                     onPress={handleAddCurrency}
                   >
@@ -317,6 +318,7 @@ export default function CurrencySettings() {
                     />
                     {!Object.prototype.hasOwnProperty.call(DEFAULT_EXCHANGE_RATES, code) && (
                       <TouchableOpacity
+                        testID={`delete-currency-${code}`}
                         style={[styles.deleteButton, { backgroundColor: colors.expense }]}
                         onPress={() => handleDeleteCurrency(code)}
                       >
@@ -329,12 +331,14 @@ export default function CurrencySettings() {
 
             <View style={styles.modalFooter}>
               <TouchableOpacity
+                testID="reset-rates-button"
                 style={[styles.modalButton, { borderColor: colors.borderColor }]}
                 onPress={handleResetExchangeRates}
               >
                 <Text style={[styles.modalButtonText, { color: colors.text }]}>重置為預設</Text>
               </TouchableOpacity>
               <TouchableOpacity
+                testID="save-rates-button"
                 style={[styles.modalButton, styles.saveButton, { backgroundColor: colors.accent }]}
                 onPress={handleSaveExchangeRates}
               >

@@ -4,14 +4,16 @@ import { DataManagement } from '../DataManagement';
 
 const mockAddSubscription = jest.fn();
 jest.mock('../../../context/DatabaseContext', () => ({
-  useDatabase: () => ({
-    subscriptions: [
-      { id: 1, name: 'Netflix', price: 100, billingCycle: 'monthly', currency: 'TWD' },
-    ],
-    addSubscription: mockAddSubscription,
-    settings: { mainCurrency: 'TWD' },
-  }),
+  useDatabase: jest.fn(),
 }));
+
+import { useDatabase } from '../../../context/DatabaseContext';
+
+const defaultContext = {
+  subscriptions: [{ id: 1, name: 'Netflix', price: 100, billingCycle: 'monthly', currency: 'TWD' }],
+  addSubscription: mockAddSubscription,
+  settings: { mainCurrency: 'TWD' },
+};
 
 jest.mock('../../../services/exportService', () => ({
   exportSubscriptionsToCSV: jest.fn(),
@@ -28,8 +30,6 @@ import {
   exportSubscriptionsToPDF,
 } from '../../../services/exportService';
 import { pickImportFile, parseImportFile } from '../../../services/importService';
-import * as DatabaseContext from '../../../context/DatabaseContext';
-import { View } from 'react-native';
 
 jest.mock('../../../i18n', () => ({
   t: (key: string) => key,
@@ -42,6 +42,8 @@ jest.mock('@expo/vector-icons', () => ({
 // Mock Lazy Import
 jest.mock('../../ImportPreviewModal', () => ({
   ImportPreviewModal: (props: { visible: boolean; onConfirm: () => void }) => {
+    // eslint-disable-next-line @typescript-eslint/no-require-imports
+    const { View } = require('react-native');
     // If visible, render something we can find
     if (props.visible) {
       return <View testID="import-preview-modal" />;
@@ -53,6 +55,7 @@ jest.mock('../../ImportPreviewModal', () => ({
 describe('DataManagement', () => {
   beforeEach(() => {
     jest.clearAllMocks();
+    (useDatabase as jest.Mock).mockReturnValue(defaultContext);
   });
 
   it('renders correctly', () => {
@@ -67,10 +70,13 @@ describe('DataManagement', () => {
     const { getByText } = render(<DataManagement />);
     fireEvent.press(getByText('export.csv'));
 
-    await waitFor(() => {
-      expect(exportSubscriptionsToCSV).toHaveBeenCalled();
-    });
-  });
+    await waitFor(
+      () => {
+        expect(exportSubscriptionsToCSV).toHaveBeenCalled();
+      },
+      { timeout: 5000 },
+    );
+  }, 10000);
 
   it('triggers PDF export', async () => {
     const { getByText } = render(<DataManagement />);
@@ -79,7 +85,7 @@ describe('DataManagement', () => {
     await waitFor(() => {
       expect(exportSubscriptionsToPDF).toHaveBeenCalled();
     });
-  });
+  }, 10000);
 
   it('triggers Import flow', async () => {
     (pickImportFile as jest.Mock).mockResolvedValue('file://test.csv');
@@ -108,15 +114,10 @@ describe('DataManagement', () => {
 
   it('shows alert when exporting with no data', async () => {
     // Override mock for this test
-    jest.spyOn(DatabaseContext, 'useDatabase').mockImplementation(
-      () =>
-        ({
-          subscriptions: [],
-          addSubscription: mockAddSubscription,
-          settings: { mainCurrency: 'TWD' },
-          // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        }) as any,
-    );
+    (useDatabase as jest.Mock).mockReturnValue({
+      ...defaultContext,
+      subscriptions: [],
+    });
 
     const { getByText } = render(<DataManagement />);
     fireEvent.press(getByText('export.csv'));

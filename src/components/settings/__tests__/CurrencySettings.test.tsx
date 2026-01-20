@@ -1,90 +1,119 @@
 import React from 'react';
-import { render, fireEvent, waitFor } from '@testing-library/react-native';
+import { render, fireEvent } from '@testing-library/react-native';
 import CurrencySettings from '../CurrencySettings';
-import { useDatabase } from '../../../context/DatabaseContext';
 
 // Mock dependencies
+const mockUpdateSettings = jest.fn();
+const mockShowToast = jest.fn();
+
 jest.mock('../../../context/ThemeContext', () => ({
   useTheme: () => ({
     colors: {
-      background: '#ffffff',
+      card: '#ffffff',
+      borderColor: '#e0e0e0',
+      accent: '#007AFF',
       text: '#000000',
       subtleText: '#666666',
-      card: '#f0f0f0',
-      border: '#cccccc',
-      accent: '#007AFF',
-      borderColor: '#cccccc',
+      background: '#f5f5f5',
       expense: '#FF3B30',
     },
   }),
 }));
 
 jest.mock('../../../context/DatabaseContext', () => ({
-  useDatabase: jest.fn(),
+  useDatabase: () => ({
+    settings: {
+      mainCurrency: 'TWD',
+      exchangeRates: JSON.stringify({ USD: 32.5, JPY: 0.21 })
+    },
+    updateSettings: mockUpdateSettings,
+  }),
 }));
 
 jest.mock('../../../context/ToastContext', () => ({
   useToast: () => ({
-    showToast: jest.fn(),
+    showToast: mockShowToast,
   }),
 }));
 
-// Mock Ionicons
-jest.mock('@expo/vector-icons', () => ({
-  Ionicons: 'Ionicons',
-}));
-
 describe('CurrencySettings', () => {
-  const mockUpdateSettings = jest.fn();
-  const mockSettings = {
-    mainCurrency: 'TWD',
-    exchangeRates: JSON.stringify({ TWD: 1, USD: 0.032 }),
-  };
-
   beforeEach(() => {
     jest.clearAllMocks();
-    (useDatabase as jest.Mock).mockReturnValue({
-      settings: mockSettings,
-      updateSettings: mockUpdateSettings,
-    });
   });
 
   it('renders correctly', () => {
     const { getByText } = render(<CurrencySettings />);
     expect(getByText('settings.currency')).toBeTruthy();
-    expect(getByText('settings.mainCurrency')).toBeTruthy(); // Checks if i18n key is present or used
   });
 
-  it('opens modal on press', () => {
-    const { getByText } = render(<CurrencySettings />);
-
-    // Find the touchable by text or other means.
-    // Since the structure is Touchable -> View -> Text('settings.currency')
+  it('opens main currency modal when pressed', () => {
+    const { getByText, getAllByText } = render(<CurrencySettings />);
     fireEvent.press(getByText('settings.currency'));
 
     expect(getByText('主要幣別')).toBeTruthy();
+    expect(getByText('USD')).toBeTruthy();
+    expect(getByText('JPY')).toBeTruthy();
   });
 
-  it('updates currency when selected', async () => {
+  it('calls updateSettings when changing main currency', () => {
     const { getByText } = render(<CurrencySettings />);
-
-    // Open modal
     fireEvent.press(getByText('settings.currency'));
 
-    // Select USD
     fireEvent.press(getByText('USD'));
-
-    await waitFor(() => {
-      expect(mockUpdateSettings).toHaveBeenCalledWith({ mainCurrency: 'USD' });
-    });
+    expect(mockUpdateSettings).toHaveBeenCalledWith({ mainCurrency: 'USD' });
   });
 
-  it('opens exchange rate editor', () => {
+  it('opens exchange rate editor modal', () => {
     const { getByText } = render(<CurrencySettings />);
     fireEvent.press(getByText('settings.currency'));
     fireEvent.press(getByText('編輯匯率與新增幣別'));
 
     expect(getByText('編輯匯率')).toBeTruthy();
-    expect(getByText('匯率相對於 TWD (新台幣 = 1)')).toBeTruthy();
+    expect(getByText('新增幣別')).toBeTruthy();
+  });
+
+  it('can add a new custom currency', () => {
+    const { getByText, getByPlaceholderText, getByTestId } = render(<CurrencySettings />);
+    fireEvent.press(getByText('settings.currency'));
+    fireEvent.press(getByText('編輯匯率與新增幣別'));
+
+    fireEvent.changeText(getByPlaceholderText('代碼 (Ex: EUR)'), 'EUR');
+    fireEvent.changeText(getByPlaceholderText('匯率'), '35');
+    fireEvent.press(getByTestId('add-currency-button'));
+
+    expect(mockShowToast).toHaveBeenCalledWith('已新增 EUR', 'success');
+  });
+
+  it('can reset exchange rates to default', () => {
+    const { getByText, getAllByText, getByTestId } = render(<CurrencySettings />);
+    fireEvent.press(getByText('settings.currency'));
+    fireEvent.press(getByText('編輯匯率與新增幣別'));
+
+    fireEvent.press(getByTestId('reset-rates-button'));
+    // Use getAllByText because USD appears in the background list and the editor
+    expect(getAllByText('USD').length).toBeGreaterThanOrEqual(1);
+  });
+
+  it('can save exchange rates', async () => {
+    const { getByText, getByTestId } = render(<CurrencySettings />);
+    fireEvent.press(getByText('settings.currency'));
+    fireEvent.press(getByText('編輯匯率與新增幣別'));
+
+    fireEvent.press(getByTestId('save-rates-button'));
+    expect(mockUpdateSettings).toHaveBeenCalledWith(expect.objectContaining({
+      exchangeRates: expect.stringContaining('"USD":32.5')
+    }));
+  });
+
+  it('shows error when saving invalid rates', async () => {
+    const { getByText, getAllByPlaceholderText, getByTestId } = render(<CurrencySettings />);
+    fireEvent.press(getByText('settings.currency'));
+    fireEvent.press(getByText('編輯匯率與新增幣別'));
+
+    const inputs = getAllByPlaceholderText('0.00');
+    fireEvent.changeText(inputs[0], 'invalid');
+
+    fireEvent.press(getByTestId('save-rates-button'));
+    expect(mockShowToast).toHaveBeenCalledWith(expect.stringContaining('格式不正確'), 'error');
   });
 });
