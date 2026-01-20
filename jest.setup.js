@@ -53,7 +53,7 @@ jest.mock('react-native-reanimated', () => {
       Image: View,
       ScrollView: View,
       FlatList: View,
-      call: () => {},
+      call: () => { },
       createAnimatedComponent: (component) => component,
     },
     useSharedValue: (init) => ({ value: init }),
@@ -235,6 +235,13 @@ jest.mock('expo-notifications', () => ({
   addNotificationReceivedListener: jest.fn(() => ({ remove: jest.fn() })),
   addNotificationResponseReceivedListener: jest.fn(() => ({ remove: jest.fn() })),
   AndroidImportance: { MAX: 5, HIGH: 4, DEFAULT: 3, LOW: 2, MIN: 1 },
+  SchedulableTriggerInputTypes: {
+    TIME_INTERVAL: 'timeInterval',
+    DATE: 'date',
+    DAILY: 'daily',
+    WEEKLY: 'weekly',
+    CALENDAR: 'calendar',
+  },
 }));
 
 // Mock expo-local-authentication
@@ -244,4 +251,9 @@ jest.mock('expo-local-authentication', () => ({
   authenticateAsync: jest.fn(() => Promise.resolve({ success: true })),
   supportedAuthenticationTypesAsync: jest.fn(() => Promise.resolve([1, 2])),
   AuthenticationType: { FINGERPRINT: 1, FACIAL_RECOGNITION: 2 },
+}));
+
+// Mock react-native-multithreading
+jest.mock('react-native-multithreading', () => ({
+  spawnThread: jest.fn((fn) => Promise.resolve(fn())),
 }));
