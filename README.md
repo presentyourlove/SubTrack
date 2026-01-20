@@ -218,9 +218,25 @@ maestro test --continuous .maestro/flows/
 
 ### 3. 各平台測試指南
 
-- **APK (Android)**: 使用 `npm run android` 在模擬器測試，或打包 APK 安裝於實機。
-- **SideStore IPA (iOS)**: 需透過 EAS Build 產生 Development Build (`profile: development`) 安裝於手機測試 JSI 功能。
-- **Web**: 使用 `npm run web` 測試響應式佈局與降級處理。
+### 3. 各平台測試指南 (Cross-Platform Testing Guide)
+
+本專案依賴 Native Modules (如 `op-sqlite`)，建議使用 **Development Build** 進行測試以確保 Native 功能正常運作。
+
+- **Android (APK)**
+  - **模擬器**: 執行 `npm run android`。
+  - **實機**:
+    1. 透過 EAS Build 打包開發版: `eas build --profile development --platform android`
+    2. 安裝 APK 後，啟動開發伺服器: `npx expo start --dev-client`
+
+- **iOS (SideStore IPA)**
+  - **實機 (SideStore)**:
+    1. 透過 EAS Build 打包: `eas build --profile development --platform ios`
+    2. 下載 IPA 並透過 SideStore 安裝。
+    3. 手機端開啟 App，確認同一區域網路下執行: `npx expo start --dev-client`
+  - **模擬器 (Mac Only)**: 執行 `npm run ios`。
+
+- **Web (PWA)**
+  - 執行 `npm run web` 測試響應式佈局與降級處理 (Op-SQLite 在 Web 會 fallback 到 LocalStorage)。
 
 ---
 
