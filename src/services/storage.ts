@@ -1,4 +1,5 @@
 import { MMKV } from 'react-native-mmkv';
+// @ts-ignore: Persistence type mismatch is acceptable for mock adapter
 import { Persistence } from 'firebase/auth';
 
 export const storage = new MMKV();
@@ -10,7 +11,7 @@ export const storage = new MMKV();
 export const mmkvPersistence: Persistence = {
   type: 'LOCAL',
   _isAvailable: async () => true,
-  _setPersistence: async () => {},
+  _setPersistence: async () => { },
   _shouldAllowMigration: async () => true,
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   addListener: (_eventName: string, _callback: any) => {
@@ -19,10 +20,10 @@ export const mmkvPersistence: Persistence = {
     // For simple persistence, this might not be critical or needs a mock.
     // However, the official interface expects it.
     // We can leave it empty or implement a basic event emitter if needed.
-    return { remove: () => {} }; // Mock listener
+    return { remove: () => { } }; // Mock listener
   },
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  removeListener: (_eventName: string, _callback: any) => {},
+  removeListener: (_eventName: string, _callback: any) => { },
 };
 
 // Helper object to match React Native AsyncStorage interface for Firebase

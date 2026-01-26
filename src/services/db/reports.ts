@@ -93,7 +93,7 @@ export function executeReport(
 
   // Convert Map to ChartData[]
   const results: ChartData[] = [];
-  groupedData.forEach((data, key) => {
+  groupedData.forEach((data: { value: number; color: string; count: number }, key: string) => {
     if (data.value > 0) {
       results.push({
         label: key,

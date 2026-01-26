@@ -233,7 +233,7 @@ export async function parseCSV(fileUri: string): Promise<ImportResult> {
   // 使用多執行緒背景分批處理資料
   const processedData = await processInChunks(
     parseResult.data,
-    (row) => {
+    (row: Record<string, string>) => {
       // 注意：這裡在背景執行緒執行，不能直接捕捉非 Worklet 的變數
       // 但 mapRowToSubscription 目前是純函式，且依賴的 Mapping 常数已在檔案頂部定義
       // 在生產環境中，可能需要將 Mapping 傳入或確保它們被轉為 Worklet 友善形式
@@ -279,14 +279,14 @@ export async function parseExcel(fileUri: string): Promise<ImportResult> {
   const worksheet = workbook.Sheets[firstSheetName];
 
   // 轉換為 JSON
-  const jsonData = XLSX.utils.sheet_to_json<Record<string, string>>(worksheet);
+  const jsonData = XLSX.utils.sheet_to_json(worksheet) as Record<string, string>[];
 
   const errors: string[] = [];
 
   // 使用多執行緒背景分批處理資料
   const processedData = await processInChunks(
     jsonData,
-    (row) => mapRowToSubscription(row, 0),
+    (row: Record<string, string>) => mapRowToSubscription(row, 0),
     (progress) => {
       console.log(`Excel Import progress: ${progress.toFixed(2)}%`);
     },
