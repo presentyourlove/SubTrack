@@ -116,7 +116,7 @@ npm run ios
 
 - **2026-01-20**: Comprehensive linting and type error fixes across test suite (29 files).
 - **2026-01-20**: Achieved **79.22% Test Coverage**, implementing Database Migration & Web Platform consistency tests.
-- **2026-01-26**: 修復 Lint 錯誤、測試環境 (Jest ESM/require) 與日期邏輯 (午夜顯示問題)。
+- **2026-01-26**: 修復 Lint 錯誤、測試環境 (Jest ESM/require) 與日期邏輯 (強制手動時間格式以解決 CI 午夜顯示問題)；清理 Charts 元件。
 - **Linting**: ESLint, Prettier
 - **Build**: EAS (Expo Application Services)
 
