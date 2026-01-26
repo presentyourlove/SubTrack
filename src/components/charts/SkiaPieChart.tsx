@@ -1,13 +1,7 @@
 import React, { useEffect } from 'react';
-import { StyleSheet, View, Text } from 'react-native';
-import { Canvas, Path, Skia, SkFont, FontStyle, Text as SkText } from '@shopify/react-native-skia';
-import {
-  SharedValue,
-  useSharedValue,
-  withTiming,
-  Easing,
-  useDerivedValue,
-} from 'react-native-reanimated';
+import { View } from 'react-native';
+import { Canvas, Path, Skia } from '@shopify/react-native-skia';
+import { useSharedValue, withTiming, Easing } from 'react-native-reanimated';
 import { useTheme } from '../../context/ThemeContext';
 
 export interface SkiaChartData {
@@ -27,7 +21,7 @@ export const SkiaPieChart = ({
   data,
   size = 200,
   innerRadius = 0,
-  showLabels = false,
+  showLabels: _showLabels = false,
 }: SkiaPieChartProps) => {
   const { colors } = useTheme();
   const radius = size / 2;
@@ -41,7 +35,7 @@ export const SkiaPieChart = ({
       duration: 1000,
       easing: Easing.out(Easing.exp),
     });
-  }, []);
+  }, [progress]);
 
   const total = data.reduce((sum, item) => sum + item.value, 0);
 
@@ -147,5 +141,3 @@ export const SkiaPieChart = ({
     </View>
   );
 };
-
-const styles = StyleSheet.create({});

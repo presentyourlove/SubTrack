@@ -224,12 +224,9 @@ export function parseTime(timeStr: string): Date {
 
 // 格式化 Date 為 "HH:mm"
 export function formatTime(date: Date): string {
-  return date.toLocaleTimeString('en-US', {
-    hour12: false,
-    hourCycle: 'h23',
-    hour: '2-digit',
-    minute: '2-digit',
-  });
+  const hours = date.getHours().toString().padStart(2, '0');
+  const minutes = date.getMinutes().toString().padStart(2, '0');
+  return `${hours}:${minutes}`;
 }
 
 // 取得預設提醒時間（早上 9:00）
