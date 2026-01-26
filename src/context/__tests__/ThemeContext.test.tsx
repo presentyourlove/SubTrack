@@ -3,7 +3,7 @@ import { render, act, renderHook } from '@testing-library/react-native';
 import { ThemeProvider, useTheme } from '../ThemeContext';
 import { Colors } from '../../constants/Colors';
 import { Text } from 'react-native';
-// @ts-ignore: Internal path used for testing
+// @ts-expect-error: Internal path used for testing
 import useColorScheme from 'react-native/Libraries/Utilities/useColorScheme';
 
 describe('ThemeContext', () => {
