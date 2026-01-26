@@ -45,7 +45,6 @@
 - **Performance**：
   - **JSI Binding**：資料庫直接調用 C++ 層，避開 JS Bridge。
   - **FlashList**：列表渲染效能優化。
-  - **Bundle Splitting**：動態載入重型依賴 (Firebase, XLSX)。
   - **Hermes Static**：啟用靜態分析優化啟動速度。
 
 ---
@@ -305,20 +304,14 @@ Presentyourlove
 ### 🤖 V3.0 智慧化與創新 (AI & Smart Features)
 
 - [ ] **🧩 桌面小工具 (Widgets)**: 在 iOS/Android 主畫面直接查看即將扣款項目 (基於 Expo Widget API)。
-- [ ] **🧠 智慧支出預測 (AI Prediction)**: 分析歷史數據，預測下月支出並提供節省建議 (TensorFlow Lite)。
-- [ ] **�️ 語音助理整合 (Voice Control)**: 支援 Siri Shortcuts 與 Google Assistant ("Hey Google, add Netflix subscription")。
-- [ ] **🛡️ 暗網監測 (Dark Web Monitoring)**: 檢查訂閱帳號密碼是否在外洩資料庫中 (HaveIBeenPwned API)。
-- [ ] **🔐 量子抗性加密 (Post-Quantum Cryptography)**: 升級加密演算法，抵禦未來威脅。
 
-### ⚡ V3.0 架構與效能 (Architecture & Performance)
+### 🔧 具體優化工程 (Engineering Improvements)
 
-- [ ] **🚀 HTTP/3 (QUIC)**: 網路層升級，優化弱網環境下的同步速度。
-- [ ] **⚡ MMKV 緩存**: 使用 MMKV 替代 AsyncStorage 處理輕量配置，提升讀寫速度 100x。
-- [ ] **🔢 Protobuf 傳輸**: 同步協定改用 Protocol Buffers，縮減 Payload 體積。
-- [ ] **🧬 CRDTs 自動衝突解決**: 引入無衝突複製資料類型，實現更完美的離線協作。
-- [ ] **🌋 Vulkan/Metal 直接渲染**: 繞過中間層榨乾 GPU 效能 (針對極複雜圖表)。
-- [ ] **📏 Zero-Copy (FlatBuffers)**: 無需解碼的極速數據存取。
-- [ ] **🧊 晶片級指令特化 (NPU)**: 利用 NPU 加速本地 AI 模型運算。
+- [ ] **🚀 真・懶加載 (True Lazy Loading)**: 將 `xlsx` 與 `firebase` 改為動態導入 (`await import`)，優化啟動速度。
+- [ ] **⚡ MMKV 儲存層**: 替換 `AsyncStorage`，大幅提升讀寫效能。
+- [ ] **🛡️ 強型別 i18n (Typed i18n)**: 建立翻譯 Key 的型別檢查機制。
+- [ ] **♿ 無障礙優化 (A11y)**: 引入自動化檢測與改善螢幕閱讀器體驗。
+- [ ] **🔄 React Query**: 引入資料快取與同步管理庫。
 
 ---
 
