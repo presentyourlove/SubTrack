@@ -76,13 +76,25 @@ describe('GenericChart', () => {
     ];
 
     it('renders bar chart with title', () => {
-      const { getByText } = render(<GenericChart data={barData.map(d => ({ ...d, color: 'blue' }))} type="bar" title="Bar Chart" />);
+      const { getByText } = render(
+        <GenericChart
+          data={barData.map((d) => ({ ...d, color: 'blue' }))}
+          type="bar"
+          title="Bar Chart"
+        />,
+      );
 
       expect(getByText('Bar Chart')).toBeTruthy();
     });
 
     it('renders bar chart with custom height', () => {
-      const { toJSON } = render(<GenericChart data={barData.map(d => ({ ...d, color: 'blue' }))} type="bar" height={300} />);
+      const { toJSON } = render(
+        <GenericChart
+          data={barData.map((d) => ({ ...d, color: 'blue' }))}
+          type="bar"
+          height={300}
+        />,
+      );
 
       expect(toJSON()).toBeTruthy();
     });
@@ -90,7 +102,9 @@ describe('GenericChart', () => {
 
   describe('Props handling', () => {
     it('uses default height when not specified', () => {
-      const { toJSON } = render(<GenericChart data={[{ label: 'Test', value: 100, color: 'blue' }]} type="bar" />);
+      const { toJSON } = render(
+        <GenericChart data={[{ label: 'Test', value: 100, color: 'blue' }]} type="bar" />,
+      );
 
       expect(toJSON()).toBeTruthy();
     });

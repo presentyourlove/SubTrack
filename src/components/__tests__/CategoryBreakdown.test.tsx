@@ -41,7 +41,11 @@ describe('CategoryBreakdown', () => {
   it('renders empty state when no stats', () => {
     mockGetStatsByApp.mockReturnValue([]);
     const { getByText } = render(
-      <CategoryBreakdown subscriptions={[] as any[]} currency="TWD" exchangeRates={mockExchangeRates} />,
+      <CategoryBreakdown
+        subscriptions={[] as any[]}
+        currency="TWD"
+        exchangeRates={mockExchangeRates}
+      />,
     );
 
     expect(getByText('breakdown.empty')).toBeTruthy();
