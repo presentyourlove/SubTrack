@@ -77,7 +77,7 @@ describe('ThemeContext', () => {
   });
 
   it('throws error if useTheme used outside provider', () => {
-    const spy = jest.spyOn(console, 'error').mockImplementation(() => { });
+    const spy = jest.spyOn(console, 'error').mockImplementation(() => {});
 
     expect(() => {
       renderHook(() => useTheme());
