@@ -99,7 +99,6 @@ describe('PaymentInfo', () => {
 
   it('shows date picker on press (native)', () => {
     const { getByText, getByTestId } = render(<PaymentInfo {...defaultProps} />);
-    const dateStr = defaultProps.startDate.toLocaleDateString();
 
     // Press the date display
     fireEvent.press(getByText('2026/1/1'));
@@ -123,7 +122,7 @@ describe('PaymentInfo', () => {
   it('handles string date format in props', () => {
     const { getByText } = render(<PaymentInfo {...defaultProps} startDate="2026-01-15" />);
     // Should render without error
-    expect(getByText(new Date('2026-01-15').toLocaleDateString())).toBeTruthy();
+    expect(getByText('2026/1/15')).toBeTruthy();
   });
 
   it('uses default currency TWD if undefined', () => {

@@ -129,7 +129,7 @@ const BarItem = ({
   breakdown,
   progress,
   totalValue,
-  radius,
+  radius: _radius,
 }: {
   x: number;
   y: number;
@@ -146,13 +146,17 @@ const BarItem = ({
 
   if (breakdown && breakdown.length > 0) {
     // Calculate accumulated heights for rendering
-    let currentStackH = 0;
-    const segments = breakdown.map((seg) => {
-      const h = totalValue > 0 ? (seg.value / totalValue) * targetHeight : 0;
-      const rectY = y - currentStackH - h;
-      currentStackH += h;
-      return { ...seg, h, rectY };
-    });
+    // Calculate accumulated heights for rendering
+    const segments = breakdown.reduce(
+      (acc, seg) => {
+        const h = totalValue > 0 ? (seg.value / totalValue) * targetHeight : 0;
+        const rectY = y - acc.currentStackH - h;
+        acc.items.push({ ...seg, h, rectY });
+        acc.currentStackH += h;
+        return acc;
+      },
+      { items: [] as ((typeof breakdown)[0] & { h: number; rectY: number })[], currentStackH: 0 },
+    ).items;
 
     return (
       <Group origin={{ x: x + width / 2, y: y }} transform={[{ scaleY: progress }]}>

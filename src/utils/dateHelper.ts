@@ -226,6 +226,7 @@ export function parseTime(timeStr: string): Date {
 export function formatTime(date: Date): string {
   return date.toLocaleTimeString('en-US', {
     hour12: false,
+    hourCycle: 'h23',
     hour: '2-digit',
     minute: '2-digit',
   });

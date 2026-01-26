@@ -270,8 +270,10 @@ export async function parseExcel(fileUri: string): Promise<ImportResult> {
   const arrayBuffer = await file.arrayBuffer();
   const content = Buffer.from(arrayBuffer).toString('base64');
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const isJest = typeof jest !== 'undefined' || !!(global as any).jest;
   // eslint-disable-next-line @typescript-eslint/no-explicit-any, @typescript-eslint/no-require-imports
-  const XLSX = ((global as any).jest ? require('xlsx') : await import('xlsx')) as any;
+  const XLSX = isJest ? require('xlsx') : await import('xlsx');
   const workbook = XLSX.read(content, { type: 'base64' });
   const firstSheetName = workbook.SheetNames[0];
   const worksheet = workbook.Sheets[firstSheetName];

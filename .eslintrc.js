@@ -22,10 +22,12 @@ module.exports = {
   },
   overrides: [
     {
-      files: ['jest.config.js', 'jest.setup.js'],
+      files: ['jest.config.js', 'jest.setup.js', '**/*.test.ts', '**/*.test.tsx'],
       rules: {
         '@typescript-eslint/no-require-imports': 'off',
         '@typescript-eslint/no-var-requires': 'off',
+        '@typescript-eslint/no-explicit-any': 'off',
+        'react/display-name': 'off',
       },
     },
   ],
