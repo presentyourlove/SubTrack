@@ -98,7 +98,7 @@ describe('notificationHelper', () => {
       expect(Notifications.scheduleNotificationAsync).toHaveBeenCalledWith(
         expect.objectContaining({
           content: expect.objectContaining({
-            data: { subscriptionId: 'sub-1' },
+            data: { subscriptionId: 1 },
           }),
         }),
       );
