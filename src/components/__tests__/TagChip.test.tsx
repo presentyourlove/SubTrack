@@ -12,7 +12,7 @@ describe('TagChip', () => {
     id: '1',
     name: 'Urgent',
     color: '#FF0000',
-  };
+  } as any;
   const mockOnPress = jest.fn();
 
   it('renders label correctly', () => {

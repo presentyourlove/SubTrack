@@ -159,7 +159,7 @@ const BarItem = ({
     ).items;
 
     return (
-      <Group origin={{ x: x + width / 2, y: y }} transform={[{ scaleY: progress }]}>
+      <Group origin={{ x: x + width / 2, y: y }} transform={[{ scaleY: progress as any }]}>
         {segments.map((seg, i) => (
           <Rect key={i} x={x} y={seg.rectY} width={width} height={seg.h} color={seg.color} />
         ))}

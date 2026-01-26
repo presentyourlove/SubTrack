@@ -21,7 +21,7 @@ describe('calendarSyncService', () => {
   describe('fetchSubTrackEvents', () => {
     it('returns empty array when permission is denied', async () => {
       mockCalendar.requestCalendarPermissionsAsync.mockResolvedValue({
-        status: 'denied',
+        status: 'denied' as any,
         expires: 'never',
         granted: false,
         canAskAgain: true,
@@ -34,7 +34,7 @@ describe('calendarSyncService', () => {
 
     it('returns empty array when no calendars found', async () => {
       mockCalendar.requestCalendarPermissionsAsync.mockResolvedValue({
-        status: 'granted',
+        status: 'granted' as any,
         expires: 'never',
         granted: true,
         canAskAgain: true,
@@ -48,7 +48,7 @@ describe('calendarSyncService', () => {
 
     it('filters events with SubTrack tag', async () => {
       mockCalendar.requestCalendarPermissionsAsync.mockResolvedValue({
-        status: 'granted',
+        status: 'granted' as any,
         expires: 'never',
         granted: true,
         canAskAgain: true,
@@ -105,7 +105,7 @@ describe('calendarSyncService', () => {
 
     beforeEach(() => {
       mockCalendar.requestCalendarPermissionsAsync.mockResolvedValue({
-        status: 'granted',
+        status: 'granted' as any,
         expires: 'never',
         granted: true,
         canAskAgain: true,
@@ -126,7 +126,7 @@ describe('calendarSyncService', () => {
 
     it('updates existing event when calendarEventId exists', async () => {
       const subscriptionWithEvent = { ...mockSubscription, calendarEventId: 'existing-id' };
-      mockCalendar.updateEventAsync.mockResolvedValue(undefined);
+      mockCalendar.updateEventAsync.mockResolvedValue(undefined as any);
 
       const result = await calendarSyncService.upsertEvent(subscriptionWithEvent);
 
@@ -146,7 +146,7 @@ describe('calendarSyncService', () => {
 
     it('returns null when permission denied', async () => {
       mockCalendar.requestCalendarPermissionsAsync.mockResolvedValue({
-        status: 'denied',
+        status: 'denied' as any,
         expires: 'never',
         granted: false,
         canAskAgain: true,
@@ -159,7 +159,7 @@ describe('calendarSyncService', () => {
 
     it('returns null when no calendar available', async () => {
       mockCalendar.requestCalendarPermissionsAsync.mockResolvedValue({
-        status: 'granted',
+        status: 'granted' as any,
         expires: 'never',
         granted: true,
         canAskAgain: true,

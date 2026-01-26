@@ -62,7 +62,7 @@ describe('exportService', () => {
     jest.clearAllMocks();
     mockSharing.isAvailableAsync.mockResolvedValue(true);
     mockSharing.shareAsync.mockResolvedValue(undefined);
-    mockPrint.printToFileAsync.mockResolvedValue({ uri: '/tmp/print.pdf' });
+    mockPrint.printToFileAsync.mockResolvedValue({ uri: '/tmp/print.pdf', numberOfPages: 1 });
     mockPapa.unparse.mockReturnValue('csv,data');
   });
 
@@ -84,7 +84,7 @@ describe('exportService', () => {
       await exportSubscriptionsToCSV(mockSubscriptions);
 
       // Verify unparse was called with array data
-      const callArgs = mockPapa.unparse.mock.calls[0][0];
+      const callArgs = mockPapa.unparse.mock.calls[0][0] as any[];
       expect(Array.isArray(callArgs)).toBe(true);
       expect(callArgs[0]).toEqual([
         '名稱',
@@ -110,7 +110,7 @@ describe('exportService', () => {
       await exportSubscriptionsToCSV([]);
 
       expect(mockPapa.unparse).toHaveBeenCalled();
-      const callArgs = mockPapa.unparse.mock.calls[0][0];
+      const callArgs = mockPapa.unparse.mock.calls[0][0] as any[];
       // Should only have header row
       expect(callArgs.length).toBe(1);
     });
@@ -118,7 +118,7 @@ describe('exportService', () => {
     it('translates category labels correctly', async () => {
       await exportSubscriptionsToCSV(mockSubscriptions);
 
-      const callArgs = mockPapa.unparse.mock.calls[0][0];
+      const callArgs = mockPapa.unparse.mock.calls[0][0] as any[];
       // First data row (index 1) should have translated category
       expect(callArgs[1][1]).toBe('影音娛樂');
     });
@@ -126,7 +126,7 @@ describe('exportService', () => {
     it('translates billing cycle labels correctly', async () => {
       await exportSubscriptionsToCSV(mockSubscriptions);
 
-      const callArgs = mockPapa.unparse.mock.calls[0][0];
+      const callArgs = mockPapa.unparse.mock.calls[0][0] as any[];
       // First data row should have translated cycle
       expect(callArgs[1][4]).toBe('每月');
     });
@@ -153,14 +153,14 @@ describe('exportService', () => {
     it('includes total amount in PDF HTML', async () => {
       await exportSubscriptionsToPDF(mockSubscriptions, 100.5, 'EUR');
 
-      const htmlArg = mockPrint.printToFileAsync.mock.calls[0][0].html;
+      const htmlArg = mockPrint.printToFileAsync.mock.calls[0]?.[0]?.html;
       expect(htmlArg).toContain('EUR 100.50');
     });
 
     it('includes subscription count in PDF', async () => {
       await exportSubscriptionsToPDF(mockSubscriptions, 25.98, 'USD');
 
-      const htmlArg = mockPrint.printToFileAsync.mock.calls[0][0].html;
+      const htmlArg = mockPrint.printToFileAsync.mock.calls[0]?.[0]?.html;
       expect(htmlArg).toContain('2 項');
     });
 
@@ -175,7 +175,7 @@ describe('exportService', () => {
     it('generates valid HTML structure', async () => {
       await exportSubscriptionsToPDF(mockSubscriptions, 25.98, 'USD');
 
-      const htmlArg = mockPrint.printToFileAsync.mock.calls[0][0].html;
+      const htmlArg = mockPrint.printToFileAsync.mock.calls[0]?.[0]?.html;
       expect(htmlArg).toContain('<!DOCTYPE html>');
       expect(htmlArg).toContain('<table>');
       expect(htmlArg).toContain('</table>');

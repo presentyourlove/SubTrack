@@ -77,7 +77,7 @@ describe('notificationHelper', () => {
 
   describe('scheduleSubscriptionNotification', () => {
     const mockSubscription: Subscription = {
-      id: 'sub-1',
+      id: 1 as any,
       name: 'Netflix',
       price: 15.99,
       currency: 'USD',
@@ -86,7 +86,7 @@ describe('notificationHelper', () => {
       category: 'entertainment',
       createdAt: '2026-01-01',
       updatedAt: '2026-01-01',
-    };
+    } as any;
 
     it('schedules notification and returns ID', async () => {
       mockGetDaysUntil.mockReturnValue(10);
@@ -210,7 +210,7 @@ describe('notificationHelper', () => {
   describe('scheduleAllSubscriptionNotifications', () => {
     const mockSubscriptions: Subscription[] = [
       {
-        id: 'sub-1',
+        id: 1 as any,
         name: 'Netflix',
         price: 15.99,
         currency: 'USD',
@@ -221,7 +221,7 @@ describe('notificationHelper', () => {
         updatedAt: '2026-01-01',
       },
       {
-        id: 'sub-2',
+        id: 2 as any,
         name: 'Spotify',
         price: 9.99,
         currency: 'USD',

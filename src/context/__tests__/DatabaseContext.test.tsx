@@ -130,8 +130,7 @@ describe('DatabaseContext', () => {
         startDate: '2023-01-01',
         description: '',
         category: 'entertainment',
-        paid: false,
-      });
+      } as any);
     });
 
     expect(dbServices.addSubscription).toHaveBeenCalled();

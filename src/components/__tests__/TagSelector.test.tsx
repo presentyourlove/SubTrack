@@ -28,7 +28,7 @@ describe('TagSelector', () => {
   it('renders with tags', () => {
     const { getByText } = render(
       <TagSelector
-        tags={mockTags}
+        tags={mockTags as any[]}
         selectedTagIds={[]}
         onSelectionChange={mockOnSelectionChange}
         onCreateTag={mockOnCreateTag}
@@ -56,7 +56,7 @@ describe('TagSelector', () => {
   it('renders add button', () => {
     const { getByText } = render(
       <TagSelector
-        tags={mockTags}
+        tags={mockTags as any[]}
         selectedTagIds={[]}
         onSelectionChange={mockOnSelectionChange}
         onCreateTag={mockOnCreateTag}
@@ -69,7 +69,7 @@ describe('TagSelector', () => {
   it('shows create input when add button is pressed', () => {
     const { getByText, getByPlaceholderText } = render(
       <TagSelector
-        tags={mockTags}
+        tags={mockTags as any[]}
         selectedTagIds={[]}
         onSelectionChange={mockOnSelectionChange}
         onCreateTag={mockOnCreateTag}
@@ -84,7 +84,7 @@ describe('TagSelector', () => {
   it('calls onSelectionChange when tag is pressed', () => {
     const { getByText } = render(
       <TagSelector
-        tags={mockTags}
+        tags={mockTags as any[]}
         selectedTagIds={[]}
         onSelectionChange={mockOnSelectionChange}
         onCreateTag={mockOnCreateTag}
@@ -99,7 +99,7 @@ describe('TagSelector', () => {
   it('removes tag from selection when already selected', () => {
     const { getByText } = render(
       <TagSelector
-        tags={mockTags}
+        tags={mockTags as any[]}
         selectedTagIds={[1, 2]}
         onSelectionChange={mockOnSelectionChange}
         onCreateTag={mockOnCreateTag}
@@ -114,7 +114,7 @@ describe('TagSelector', () => {
   it('shows delete confirmation on long press', () => {
     const { getByText } = render(
       <TagSelector
-        tags={mockTags}
+        tags={mockTags as any[]}
         selectedTagIds={[]}
         onSelectionChange={mockOnSelectionChange}
         onCreateTag={mockOnCreateTag}
@@ -134,7 +134,7 @@ describe('TagSelector', () => {
   it('creates new tag when form is submitted', async () => {
     const { getByText, getByPlaceholderText } = render(
       <TagSelector
-        tags={mockTags}
+        tags={mockTags as any[]}
         selectedTagIds={[]}
         onSelectionChange={mockOnSelectionChange}
         onCreateTag={mockOnCreateTag}
@@ -160,7 +160,7 @@ describe('TagSelector', () => {
   it('cancels tag creation', () => {
     const { getByText, queryByPlaceholderText } = render(
       <TagSelector
-        tags={mockTags}
+        tags={mockTags as any[]}
         selectedTagIds={[]}
         onSelectionChange={mockOnSelectionChange}
         onCreateTag={mockOnCreateTag}

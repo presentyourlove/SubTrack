@@ -55,7 +55,6 @@ describe('securityService', () => {
     it('returns true on successful authentication', async () => {
       mockLocalAuth.authenticateAsync.mockResolvedValue({
         success: true,
-        error: undefined,
       });
 
       const result = await authenticateBiometric();
@@ -83,7 +82,6 @@ describe('securityService', () => {
     it('uses custom reason message', async () => {
       mockLocalAuth.authenticateAsync.mockResolvedValue({
         success: true,
-        error: undefined,
       });
 
       await authenticateBiometric('Custom prompt message');

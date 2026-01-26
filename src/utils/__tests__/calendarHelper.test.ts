@@ -43,17 +43,17 @@ jest.mock('expo-calendar', () => {
 
 describe('calendarHelper', () => {
   const mockSubscription: Subscription = {
-    id: '1',
+    id: 1 as any,
     name: 'Netflix',
     price: 15.99,
     currency: 'USD',
     billingCycle: 'monthly',
     nextBillingDate: '2023-01-01',
     icon: 'netflix',
-    category: 'Entertainment',
+    category: 'entertainment',
     startDate: '2023-01-01',
     reminderEnabled: true,
-  };
+  } as any;
 
   beforeEach(() => {
     jest.clearAllMocks();

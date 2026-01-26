@@ -13,7 +13,7 @@ describe('ImportPreviewModal', () => {
         currency: 'USD',
         category: 'entertainment',
         billingCycle: 'monthly',
-      },
+      } as any,
     ],
     errors: [],
     onConfirm: jest.fn(),

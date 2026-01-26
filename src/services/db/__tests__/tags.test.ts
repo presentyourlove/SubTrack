@@ -27,7 +27,7 @@ describe('tags service', () => {
 
   describe('getAllTags', () => {
     it('gets all tags', async () => {
-      const tags: Tag[] = [{ id: 1, name: 'Fun', color: 'red' }];
+      const tags: Tag[] = [{ id: 1, name: 'Fun', color: 'red' } as any];
       (mockDb.getAllAsync as jest.Mock).mockResolvedValue(tags);
 
       const result = await getAllTags(mockDb);
@@ -40,7 +40,7 @@ describe('tags service', () => {
 
   describe('getTagById', () => {
     it('gets tag by id', async () => {
-      const tag: Tag = { id: 1, name: 'Fun', color: 'red' };
+      const tag: Tag = { id: 1, name: 'Fun', color: 'red' } as any;
       (mockDb.getFirstAsync as jest.Mock).mockResolvedValue(tag);
 
       const result = await getTagById(mockDb, 1);

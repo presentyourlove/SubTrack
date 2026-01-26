@@ -14,7 +14,7 @@ describe('settings service', () => {
 
   describe('getUserSettings', () => {
     it('retrieves settings from id 1', async () => {
-      const mockSettings = { id: 1, currency: 'TWD' } as UserSettings;
+      const mockSettings = { id: 1, currency: 'TWD' } as any;
       (mockDb.getFirstAsync as jest.Mock).mockResolvedValue(mockSettings);
 
       const result = await getUserSettings(mockDb);
@@ -25,7 +25,7 @@ describe('settings service', () => {
 
   describe('updateUserSettings', () => {
     it('updates specific fields', async () => {
-      await updateUserSettings(mockDb, { currency: 'USD' });
+      await updateUserSettings(mockDb, { currency: 'USD' } as any);
       expect(mockDb.runAsync).toHaveBeenCalledWith(
         expect.stringContaining('UPDATE user_settings SET currency = ?'),
         expect.arrayContaining(['USD']),
