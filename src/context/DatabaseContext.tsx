@@ -1,4 +1,4 @@
-import { createContext, useContext, useState, useEffect } from 'react';
+import { createContext, useContext, useState, useEffect, useCallback, useMemo } from 'react';
 import { initializeDatabase, Database } from '../services';
 import { Subscription, UserSettings, Tag, Workspace, CustomReport } from '../types';
 import * as db from '../services';
@@ -63,7 +63,7 @@ type DatabaseContextType = {
 
 const DatabaseContext = createContext<DatabaseContextType | undefined>(undefined);
 
-export const DatabaseProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+export const DatabaseProvider = ({ children }: { children: React.ReactNode }) => {
   console.log('DatabaseProvider is running');
   const { user, isAuthenticated } = useAuth();
   const [database, setDatabase] = useState<Database | null>(null);

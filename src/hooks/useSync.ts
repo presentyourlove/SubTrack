@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback, useRef } from 'react';
+import { useState, useEffect, useCallback, useRef, useMemo } from 'react';
 import { Subscription, UserSettings } from '../types';
 import { Database } from '../services';
 import { uploadLocalDataToFirestore, downloadFirestoreDataToLocal } from '../services/syncService';

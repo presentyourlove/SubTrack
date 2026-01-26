@@ -102,7 +102,7 @@ describe('PaymentInfo', () => {
     const dateStr = defaultProps.startDate.toLocaleDateString();
 
     // Press the date display
-    fireEvent.press(getByText(dateStr));
+    fireEvent.press(getByText('2026/1/1'));
 
     const picker = getByTestId('dateTimePicker');
     expect(picker).toBeTruthy();
@@ -110,8 +110,7 @@ describe('PaymentInfo', () => {
 
   it('updates date when picker changes (native)', () => {
     const { getByText, getByTestId } = render(<PaymentInfo {...defaultProps} />);
-    const dateStr = defaultProps.startDate.toLocaleDateString();
-    fireEvent.press(getByText(dateStr));
+    fireEvent.press(getByText('2026/1/1'));
 
     const picker = getByTestId('dateTimePicker');
 
