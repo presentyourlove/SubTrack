@@ -2,16 +2,9 @@ import React from 'react';
 import { render, act, renderHook } from '@testing-library/react-native';
 import { ThemeProvider, useTheme } from '../ThemeContext';
 import { Colors } from '../../constants/Colors';
-import { Text, useColorScheme } from 'react-native';
-
-// Mock react-native
-jest.mock('react-native', () => {
-  const actual = jest.requireActual('react-native');
-  return {
-    ...actual,
-    useColorScheme: jest.fn(),
-  };
-});
+import { Text } from 'react-native';
+// @ts-ignore: Internal path used for testing
+import useColorScheme from 'react-native/Libraries/Utilities/useColorScheme';
 
 describe('ThemeContext', () => {
   beforeEach(() => {
@@ -84,7 +77,7 @@ describe('ThemeContext', () => {
   });
 
   it('throws error if useTheme used outside provider', () => {
-    const spy = jest.spyOn(console, 'error').mockImplementation(() => {});
+    const spy = jest.spyOn(console, 'error').mockImplementation(() => { });
 
     expect(() => {
       renderHook(() => useTheme());
