@@ -1,5 +1,5 @@
 import { MMKV } from 'react-native-mmkv';
-// @ts-ignore: Persistence type mismatch is acceptable for mock adapter
+// @ts-expect-error: Persistence type mismatch is acceptable for mock adapter
 import { Persistence } from 'firebase/auth';
 
 export const storage = new MMKV();
