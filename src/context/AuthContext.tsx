@@ -25,11 +25,14 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     return () => unsubscribe();
   }, []);
 
-  const value = {
-    user,
-    loading,
-    isAuthenticated: !!user,
-  };
+  const value = useMemo(
+    () => ({
+      user,
+      loading,
+      isAuthenticated: !!user,
+    }),
+    [user, loading],
+  );
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 }

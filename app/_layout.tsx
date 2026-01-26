@@ -1,4 +1,5 @@
 import { useEffect } from 'react';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { Stack, useRouter } from 'expo-router';
 import { useQuickActionCallback } from 'expo-quick-actions/hooks';
 import { ThemeProvider } from '../src/context/ThemeContext';
@@ -8,6 +9,8 @@ import { SecurityProvider } from '../src/context/SecurityContext';
 import { ToastProvider } from '../src/context/ToastContext';
 import { LockScreen } from '../src/components/LockScreen';
 import { requestNotificationPermissions } from '../src/utils/notificationHelper';
+
+const queryClient = new QueryClient();
 
 export default function RootLayout() {
   const router = useRouter();
@@ -43,19 +46,21 @@ export default function RootLayout() {
   }, []);
 
   return (
-    <ThemeProvider>
-      <AuthProvider>
-        <DatabaseProvider>
-          <SecurityProvider>
-            <ToastProvider>
-              <Stack screenOptions={{ headerShown: false }}>
-                <Stack.Screen name="(tabs)" />
-              </Stack>
-              <LockScreen />
-            </ToastProvider>
-          </SecurityProvider>
-        </DatabaseProvider>
-      </AuthProvider>
-    </ThemeProvider>
+    <QueryClientProvider client={queryClient}>
+      <ThemeProvider>
+        <AuthProvider>
+          <DatabaseProvider>
+            <SecurityProvider>
+              <ToastProvider>
+                <Stack screenOptions={{ headerShown: false }}>
+                  <Stack.Screen name="(tabs)" />
+                </Stack>
+                <LockScreen />
+              </ToastProvider>
+            </SecurityProvider>
+          </DatabaseProvider>
+        </AuthProvider>
+      </ThemeProvider>
+    </QueryClientProvider>
   );
 }

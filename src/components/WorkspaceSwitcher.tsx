@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, Modal, FlatList, TextInput } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useTheme } from '../context/ThemeContext';
@@ -26,21 +26,38 @@ export default function WorkspaceSwitcher() {
       setIsCreating(false);
       // Optional: switch to new workspace? Auto-refresh handles showing it in list
     }
+    }
   };
+
+  const dynamicStyles = useMemo(
+    () => ({
+      switcherButton: { backgroundColor: colors.card, borderColor: colors.borderColor },
+      text: { color: colors.text },
+      subtleText: { color: colors.subtleText },
+      modalContent: { backgroundColor: colors.card },
+      itemActive: { backgroundColor: colors.background },
+      input: {
+        color: colors.text,
+        backgroundColor: colors.background,
+        borderColor: colors.borderColor,
+      },
+      createBtn: { backgroundColor: colors.accent },
+      addButton: { borderTopColor: colors.borderColor },
+      addText: { color: colors.accent },
+    }),
+    [colors],
+  );
 
   if (!currentWorkspace) return null;
 
   return (
     <>
       <TouchableOpacity
-        style={[
-          styles.switcherButton,
-          { backgroundColor: colors.card, borderColor: colors.borderColor },
-        ]}
+        style={[styles.switcherButton, dynamicStyles.switcherButton]}
         onPress={() => setModalVisible(true)}
       >
         <Text style={styles.icon}>{currentWorkspace.icon}</Text>
-        <Text style={[styles.name, { color: colors.text }]}>{currentWorkspace.name}</Text>
+        <Text style={[styles.name, dynamicStyles.text]}>{currentWorkspace.name}</Text>
         <Ionicons name="chevron-down" size={16} color={colors.subtleText} />
       </TouchableOpacity>
 
@@ -55,8 +72,8 @@ export default function WorkspaceSwitcher() {
           activeOpacity={1}
           onPress={() => setModalVisible(false)}
         >
-          <View style={[styles.modalContent, { backgroundColor: colors.card }]}>
-            <Text style={[styles.modalTitle, { color: colors.text }]}>
+          <View style={[styles.modalContent, dynamicStyles.modalContent]}>
+            <Text style={[styles.modalTitle, dynamicStyles.text]}>
               {i18n.t('workspace.switch', { defaultValue: 'Switch Workspace' })}
             </Text>
 
@@ -67,12 +84,12 @@ export default function WorkspaceSwitcher() {
                 <TouchableOpacity
                   style={[
                     styles.workspaceItem,
-                    item.id === currentWorkspace.id && { backgroundColor: colors.background },
+                    item.id === currentWorkspace.id && dynamicStyles.itemActive,
                   ]}
                   onPress={() => handleSwitch(item)}
                 >
                   <Text style={styles.workspaceIcon}>{item.icon}</Text>
-                  <Text style={[styles.workspaceName, { color: colors.text }]}>{item.name}</Text>
+                  <Text style={[styles.workspaceName, dynamicStyles.text]}>{item.name}</Text>
                   {item.id === currentWorkspace.id && (
                     <Ionicons name="checkmark" size={20} color={colors.accent} />
                   )}
@@ -83,24 +100,14 @@ export default function WorkspaceSwitcher() {
             {isCreating ? (
               <View style={styles.createContainer}>
                 <TextInput
-                  style={[
-                    styles.input,
-                    {
-                      color: colors.text,
-                      backgroundColor: colors.background,
-                      borderColor: colors.borderColor,
-                    },
-                  ]}
+                  style={[styles.input, dynamicStyles.input]}
                   placeholder="Name"
                   placeholderTextColor={colors.subtleText}
                   value={newName}
                   onChangeText={setNewName}
                 />
                 <View style={styles.createActions}>
-                  <TouchableOpacity
-                    onPress={handleCreate}
-                    style={[styles.createBtn, { backgroundColor: colors.accent }]}
-                  >
+                  <TouchableOpacity onPress={handleCreate} style={[styles.createBtn, dynamicStyles.createBtn]}>
                     <Text style={{ color: '#fff' }}>Add</Text>
                   </TouchableOpacity>
                   <TouchableOpacity onPress={() => setIsCreating(false)} style={styles.cancelBtn}>
@@ -110,11 +117,11 @@ export default function WorkspaceSwitcher() {
               </View>
             ) : (
               <TouchableOpacity
-                style={[styles.addButton, { borderTopColor: colors.borderColor }]}
+                style={[styles.addButton, dynamicStyles.addButton]}
                 onPress={() => setIsCreating(true)}
               >
                 <Ionicons name="add" size={20} color={colors.accent} />
-                <Text style={[styles.addText, { color: colors.accent }]}>
+                <Text style={[styles.addText, dynamicStyles.addText]}>
                   {i18n.t('workspace.new', { defaultValue: 'New Workspace' })}
                 </Text>
               </TouchableOpacity>

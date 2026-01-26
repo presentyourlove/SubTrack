@@ -93,12 +93,15 @@ export function useSync(
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isAuthenticated, user, database]);
 
-  return {
-    isOnline,
-    isSyncing,
-    lastSyncTime,
-    syncToCloud,
-    syncFromCloud,
-    triggerSync,
-  };
+  return useMemo(
+    () => ({
+      isOnline,
+      isSyncing,
+      lastSyncTime,
+      syncToCloud,
+      syncFromCloud,
+      triggerSync,
+    }),
+    [isOnline, isSyncing, lastSyncTime, syncToCloud, syncFromCloud, triggerSync],
+  );
 }

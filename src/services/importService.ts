@@ -6,7 +6,6 @@
 import { File } from 'expo-file-system';
 import * as DocumentPicker from 'expo-document-picker';
 import Papa from 'papaparse';
-import * as XLSX from 'xlsx';
 import { Subscription, SubscriptionCategory, BillingCycle } from '../types';
 import { processInChunks } from './workerService';
 
@@ -271,6 +270,7 @@ export async function parseExcel(fileUri: string): Promise<ImportResult> {
   const arrayBuffer = await file.arrayBuffer();
   const content = Buffer.from(arrayBuffer).toString('base64');
 
+  const XLSX = await import('xlsx');
   const workbook = XLSX.read(content, { type: 'base64' });
   const firstSheetName = workbook.SheetNames[0];
   const worksheet = workbook.Sheets[firstSheetName];

@@ -1,4 +1,4 @@
-import { createContext, useContext, useState, useEffect, ReactNode } from 'react';
+import { createContext, useContext, useState, useEffect } from 'react';
 import { initializeDatabase, Database } from '../services';
 import { Subscription, UserSettings, Tag, Workspace, CustomReport } from '../types';
 import * as db from '../services';
@@ -127,10 +127,10 @@ export const DatabaseProvider: React.FC<{ children: React.ReactNode }> = ({ chil
   }
 
   // 重新整理資料
-  async function refreshData() {
+  const refreshData = useCallback(async () => {
     if (!database) return;
     await loadLocalData(database);
-  }
+  }, [database]);
 
   // 使用 Sync Hook
   const { isOnline, isSyncing, lastSyncTime, syncToCloud, syncFromCloud, triggerSync } = useSync(
@@ -151,233 +151,301 @@ export const DatabaseProvider: React.FC<{ children: React.ReactNode }> = ({ chil
   }, [settings?.language]);
 
   // 新增訂閱
+  const addSubscription = useCallback(
+    async (subscription: Omit<Subscription, 'id' | 'createdAt' | 'updatedAt'>) => {
+      if (!database) throw new Error('Database not initialized');
+      if (!currentWorkspace) throw new Error('No active workspace');
 
-  // 新增訂閱
-  async function addSubscription(
-    subscription: Omit<Subscription, 'id' | 'createdAt' | 'updatedAt'>,
-  ) {
-    if (!database) throw new Error('Database not initialized');
-    if (!currentWorkspace) throw new Error('No active workspace');
+      const calculatedNextBillingDate = calculateNextBillingDate(
+        subscription.startDate,
+        subscription.billingCycle,
+      );
 
-    const calculatedNextBillingDate = calculateNextBillingDate(
-      subscription.startDate,
-      subscription.billingCycle,
-    );
+      const subData = {
+        ...subscription,
+        nextBillingDate: subscription.nextBillingDate || calculatedNextBillingDate,
+        workspaceId: currentWorkspace.id,
+      };
 
-    const subData = {
-      ...subscription,
-      nextBillingDate: subscription.nextBillingDate || calculatedNextBillingDate,
-      workspaceId: currentWorkspace.id,
-    };
-
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const id = await db.addSubscription(database as any, subData);
-
-    // 如果已登入，同步到雲端
-    if (isAuthenticated && user) {
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      const allSubs = await db.getAllSubscriptions(database as any, currentWorkspace.id);
-      const newSub = allSubs.find((s) => s.id === id);
-      if (newSub) {
-        await syncSubscriptionToFirestore(user.uid, newSub);
-      }
-    }
+      const id = await db.addSubscription(database as any, subData);
 
-    await refreshData();
-    triggerSync();
-  }
+      // 如果已登入，同步到雲端
+      if (isAuthenticated && user) {
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        const allSubs = await db.getAllSubscriptions(database as any, currentWorkspace.id);
+        const newSub = allSubs.find((s) => s.id === id);
+        if (newSub) {
+          await syncSubscriptionToFirestore(user.uid, newSub);
+        }
+      }
+
+      await refreshData();
+      triggerSync();
+    },
+    [database, currentWorkspace, isAuthenticated, user, refreshData, triggerSync],
+  );
 
   // 更新訂閱
-  async function updateSubscription(
-    id: number,
-    updates: Partial<Omit<Subscription, 'id' | 'createdAt' | 'updatedAt'>>,
-  ) {
-    if (!database) throw new Error('Database not initialized');
+  const updateSubscription = useCallback(
+    async (
+      id: number,
+      updates: Partial<Omit<Subscription, 'id' | 'createdAt' | 'updatedAt'>>,
+    ) => {
+      if (!database) throw new Error('Database not initialized');
 
-    const finalUpdates = { ...updates };
-    if (updates.startDate || updates.billingCycle) {
-      const currentSub = subscriptions.find((s) => s.id === id);
-      if (currentSub) {
-        const startDate = updates.startDate || currentSub.startDate;
-        const cycle = updates.billingCycle || currentSub.billingCycle;
-        finalUpdates.nextBillingDate = calculateNextBillingDate(startDate, cycle);
+      const finalUpdates = { ...updates };
+      if (updates.startDate || updates.billingCycle) {
+        const currentSub = subscriptions.find((s) => s.id === id);
+        if (currentSub) {
+          const startDate = updates.startDate || currentSub.startDate;
+          const cycle = updates.billingCycle || currentSub.billingCycle;
+          finalUpdates.nextBillingDate = calculateNextBillingDate(startDate, cycle);
+        }
       }
-    }
 
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    await db.updateSubscription(database as any, id, finalUpdates);
-
-    // 如果已登入，同步到雲端
-    if (isAuthenticated && user) {
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      const allSubs = await db.getAllSubscriptions(database as any, currentWorkspace?.id);
-      const updatedSub = allSubs.find((s) => s.id === id);
-      if (updatedSub) {
-        await syncSubscriptionToFirestore(user.uid, updatedSub);
-      }
-    }
+      await db.updateSubscription(database as any, id, finalUpdates);
 
-    await refreshData();
-    triggerSync();
-  }
+      // 如果已登入，同步到雲端
+      if (isAuthenticated && user) {
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        const allSubs = await db.getAllSubscriptions(database as any, currentWorkspace?.id);
+        const updatedSub = allSubs.find((s) => s.id === id);
+        if (updatedSub) {
+          await syncSubscriptionToFirestore(user.uid, updatedSub);
+        }
+      }
+
+      await refreshData();
+      triggerSync();
+    },
+    [database, subscriptions, isAuthenticated, user, currentWorkspace, refreshData, triggerSync],
+  );
 
   // 刪除訂閱
-  async function deleteSubscription(id: number) {
-    if (!database) throw new Error('Database not initialized');
+  const deleteSubscription = useCallback(
+    async (id: number) => {
+      if (!database) throw new Error('Database not initialized');
 
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    await db.deleteSubscription(database as any, id);
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      await db.deleteSubscription(database as any, id);
 
-    // 如果已登入，從雲端刪除
-    if (isAuthenticated && user) {
-      await deleteSubscriptionFromFirestore(user.uid, id);
-    }
+      // 如果已登入，從雲端刪除
+      if (isAuthenticated && user) {
+        await deleteSubscriptionFromFirestore(user.uid, id);
+      }
 
-    await refreshData();
-    triggerSync();
-  }
+      await refreshData();
+      triggerSync();
+    },
+    [database, isAuthenticated, user, refreshData, triggerSync],
+  );
 
   // 更新設定
-  async function updateSettings(
-    updates: Partial<Omit<UserSettings, 'id' | 'createdAt' | 'updatedAt'>>,
-  ) {
-    if (!database) throw new Error('Database not initialized');
+  const updateSettings = useCallback(
+    async (updates: Partial<Omit<UserSettings, 'id' | 'createdAt' | 'updatedAt'>>) => {
+      if (!database) throw new Error('Database not initialized');
 
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    await db.updateUserSettings(database as any, updates);
-
-    // 如果已登入，同步到雲端
-    if (isAuthenticated && user) {
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      const newSettings = await db.getUserSettings(database as any);
-      if (newSettings) {
-        await syncUserSettingsToFirestore(user.uid, newSettings);
-      }
-    }
+      await db.updateUserSettings(database as any, updates);
 
-    await refreshData();
-    triggerSync();
-  }
+      // 如果已登入，同步到雲端
+      if (isAuthenticated && user) {
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        const newSettings = await db.getUserSettings(database as any);
+        if (newSettings) {
+          await syncUserSettingsToFirestore(user.uid, newSettings);
+        }
+      }
+
+      await refreshData();
+      triggerSync();
+    },
+    [database, isAuthenticated, user, refreshData, triggerSync],
+  );
 
   // 建立標籤
-  async function createTag(name: string, color: string): Promise<number | null> {
-    if (!database) return null;
-    try {
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      const id = await tagDb.createTag(database as any, name, color);
-      await refreshData();
-      return id;
-    } catch (error) {
-      console.error('Failed to create tag:', error);
-      return null;
-    }
-  }
+  const createTag = useCallback(
+    async (name: string, color: string): Promise<number | null> => {
+      if (!database) return null;
+      try {
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        const id = await tagDb.createTag(database as any, name, color);
+        await refreshData();
+        return id;
+      } catch (error) {
+        console.error('Failed to create tag:', error);
+        return null;
+      }
+    },
+    [database, refreshData],
+  );
 
   // 刪除標籤
-  async function deleteTag(id: number): Promise<void> {
-    if (!database) return;
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    await tagDb.deleteTag(database as any, id);
-    await refreshData();
-  }
+  const deleteTag = useCallback(
+    async (id: number): Promise<void> => {
+      if (!database) return;
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      await tagDb.deleteTag(database as any, id);
+      await refreshData();
+    },
+    [database, refreshData],
+  );
 
   // 取得訂閱的標籤
-  async function getTagsForSubscription(subscriptionId: number): Promise<Tag[]> {
-    if (!database) return [];
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    return tagDb.getTagsForSubscription(database as any, subscriptionId);
-  }
+  const getTagsForSubscription = useCallback(
+    async (subscriptionId: number): Promise<Tag[]> => {
+      if (!database) return [];
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      return tagDb.getTagsForSubscription(database as any, subscriptionId);
+    },
+    [database],
+  );
 
   // 設定訂閱的標籤
-  async function setTagsForSubscription(subscriptionId: number, tagIds: number[]): Promise<void> {
-    if (!database) return;
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    await tagDb.setTagsForSubscription(database as any, subscriptionId, tagIds);
-  }
+  const setTagsForSubscription = useCallback(
+    async (subscriptionId: number, tagIds: number[]): Promise<void> => {
+      if (!database) return;
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      await tagDb.setTagsForSubscription(database as any, subscriptionId, tagIds);
+    },
+    [database],
+  );
 
   // 工作區操作
-  async function createWorkspace(name: string, icon: string) {
-    if (!database) return;
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    await workspaceDb.createWorkspace(database as any, name, icon);
-    await refreshData();
-  }
-
-  async function updateWorkspace(id: number, name: string, icon: string) {
-    if (!database) return;
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    await workspaceDb.updateWorkspace(database as any, id, name, icon);
-    await refreshData();
-  }
-
-  async function deleteWorkspace(id: number) {
-    if (!database) return;
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    await workspaceDb.deleteWorkspace(database as any, id);
-    // 如果刪除的是當前工作區，切換回預設
-    if (currentWorkspace?.id === id) {
-      await switchWorkspace(1);
-    } else {
+  const createWorkspace = useCallback(
+    async (name: string, icon: string) => {
+      if (!database) return;
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      await workspaceDb.createWorkspace(database as any, name, icon);
       await refreshData();
-    }
-  }
+    },
+    [database, refreshData],
+  );
 
-  async function switchWorkspace(id: number) {
-    if (!database) return;
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    await workspaceDb.switchWorkspace(database as any, id);
-    await refreshData();
-  }
+  const updateWorkspace = useCallback(
+    async (id: number, name: string, icon: string) => {
+      if (!database) return;
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      await workspaceDb.updateWorkspace(database as any, id, name, icon);
+      await refreshData();
+    },
+    [database, refreshData],
+  );
 
-  const value = {
-    database,
-    subscriptions,
-    tags,
-    settings,
-    workspaces,
-    currentWorkspace,
-    loading,
-    isOnline,
-    isSyncing,
-    lastSyncTime,
-    refreshData,
-    addSubscription,
-    updateSubscription,
-    deleteSubscription,
-    updateSettings,
-    syncToCloud,
-    syncFromCloud,
-    createTag,
-    deleteTag,
-    getTagsForSubscription,
-    setTagsForSubscription,
-    createWorkspace,
-    updateWorkspace,
-    deleteWorkspace,
-    switchWorkspace,
-    createReport,
-    getReports,
-    deleteReport,
-  };
+  const switchWorkspace = useCallback(
+    async (id: number) => {
+      if (!database) return;
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      await workspaceDb.switchWorkspace(database as any, id);
+      await refreshData();
+    },
+    [database, refreshData],
+  );
+
+  const deleteWorkspace = useCallback(
+    async (id: number) => {
+      if (!database) return;
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      await workspaceDb.deleteWorkspace(database as any, id);
+      // 如果刪除的是當前工作區，切換回預設
+      if (currentWorkspace?.id === id) {
+        await switchWorkspace(1);
+      } else {
+        await refreshData();
+      }
+    },
+    [database, currentWorkspace, switchWorkspace, refreshData],
+  );
 
   // 報表操作
-  async function createReport(report: Omit<CustomReport, 'id' | 'createdAt' | 'updatedAt'>) {
-    if (!database) return null;
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    return reportDb.createReport(database as any, report);
-  }
+  const createReport = useCallback(
+    async (report: Omit<CustomReport, 'id' | 'createdAt' | 'updatedAt'>) => {
+      if (!database) return null;
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      return reportDb.createReport(database as any, report);
+    },
+    [database],
+  );
 
-  async function getReports() {
+  const getReports = useCallback(async () => {
     if (!database) return [];
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     return reportDb.getReports(database as any);
-  }
+  }, [database]);
 
-  async function deleteReport(id: number) {
-    if (!database) return;
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    await reportDb.deleteReport(database as any, id);
-  }
+  const deleteReport = useCallback(
+    async (id: number) => {
+      if (!database) return;
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      await reportDb.deleteReport(database as any, id);
+    },
+    [database],
+  );
+
+  const value = useMemo(
+    () => ({
+      database,
+      subscriptions,
+      tags,
+      settings,
+      workspaces,
+      currentWorkspace,
+      loading,
+      isOnline,
+      isSyncing,
+      lastSyncTime,
+      refreshData,
+      addSubscription,
+      updateSubscription,
+      deleteSubscription,
+      updateSettings,
+      syncToCloud,
+      syncFromCloud,
+      createTag,
+      deleteTag,
+      getTagsForSubscription,
+      setTagsForSubscription,
+      createWorkspace,
+      updateWorkspace,
+      deleteWorkspace,
+      switchWorkspace,
+      createReport,
+      getReports,
+      deleteReport,
+    }),
+    [
+      database,
+      subscriptions,
+      tags,
+      settings,
+      workspaces,
+      currentWorkspace,
+      loading,
+      isOnline,
+      isSyncing,
+      lastSyncTime,
+      refreshData,
+      addSubscription,
+      updateSubscription,
+      deleteSubscription,
+      updateSettings,
+      syncToCloud,
+      syncFromCloud,
+      createTag,
+      deleteTag,
+      getTagsForSubscription,
+      setTagsForSubscription,
+      createWorkspace,
+      updateWorkspace,
+      deleteWorkspace,
+      switchWorkspace,
+      createReport,
+      getReports,
+      deleteReport,
+    ],
+  );
 
   return <DatabaseContext.Provider value={value}>{children}</DatabaseContext.Provider>;
 };

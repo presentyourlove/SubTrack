@@ -27,11 +27,13 @@ if (Platform.OS === 'web') {
   // eslint-disable-next-line @typescript-eslint/ban-ts-comment
   // @ts-ignore - 動態導入在 React Native 環境中可用
   // eslint-disable-next-line @typescript-eslint/no-require-imports
+  // eslint-disable-next-line @typescript-eslint/no-require-imports
   const { getReactNativePersistence } = require('firebase/auth');
   // eslint-disable-next-line @typescript-eslint/no-require-imports
-  const AsyncStorage = require('@react-native-async-storage/async-storage').default;
+  const { mmkvStorageAdapter } = require('./storage');
+
   auth = initializeAuth(app, {
-    persistence: getReactNativePersistence(AsyncStorage),
+    persistence: getReactNativePersistence(mmkvStorageAdapter),
   });
 }
 

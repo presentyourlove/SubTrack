@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, Platform, Image, Alert } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import * as Calendar from 'expo-calendar';
@@ -35,6 +35,20 @@ export default function SubscriptionCard({
   const { maskValue } = usePrivacy();
 
   // 計算工時換算
+  const dynamicStyles = useMemo(
+    () => ({
+      container: { backgroundColor: colors.card, borderColor: colors.borderColor },
+      text: { color: colors.text },
+      subtleText: { color: colors.subtleText },
+      accentUnderline: { color: colors.accent, textDecorationLine: 'underline' as const },
+      borderTop: { borderTopColor: colors.borderColor },
+      calendarActive: { backgroundColor: colors.accent },
+      calendarInactive: { backgroundColor: colors.borderColor },
+      expense: { color: colors.expense },
+    }),
+    [colors],
+  );
+
   const hourlyRate = settings ? calculateHourlyRate(settings) : 0;
   const workHours = settings?.conversionEnabled
     ? convertToWorkHours(subscription.price, hourlyRate)
@@ -118,12 +132,7 @@ export default function SubscriptionCard({
         onClose={() => setShowSplitBill(false)}
         subscription={subscription}
       />
-      <View
-        style={[
-          styles.container,
-          { backgroundColor: colors.card, borderColor: colors.borderColor },
-        ]}
-      >
+      <View style={[styles.container, dynamicStyles.container]}>
         {/* 頂部資訊 */}
         <View style={styles.header}>
           <View style={styles.iconContainer}>
@@ -135,8 +144,8 @@ export default function SubscriptionCard({
           </View>
 
           <View style={styles.info}>
-            <Text style={[styles.name, { color: colors.text }]}>{subscription.name}</Text>
-            <Text style={[styles.category, { color: colors.subtleText }]}>
+            <Text style={[styles.name, dynamicStyles.text]}>{subscription.name}</Text>
+            <Text style={[styles.category, dynamicStyles.subtleText]}>
               {i18n.t(`categories.${subscription.category}`)}
             </Text>
           </View>
@@ -149,7 +158,7 @@ export default function SubscriptionCard({
         {/* 價格和日期 */}
         <View style={styles.details}>
           <View style={styles.priceContainer}>
-            <Text style={[styles.price, { color: colors.text }]}>
+            <Text style={[styles.price, dynamicStyles.text]}>
               {maskValue(formatCurrency(subscription.price, subscription.currency))} /{' '}
               {subscription.billingCycle === 'monthly'
                 ? i18n.t('card.perMonth')
@@ -157,12 +166,7 @@ export default function SubscriptionCard({
             </Text>
             {subscription.isFamilyPlan && subscription.memberCount && (
               <TouchableOpacity onPress={() => setShowSplitBill(true)}>
-                <Text
-                  style={[
-                    styles.perPersonPrice,
-                    { color: colors.accent, textDecorationLine: 'underline' },
-                  ]}
-                >
+                <Text style={[styles.perPersonPrice, dynamicStyles.accentUnderline]}>
                   (
                   {maskValue(
                     formatCurrency(
@@ -176,11 +180,11 @@ export default function SubscriptionCard({
             )}
           </View>
           {workHours && (
-            <Text style={[styles.date, { color: colors.subtleText, marginTop: 2, fontSize: 12 }]}>
+            <Text style={[styles.date, dynamicStyles.subtleText, { marginTop: 2, fontSize: 12 }]}>
               {workHours}
             </Text>
           )}
-          <Text style={[styles.date, { color: colors.subtleText }]}>
+          <Text style={[styles.date, dynamicStyles.subtleText]}>
             {i18n.t('card.nextBilling')}{' '}
             {subscription.nextBillingDate
               ? formatDateLocale(subscription.nextBillingDate)
@@ -200,7 +204,7 @@ export default function SubscriptionCard({
         {/* 操作按鈕 */}
         <View style={styles.actions}>
           <TouchableOpacity
-            style={[styles.actionButton, { borderColor: colors.borderColor }]}
+            style={[styles.actionButton, dynamicStyles.container]}
             onPress={() => {
               if (onEdit) {
                 hapticFeedback.selection();
@@ -209,12 +213,12 @@ export default function SubscriptionCard({
             }}
           >
             <Ionicons name="pencil" size={18} color={colors.text} />
-            <Text style={[styles.actionText, { color: colors.text }]}>{i18n.t('common.edit')}</Text>
+            <Text style={[styles.actionText, dynamicStyles.text]}>{i18n.t('common.edit')}</Text>
           </TouchableOpacity>
 
           <TouchableOpacity
             testID="delete-subscription-button"
-            style={[styles.actionButton, { borderColor: colors.borderColor }]}
+            style={[styles.actionButton, dynamicStyles.container]}
             onPress={() => {
               if (onDelete) {
                 hapticFeedback.error();
@@ -223,19 +227,19 @@ export default function SubscriptionCard({
             }}
           >
             <Ionicons name="trash-outline" size={18} color={colors.expense} />
-            <Text style={[styles.actionText, { color: colors.expense }]}>
+            <Text style={[styles.actionText, dynamicStyles.expense]}>
               {i18n.t('common.delete')}
             </Text>
           </TouchableOpacity>
         </View>
 
         {/* 日曆同步開關 */}
-        <View style={[styles.calendarSync, { borderTopColor: colors.borderColor }]}>
+        <View style={[styles.calendarSync, dynamicStyles.borderTop]}>
           <View style={{ flex: 1 }}>
-            <Text style={[styles.calendarLabel, { color: colors.text }]}>
+            <Text style={[styles.calendarLabel, dynamicStyles.text]}>
               {i18n.t('calendar.syncLabel')}
             </Text>
-            <Text style={[styles.calendarHint, { color: colors.subtleText }]}>
+            <Text style={[styles.calendarHint, dynamicStyles.subtleText]}>
               {i18n.t('calendar.syncHint')}
             </Text>
           </View>
@@ -244,8 +248,8 @@ export default function SubscriptionCard({
             style={[
               styles.calendarToggle,
               subscription.calendarEventId
-                ? { backgroundColor: colors.accent }
-                : { backgroundColor: colors.borderColor },
+                ? dynamicStyles.calendarActive
+                : dynamicStyles.calendarInactive,
             ]}
             onPress={() => {
               hapticFeedback.light();
