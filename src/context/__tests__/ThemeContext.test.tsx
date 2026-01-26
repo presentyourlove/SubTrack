@@ -2,9 +2,16 @@ import React from 'react';
 import { render, act, renderHook } from '@testing-library/react-native';
 import { ThemeProvider, useTheme } from '../ThemeContext';
 import { Colors } from '../../constants/Colors';
-import { Text } from 'react-native';
-// Import the mocked hook to control return value
-import useColorScheme from 'react-native/Libraries/Utilities/useColorScheme';
+import { Text, useColorScheme } from 'react-native';
+
+// Mock react-native
+jest.mock('react-native', () => {
+  const actual = jest.requireActual('react-native');
+  return {
+    ...actual,
+    useColorScheme: jest.fn(),
+  };
+});
 
 describe('ThemeContext', () => {
   beforeEach(() => {

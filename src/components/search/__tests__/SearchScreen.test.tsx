@@ -2,7 +2,7 @@ import React from 'react';
 import { render, fireEvent, waitFor } from '@testing-library/react-native';
 import { View, Text, TouchableOpacity, FlatList } from 'react-native';
 import SearchScreen from '../SearchScreen';
-import { Subscription } from '../../../../types';
+import { Subscription } from '../../../types';
 
 // Mock dependencies
 const mockBack = jest.fn();

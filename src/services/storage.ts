@@ -1,8 +1,7 @@
-import { MMKV } from 'react-native-mmkv';
+import { createMMKV } from 'react-native-mmkv';
 import { Persistence } from 'firebase/auth';
 
-// @ts-expect-error: MMKV type definition mismatch
-export const storage = new MMKV();
+export const storage = createMMKV();
 
 /**
  * MMKV adapter for Firebase Auth Persistence.

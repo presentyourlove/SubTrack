@@ -25,11 +25,4 @@ describe('TagChip', () => {
     fireEvent.press(getByText('Urgent'));
     expect(mockOnPress).toHaveBeenCalledWith(mockTag);
   });
-
-  it('shows remove icon when onDelete provided', () => {
-    const mockOnDelete = jest.fn();
-    const { getByTestId } = renderWithProviders(<TagChip tag={mockTag} onDelete={mockOnDelete} />);
-    // Assuming the close icon has testID or accessibility label.
-    // If not, we might check for existence of an icon from vector-icons.
-  });
 });

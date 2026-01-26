@@ -12,9 +12,9 @@ jest.spyOn(Alert, 'alert');
 
 describe('TagSelector', () => {
   const mockTags = [
-    { id: 1, name: 'Entertainment', color: '#FF5733' },
-    { id: 2, name: 'Business', color: '#33FF57' },
-    { id: 3, name: 'Personal', color: '#3357FF' },
+    { id: 1, name: 'Entertainment', color: '#FF5733', createdAt: '', updatedAt: '' },
+    { id: 2, name: 'Business', color: '#33FF57', createdAt: '', updatedAt: '' },
+    { id: 3, name: 'Personal', color: '#3357FF', createdAt: '', updatedAt: '' },
   ];
   const mockOnSelectionChange = jest.fn();
   const mockOnCreateTag = jest.fn();

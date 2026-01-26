@@ -86,6 +86,10 @@ describe('notificationHelper', () => {
       category: 'entertainment',
       createdAt: '2026-01-01',
       updatedAt: '2026-01-01',
+      icon: '📺',
+      startDate: '2026-01-01',
+      reminderEnabled: true,
+      workspaceId: 1,
     } as any;
 
     it('schedules notification and returns ID', async () => {
@@ -219,6 +223,10 @@ describe('notificationHelper', () => {
         category: 'entertainment',
         createdAt: '2026-01-01',
         updatedAt: '2026-01-01',
+        icon: '📺',
+        startDate: '2026-01-01',
+        reminderEnabled: true,
+        workspaceId: 1,
       },
       {
         id: 2 as any,
@@ -230,6 +238,10 @@ describe('notificationHelper', () => {
         category: 'entertainment',
         createdAt: '2026-01-01',
         updatedAt: '2026-01-01',
+        icon: '🎵',
+        startDate: '2026-01-01',
+        reminderEnabled: true,
+        workspaceId: 1,
       },
     ];
 
