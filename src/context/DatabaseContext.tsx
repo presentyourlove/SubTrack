@@ -188,10 +188,7 @@ export const DatabaseProvider: React.FC<{ children: React.ReactNode }> = ({ chil
 
   // 更新訂閱
   const updateSubscription = useCallback(
-    async (
-      id: number,
-      updates: Partial<Omit<Subscription, 'id' | 'createdAt' | 'updatedAt'>>,
-    ) => {
+    async (id: number, updates: Partial<Omit<Subscription, 'id' | 'createdAt' | 'updatedAt'>>) => {
       if (!database) throw new Error('Database not initialized');
 
       const finalUpdates = { ...updates };

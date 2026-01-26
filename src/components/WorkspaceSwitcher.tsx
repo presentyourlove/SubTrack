@@ -26,7 +26,6 @@ export default function WorkspaceSwitcher() {
       setIsCreating(false);
       // Optional: switch to new workspace? Auto-refresh handles showing it in list
     }
-    }
   };
 
   const dynamicStyles = useMemo(
@@ -107,7 +106,10 @@ export default function WorkspaceSwitcher() {
                   onChangeText={setNewName}
                 />
                 <View style={styles.createActions}>
-                  <TouchableOpacity onPress={handleCreate} style={[styles.createBtn, dynamicStyles.createBtn]}>
+                  <TouchableOpacity
+                    onPress={handleCreate}
+                    style={[styles.createBtn, dynamicStyles.createBtn]}
+                  >
                     <Text style={{ color: '#fff' }}>Add</Text>
                   </TouchableOpacity>
                   <TouchableOpacity onPress={() => setIsCreating(false)} style={styles.cancelBtn}>
