@@ -118,6 +118,7 @@ npm run ios
 - **2026-01-20**: Achieved **79.22% Test Coverage**, implementing Database Migration & Web Platform consistency tests.
 - **2026-01-26**: 修復 Lint 錯誤、測試環境 (Jest ESM/require) 與日期邏輯；清理 Charts 元件；**達成 100% Type Check 通過**。
 - **2026-01-26**: 架構優化完成：MMKV 儲存層、Platform Resolution、Context 渲染優化。
+- **2026-01-27**: 修復 Jest 設定範圍與無障礙 Lint 警告 (Jest Setup Scope & A11y Lint Fixes)。
 - **Linting**: ESLint, Prettier
 - **Build**: EAS (Expo Application Services)
 
