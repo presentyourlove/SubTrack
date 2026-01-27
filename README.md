@@ -1,4 +1,4 @@
-# SubTrack - 智慧訂閱管理助手 📱💰
+﻿# SubTrack - 智慧訂閱管理助手 📱💰
 
 [![React Native](https://img.shields.io/badge/React_Native-Expo-blue.svg)](https://reactnative.dev)
 [![TypeScript](https://img.shields.io/badge/Language-TypeScript-007ACC.svg)](https://www.typescriptlang.org/)
@@ -320,9 +320,9 @@ Presentyourlove
 
 #### �️ 品質與穩定性 (Quality & Stability)
 
-- [ ] **�🐞 錯誤監控 (Sentry Integration)**: 整合 Sentry SDK 以追蹤生產環境的 Crash 與效能問題 (目前缺席)。
+- - [x] **🐞 錯誤監控 (Sentry Integration)**: 整合 Sentry SDK 以追蹤生產環境的 Crash 與效能問題 (目前缺席)。
 - [x] **🛡️ 環境變數驗證 (Env Validation)**: 引入 `zod` 在啟動時驗證 `process.env`，防止缺少 Config 導致的 Runtime Error。
-- [ ] **�️ 強型別 i18n (Typed i18n)**: 建立翻譯 Key 的型別檢查機制。
+- - [x] **🗣️ 強型別 i18n (Typed i18n)**: 建立翻譯 Key 的型別檢查機制。
 - [x] **♿ 無障礙優化 (A11y)**: 引入自動化檢測與改善螢幕閱讀器體驗。
 
 ---
