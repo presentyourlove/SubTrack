@@ -27,7 +27,8 @@ export const CachedImage: React.FC<CachedImageProps> = ({
         contentFit={contentFit}
         transition={transition}
         cachePolicy="disk"
-        accessibilityIgnoresInvertColors={props.accessibilityIgnoresInvertColors}
+        // eslint-disable-next-line react-native-a11y/has-valid-accessibility-ignores-invert-colors
+        accessibilityIgnoresInvertColors={props.accessibilityIgnoresInvertColors ?? true}
         {...props}
       />
       {showLoader && (

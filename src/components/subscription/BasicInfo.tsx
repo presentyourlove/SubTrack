@@ -74,7 +74,11 @@ export default function BasicInfo({
             }}
           >
             {icon.startsWith('file://') ? (
-              <Image source={{ uri: icon }} style={styles.customIconPreview} accessibilityIgnoresInvertColors={true} />
+              <Image
+                source={{ uri: icon }}
+                style={styles.customIconPreview}
+                accessibilityIgnoresInvertColors={true}
+              />
             ) : (
               <Ionicons
                 name="image-outline"

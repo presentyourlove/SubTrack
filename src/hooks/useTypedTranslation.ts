@@ -7,9 +7,12 @@ import { TranslationKeys } from '../i18n/types';
  * Ensures that all translation keys exist at compile time.
  */
 export function useTypedTranslation() {
-  const t = useCallback((key: TranslationKeys, options?: Record<string, unknown>) => {
-    return i18n.t(key, options);
-  }, []);
+  const t = useCallback(
+    (key: TranslationKeys, options?: Record<string, string | number | undefined>) => {
+      return i18n.t(key, options);
+    },
+    [],
+  );
 
   return { t, i18n };
 }

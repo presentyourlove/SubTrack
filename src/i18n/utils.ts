@@ -4,4 +4,5 @@ import { TranslationKeys } from './types';
 /**
  * Typed translation helper for use outside of React components/hooks.
  */
-export const t = (key: TranslationKeys, options?: Record<string, unknown>) => i18n.t(key, options);
+export const t = (key: TranslationKeys, options?: Record<string, string | number | undefined>) =>
+  i18n.t(key, options);
