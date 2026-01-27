@@ -58,7 +58,7 @@ describe('SplitBillModal', () => {
       <SplitBillModal visible={true} subscription={mockSubscription} onClose={mockOnClose} />,
     );
 
-    expect(getByText('Split Bill')).toBeTruthy();
+    expect(getByText('splitBill.title')).toBeTruthy();
 
     // Wait for members to load
     await waitFor(() => {

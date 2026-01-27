@@ -54,7 +54,9 @@ export default function SplitBillModal({
   }, [visible, db, subscription.memberCount, subscription.id]);
 
   const handleToggleStatus = async (member: Member) => {
-    if (!db) return;
+    if (!db) {
+      return;
+    }
     const newStatus = member.status === 'paid' ? 'unpaid' : 'paid';
     await MemberService.updateMemberStatus(db as unknown as SQLiteDatabase, member.id, newStatus);
 

@@ -5,6 +5,9 @@ if (typeof process === 'undefined') {
   process.env = {};
 }
 
+// Increase default timeout to 30s for slow CI/Emulators
+jest.setTimeout(30000);
+
 // Mock standard libraries
 global.ReanimatedDataMock = {
   now: () => 0,
@@ -119,7 +122,7 @@ jest.mock('expo-haptics', () => ({
 
 jest.mock('expo-image-manipulator', () => ({
   manipulateAsync: jest.fn().mockResolvedValue({ uri: 'file:///mock-image.jpg' }),
-  SaveFormat: { JPEG: 'jpeg', PNG: 'png' },
+  SaveFormat: { JPEG: 'jpeg', PNG: 'png', WEBP: 'webp' },
   FlipType: { Horizontal: 'horizontal', Vertical: 'vertical' },
 }));
 

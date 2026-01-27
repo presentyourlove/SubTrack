@@ -151,7 +151,6 @@ export default function SubscriptionCard({
           <View style={styles.info}>
             <Text style={[styles.name, dynamicStyles.text]}>{subscription.name}</Text>
             <Text style={[styles.category, dynamicStyles.subtleText]}>
-              {/* @ts-expect-error Dynamic category name */}
               {t(`categories.${subscription.category}`)}
             </Text>
           </View>

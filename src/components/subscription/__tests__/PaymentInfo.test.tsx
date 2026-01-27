@@ -101,7 +101,7 @@ describe('PaymentInfo', () => {
     const { getByText, getByTestId } = render(<PaymentInfo {...defaultProps} />);
 
     // Press the date display
-    fireEvent.press(getByText('2026/1/1'));
+    fireEvent.press(getByText('1/1/2026'));
 
     const picker = getByTestId('dateTimePicker');
     expect(picker).toBeTruthy();
@@ -109,7 +109,7 @@ describe('PaymentInfo', () => {
 
   it('updates date when picker changes (native)', () => {
     const { getByText, getByTestId } = render(<PaymentInfo {...defaultProps} />);
-    fireEvent.press(getByText('2026/1/1'));
+    fireEvent.press(getByText('1/1/2026'));
 
     const picker = getByTestId('dateTimePicker');
 
@@ -122,7 +122,7 @@ describe('PaymentInfo', () => {
   it('handles string date format in props', () => {
     const { getByText } = render(<PaymentInfo {...defaultProps} startDate="2026-01-15" />);
     // Should render without error
-    expect(getByText('2026/1/15')).toBeTruthy();
+    expect(getByText('1/15/2026')).toBeTruthy();
   });
 
   it('uses default currency TWD if undefined', () => {

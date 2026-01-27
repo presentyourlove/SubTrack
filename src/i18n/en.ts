@@ -287,7 +287,6 @@ export default {
     title: 'Search',
     placeholder: 'Search subscriptions, description, category or tags...',
     noResults: 'No subscriptions found',
-    noResults: 'No subscriptions found',
     results: 'Found {{count}} results',
   },
   // Workspace
