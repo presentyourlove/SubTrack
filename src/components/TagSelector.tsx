@@ -215,6 +215,7 @@ export function TagSelector({
             <TouchableOpacity
               style={styles.addButton}
               onPress={() => setShowCreateInput(true)}
+              accessibilityRole="button"
               accessibilityLabel={i18n.t('tags.add')}
             >
               <Ionicons name="add" size={16} color={isDark ? '#8e8e93' : '#666666'} />
@@ -232,6 +233,7 @@ export function TagSelector({
               value={newTagName}
               onChangeText={setNewTagName}
               placeholder={i18n.t('tags.placeholder')}
+              accessibilityLabel={i18n.t('tags.placeholder')}
               placeholderTextColor={isDark ? '#8e8e93' : '#999999'}
               autoFocus
               maxLength={20}
@@ -248,6 +250,7 @@ export function TagSelector({
                   selectedColorIndex === index && styles.colorOptionSelected,
                 ]}
                 onPress={() => setSelectedColorIndex(index)}
+                accessibilityRole="button"
                 accessibilityLabel={`顏色選項 ${index + 1}`}
               >
                 {selectedColorIndex === index && (
@@ -260,6 +263,8 @@ export function TagSelector({
           <View style={styles.buttonRow}>
             <TouchableOpacity
               style={styles.cancelButton}
+              accessibilityRole="button"
+              accessibilityLabel={i18n.t('common.cancel')}
               onPress={() => {
                 setShowCreateInput(false);
                 setNewTagName('');
@@ -269,6 +274,8 @@ export function TagSelector({
             </TouchableOpacity>
             <TouchableOpacity
               style={styles.createButton}
+              accessibilityRole="button"
+              accessibilityLabel={i18n.t('tags.add')}
               onPress={handleCreateTag}
               disabled={!newTagName.trim()}
             >

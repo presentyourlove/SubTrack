@@ -53,7 +53,12 @@ export default function SearchScreen() {
           },
         ]}
       >
-        <TouchableOpacity onPress={() => router.back()} style={styles.backButton}>
+        <TouchableOpacity
+          onPress={() => router.back()}
+          style={styles.backButton}
+          accessibilityRole="button"
+          accessibilityLabel={i18n.t('common.back')}
+        >
           <Ionicons name="arrow-back" size={24} color={colors.text} />
         </TouchableOpacity>
         <View style={[styles.searchContainer, { backgroundColor: colors.inputBackground }]}>
@@ -61,6 +66,7 @@ export default function SearchScreen() {
           <TextInput
             style={[styles.input, { color: colors.text }]}
             placeholder={i18n.t('search.placeholder')}
+            accessibilityLabel={i18n.t('search.placeholder')}
             placeholderTextColor={colors.subtleText}
             value={query}
             onChangeText={setQuery}
@@ -69,6 +75,8 @@ export default function SearchScreen() {
           {query.length > 0 && (
             <TouchableOpacity
               testID="clear-search-button"
+              accessibilityRole="button"
+              accessibilityLabel={i18n.t('common.clear')} // Assuming clear key exists, or use generic
               onPress={() => {
                 hapticFeedback.selection();
                 setQuery('');

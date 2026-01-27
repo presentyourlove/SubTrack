@@ -47,6 +47,9 @@ export default function ReportBuilderModal({ visible, onClose, onSave }: ReportB
         { borderColor: colors.borderColor },
       ]}
       onPress={onPress}
+      accessibilityRole="button"
+      accessibilityLabel={label}
+      accessibilityState={{ selected }}
     >
       {icon && (
         <Ionicons
@@ -57,7 +60,7 @@ export default function ReportBuilderModal({ visible, onClose, onSave }: ReportB
         />
       )}
       <Text style={[styles.optionText, { color: selected ? '#fff' : colors.text }]}>{label}</Text>
-    </TouchableOpacity>
+    </TouchableOpacity >
   );
 
   return (
@@ -68,7 +71,11 @@ export default function ReportBuilderModal({ visible, onClose, onSave }: ReportB
             <Text style={[styles.title, { color: colors.text }]}>
               {i18n.t('reports.createTitle')}
             </Text>
-            <TouchableOpacity onPress={onClose}>
+            <TouchableOpacity
+              onPress={onClose}
+              accessibilityRole="button"
+              accessibilityLabel={i18n.t('common.close')}
+            >
               <Ionicons name="close" size={24} color={colors.text} />
             </TouchableOpacity>
           </View>
@@ -155,6 +162,8 @@ export default function ReportBuilderModal({ visible, onClose, onSave }: ReportB
             <TouchableOpacity
               style={[styles.saveButton, { backgroundColor: colors.accent }]}
               onPress={handleSave}
+              accessibilityRole="button"
+              accessibilityLabel={i18n.t('common.save')}
             >
               <Text style={styles.saveButtonText}>{i18n.t('common.save')}</Text>
             </TouchableOpacity>

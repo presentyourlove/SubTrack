@@ -42,6 +42,9 @@ export default function CategoryTabs({ selectedCategory, onSelectCategory }: Cat
             hapticFeedback.selection();
             onSelectCategory(cat.value);
           }}
+          accessibilityRole="button"
+          accessibilityLabel={cat.label}
+          accessibilityState={{ selected: selectedCategory === cat.value }}
         >
           <Text
             style={[

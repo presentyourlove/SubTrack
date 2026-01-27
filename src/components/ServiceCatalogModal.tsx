@@ -196,7 +196,11 @@ export function ServiceCatalogModal({
               autoCorrect={false}
             />
             {searchQuery.length > 0 && (
-              <TouchableOpacity onPress={() => setSearchQuery('')}>
+              <TouchableOpacity
+                onPress={() => setSearchQuery('')}
+                accessibilityRole="button"
+                accessibilityLabel={i18n.t('common.clear')} // Assuming meaningful label or hint is needed, checking if clear exists or using generic
+              >
                 <Ionicons name="close-circle" size={18} color={isDark ? '#8e8e93' : '#999999'} />
               </TouchableOpacity>
             )}
@@ -212,6 +216,9 @@ export function ServiceCatalogModal({
                   setSelectedCategory(tab.key);
                   setSearchQuery('');
                 }}
+                accessibilityRole="button"
+                accessibilityLabel={tab.label}
+                accessibilityState={{ selected: selectedCategory === tab.key }}
               >
                 <Text
                   style={[styles.tabText, selectedCategory === tab.key && styles.tabTextSelected]}

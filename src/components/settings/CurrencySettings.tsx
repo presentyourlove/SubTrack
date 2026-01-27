@@ -134,6 +134,9 @@ export default function CurrencySettings() {
           { backgroundColor: colors.card, borderColor: colors.borderColor },
         ]}
         onPress={() => setModalVisible(true)}
+        accessibilityRole="button"
+        accessibilityLabel={i18n.t('settings.currency')}
+        accessibilityHint={i18n.t('settings.mainCurrency', { currency: settings?.mainCurrency || 'TWD' })}
       >
         <View style={styles.settingIcon}>
           <Ionicons name="cash" size={24} color={colors.accent} />
@@ -164,7 +167,11 @@ export default function CurrencySettings() {
               <Text style={[styles.modalTitle, { color: colors.text }]}>
                 {i18n.t('settings.currency')}
               </Text>
-              <TouchableOpacity onPress={() => setModalVisible(false)}>
+              <TouchableOpacity
+                onPress={() => setModalVisible(false)}
+                accessibilityRole="button"
+                accessibilityLabel={i18n.t('common.close')}
+              >
                 <Ionicons name="close" size={24} color={colors.text} />
               </TouchableOpacity>
             </View>
@@ -184,6 +191,9 @@ export default function CurrencySettings() {
                       },
                     ]}
                     onPress={() => handleCurrencyChange(code)}
+                    accessibilityRole="button"
+                    accessibilityLabel={code}
+                    accessibilityState={{ selected: settings?.mainCurrency === code }}
                   >
                     <Text
                       style={[
@@ -204,6 +214,8 @@ export default function CurrencySettings() {
                   { backgroundColor: colors.card, borderColor: colors.borderColor },
                 ]}
                 onPress={handleOpenExchangeRateEditor}
+                accessibilityRole="button"
+                accessibilityLabel="編輯匯率與新增幣別"
               >
                 <Ionicons name="swap-horizontal" size={20} color={colors.accent} />
                 <Text style={[styles.exchangeRateButtonText, { color: colors.text }]}>
@@ -226,7 +238,11 @@ export default function CurrencySettings() {
           <View style={[styles.modalContainer, { backgroundColor: colors.background }]}>
             <View style={styles.modalHeader}>
               <Text style={[styles.modalTitle, { color: colors.text }]}>編輯匯率</Text>
-              <TouchableOpacity onPress={() => setExchangeRateModalVisible(false)}>
+              <TouchableOpacity
+                onPress={() => setExchangeRateModalVisible(false)}
+                accessibilityRole="button"
+                accessibilityLabel={i18n.t('common.close')}
+              >
                 <Ionicons name="close" size={24} color={colors.text} />
               </TouchableOpacity>
             </View>
@@ -272,6 +288,8 @@ export default function CurrencySettings() {
                     testID="add-currency-button"
                     style={[styles.addButton, { backgroundColor: colors.accent }]}
                     onPress={handleAddCurrency}
+                    accessibilityRole="button"
+                    accessibilityLabel={i18n.t('common.add')}
                   >
                     <Ionicons name="add" size={24} color="#fff" />
                   </TouchableOpacity>
@@ -321,6 +339,8 @@ export default function CurrencySettings() {
                         testID={`delete-currency-${code}`}
                         style={[styles.deleteButton, { backgroundColor: colors.expense }]}
                         onPress={() => handleDeleteCurrency(code)}
+                        accessibilityRole="button"
+                        accessibilityLabel={i18n.t('common.delete')}
                       >
                         <Ionicons name="trash-outline" size={18} color="#ffffff" />
                       </TouchableOpacity>
@@ -334,6 +354,8 @@ export default function CurrencySettings() {
                 testID="reset-rates-button"
                 style={[styles.modalButton, { borderColor: colors.borderColor }]}
                 onPress={handleResetExchangeRates}
+                accessibilityRole="button"
+                accessibilityLabel="重置為預設"
               >
                 <Text style={[styles.modalButtonText, { color: colors.text }]}>重置為預設</Text>
               </TouchableOpacity>
@@ -341,6 +363,8 @@ export default function CurrencySettings() {
                 testID="save-rates-button"
                 style={[styles.modalButton, styles.saveButton, { backgroundColor: colors.accent }]}
                 onPress={handleSaveExchangeRates}
+                accessibilityRole="button"
+                accessibilityLabel={i18n.t('common.save')}
               >
                 <Text style={[styles.modalButtonText, { color: '#ffffff' }]}>儲存</Text>
               </TouchableOpacity>

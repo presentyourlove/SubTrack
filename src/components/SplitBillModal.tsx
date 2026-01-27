@@ -81,7 +81,11 @@ export default function SplitBillModal({
             <Text style={[styles.title, { color: colors.text }]}>
               {i18n.t('splitBill.title', { defaultValue: 'Split Bill' })}
             </Text>
-            <TouchableOpacity onPress={onClose}>
+            <TouchableOpacity
+              onPress={onClose}
+              accessibilityRole="button"
+              accessibilityLabel={i18n.t('common.close')}
+            >
               <Ionicons name="close" size={24} color={colors.text} />
             </TouchableOpacity>
           </View>
@@ -110,6 +114,9 @@ export default function SplitBillModal({
                   { backgroundColor: colors.card, borderColor: colors.borderColor },
                 ]}
                 onPress={() => handleToggleStatus(member)}
+                accessibilityRole="button"
+                accessibilityLabel={`${member.name}, ${member.status === 'paid' ? 'PAID' : 'UNPAID'}`}
+                accessibilityHint="Double tap to toggle status"
               >
                 <View style={styles.memberInfo}>
                   <Text style={[styles.memberName, { color: colors.text }]}>{member.name}</Text>

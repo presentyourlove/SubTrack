@@ -32,6 +32,8 @@ export const LockScreen = () => {
         <TouchableOpacity
           style={[styles.button, { backgroundColor: colors.primary }]}
           onPress={() => unlock()}
+          accessibilityRole="button"
+          accessibilityLabel="立即解鎖"
         >
           <Ionicons name="finger-print" size={24} color="#FFF" style={styles.buttonIcon} />
           <Text style={styles.buttonText}>立即解鎖</Text>
