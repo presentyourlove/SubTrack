@@ -1,3 +1,10 @@
+// Ensure process.env exists
+if (typeof process === 'undefined') {
+  global.process = { env: {} };
+} else if (!process.env) {
+  process.env = {};
+}
+
 // Mock standard libraries
 global.ReanimatedDataMock = {
   now: () => 0,
@@ -53,7 +60,7 @@ jest.mock('react-native-reanimated', () => {
       Image: View,
       ScrollView: View,
       FlatList: View,
-      call: () => {},
+      call: () => { },
       createAnimatedComponent: (component) => component,
     },
     useSharedValue: (init) => ({ value: init }),
@@ -163,31 +170,12 @@ jest.mock('expo-localization', () => ({
 
 // Mock i18n
 jest.mock('./src/i18n', () => {
-  // Load the actual english translations for testing inside the factory
-  const enTranslations = require('./src/i18n/en').default;
-
   return {
     t: jest.fn((key, options) => {
-      if (options && options.defaultValue) return options.defaultValue;
-
-      // Simple property access for nested keys like 'common.save'
-      const keys = key.split('.');
-      let value = enTranslations;
-      for (const k of keys) {
-        value = value?.[k];
-      }
-
-      if (typeof value === 'string') {
-        // Simple interpolation for {{value}}
-        if (options) {
-          return value.replace(/\{\{(\w+)\}\}/g, (_, k) => options[k] || `{{${k}}}`);
-        }
-        return value;
-      }
-
-      return key; // Fallback to key if not found
+      // Return key to match strict test expectations (e.g. getAllByText('settings.notifications'))
+      return key;
     }),
-    locale: 'en-US', // Use EN for tests as we check English strings
+    locale: 'en-US',
   };
 });
 

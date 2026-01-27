@@ -1,7 +1,7 @@
 import { z } from 'zod';
 
 describe('Env Validation', () => {
-  const originalEnv = process.env;
+  const originalEnv = process.env || {};
 
   beforeEach(() => {
     jest.resetModules();
