@@ -8,6 +8,7 @@ import {
 } from 'firebase/auth';
 import { auth } from './firebaseConfig';
 import { t } from '../i18n/utils';
+import { TranslationKeys } from '../i18n/types';
 
 /**
  * 註冊新使用者
@@ -152,7 +153,7 @@ export function getCurrentUser(): User | null {
 function getAuthErrorMessage(errorCode: string): string {
   // 嘗試直接使用 i18n 翻譯錯誤代碼
   const i18nKey = `error.${errorCode}`;
-  const translated = t(i18nKey as any);
+  const translated = t(i18nKey as TranslationKeys);
 
   // 如果翻譯結果跟 key 一樣(或包含 error. 前綴代表沒翻譯到)，代表找不到翻譯，使用未知錯誤
   // i18n-js 的行為是找不到 key 會回傳 key 本身

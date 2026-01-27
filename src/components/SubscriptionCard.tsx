@@ -138,7 +138,7 @@ export default function SubscriptionCard({
         <View style={styles.header}>
           <View style={styles.iconContainer}>
             {subscription.icon.startsWith('file://') ? (
-              <Image source={{ uri: subscription.icon }} style={styles.iconImage} />
+              <Image source={{ uri: subscription.icon }} style={styles.iconImage} accessibilityIgnoresInvertColors={true} />
             ) : (
               <Text style={styles.icon}>{subscription.icon}</Text>
             )}

@@ -27,6 +27,7 @@ export const CachedImage: React.FC<CachedImageProps> = ({
         contentFit={contentFit}
         transition={transition}
         cachePolicy="disk"
+        accessibilityIgnoresInvertColors={props.accessibilityIgnoresInvertColors}
         {...props}
       />
       {showLoader && (
