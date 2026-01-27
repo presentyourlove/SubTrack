@@ -7,7 +7,7 @@ import {
   updateProfile,
 } from 'firebase/auth';
 import { auth } from './firebaseConfig';
-import i18n from '../i18n';
+import { t } from '../i18n/utils';
 
 /**
  * 註冊新使用者
@@ -73,13 +73,13 @@ export async function loginUser(email: string, password: string): Promise<User> 
   } catch (error) {
     const errorCode = (error as { code: string }).code;
     if (errorCode === 'auth/user-not-found' || errorCode === 'auth/wrong-password') {
-      throw new Error(i18n.t('error.invalidCredentials'));
+      throw new Error(t('error.invalidCredentials'));
     } else if (errorCode === 'auth/invalid-email') {
-      throw new Error(i18n.t('validation.invalidEmail'));
+      throw new Error(t('validation.invalidEmail'));
     } else if (errorCode === 'auth/weak-password') {
-      throw new Error(i18n.t('validation.passwordTooShort'));
+      throw new Error(t('validation.passwordTooShort'));
     }
-    throw new Error(i18n.t('error.loginFailed'));
+    throw new Error(t('error.loginFailed'));
   }
 }
 
@@ -94,13 +94,14 @@ export async function loginUser(email: string, password: string): Promise<User> 
  * @example
  * await logoutUser();
  * console.log('已成功登出');
+ * }
  */
 export async function logoutUser(): Promise<void> {
   try {
     await signOut(auth);
   } catch (error) {
     console.error('Logout failed:', error);
-    throw new Error(i18n.t('error.logoutFailed'));
+    throw new Error(t('error.logoutFailed'));
   }
 }
 
@@ -151,12 +152,12 @@ export function getCurrentUser(): User | null {
 function getAuthErrorMessage(errorCode: string): string {
   // 嘗試直接使用 i18n 翻譯錯誤代碼
   const i18nKey = `error.${errorCode}`;
-  const translated = i18n.t(i18nKey);
+  const translated = t(i18nKey as any);
 
   // 如果翻譯結果跟 key 一樣(或包含 error. 前綴代表沒翻譯到)，代表找不到翻譯，使用未知錯誤
   // i18n-js 的行為是找不到 key 會回傳 key 本身
   if (translated.includes('error.auth')) {
-    return i18n.t('error.unknown');
+    return t('error.unknown');
   }
 
   return translated;
@@ -199,10 +200,10 @@ export function validatePassword(password: string): {
   message: string;
 } {
   if (password.length < 6) {
-    return { isValid: false, message: i18n.t('validation.passwordTooShort') };
+    return { isValid: false, message: t('validation.passwordTooShort') };
   }
   if (password.length > 128) {
-    return { isValid: false, message: i18n.t('validation.passwordTooLong') };
+    return { isValid: false, message: t('validation.passwordTooLong') };
   }
   return { isValid: true, message: '' };
 }

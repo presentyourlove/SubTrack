@@ -1,5 +1,5 @@
 import { UserSettings } from '../types';
-import i18n from '../i18n';
+import { t } from '../i18n/utils';
 
 /**
  * 計算基準時薪
@@ -36,5 +36,5 @@ export function convertToWorkHours(price: number, hourlyRate: number): string | 
   // 顯示小數點後一位
   const formattedHours = hours.toFixed(1);
 
-  return `≈ ${formattedHours} ${i18n.t('settings.valueConverter.hoursUnit')}`;
+  return `≈ ${formattedHours} ${t('settings.valueConverter.hoursUnit')}`;
 }

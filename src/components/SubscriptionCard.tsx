@@ -8,7 +8,7 @@ import { useDatabase } from '../context/DatabaseContext';
 import { calculateHourlyRate, convertToWorkHours } from '../utils/valueConverter';
 import { formatCurrency } from '../utils/currencyHelper';
 import { formatDateLocale, getDaysUntil, getUrgencyLevel } from '../utils/dateHelper';
-import i18n from '../i18n';
+import { useTypedTranslation } from '../hooks/useTypedTranslation';
 import { TagChip } from './TagChip';
 import SplitBillModal from './SplitBillModal';
 import { usePrivacy } from '../hooks/usePrivacy';
@@ -31,6 +31,7 @@ export default function SubscriptionCard({
   onUpdateCalendarId,
 }: SubscriptionCardProps) {
   const { colors } = useTheme();
+  const { t } = useTypedTranslation();
   const { settings } = useDatabase();
   const { maskValue } = usePrivacy();
 
@@ -60,7 +61,7 @@ export default function SubscriptionCard({
   // 同步到日曆
   const handleSyncToCalendar = async () => {
     if (Platform.OS === 'web') {
-      Alert.alert(i18n.t('calendar.webNotSupported'));
+      Alert.alert(t('calendar.webNotSupported'));
       return;
     }
 
@@ -75,14 +76,14 @@ export default function SubscriptionCard({
             onUpdateCalendarId(null);
           }
 
-          Alert.alert(i18n.t('calendar.removed'));
+          Alert.alert(t('calendar.removed'));
           // 通知父組件重新載入資料
           if (onSyncToCalendar) {
             onSyncToCalendar();
           }
         } catch (error) {
           console.error('刪除日曆事件失敗:', error);
-          Alert.alert(i18n.t('calendar.removeFailed'));
+          Alert.alert(t('calendar.removeFailed'));
         }
         return;
       }
@@ -90,7 +91,7 @@ export default function SubscriptionCard({
       const eventId = await calendarSyncService.upsertEvent(subscription);
 
       if (!eventId) {
-        Alert.alert(i18n.t('calendar.noCalendar'));
+        Alert.alert(t('calendar.noCalendar'));
         return;
       }
 
@@ -99,14 +100,14 @@ export default function SubscriptionCard({
         onUpdateCalendarId(eventId);
       }
 
-      Alert.alert(i18n.t('calendar.syncSuccess'));
+      Alert.alert(t('calendar.syncSuccess'));
       // 通知父組件重新載入資料
       if (onSyncToCalendar) {
         onSyncToCalendar();
       }
     } catch (error) {
       console.error('同步日曆失敗:', error);
-      Alert.alert(i18n.t('calendar.syncFailed'));
+      Alert.alert(t('calendar.syncFailed'));
     }
   };
 
@@ -118,9 +119,9 @@ export default function SubscriptionCard({
   };
 
   const urgencyLabels = {
-    urgent: i18n.t('card.remainingDays', { days: daysUntil }),
-    warning: i18n.t('card.remainingDays', { days: daysUntil }),
-    safe: i18n.t('card.remainingDays', { days: daysUntil }),
+    urgent: t('card.remainingDays', { days: daysUntil }),
+    warning: t('card.remainingDays', { days: daysUntil }),
+    safe: t('card.remainingDays', { days: daysUntil }),
   };
 
   const [showSplitBill, setShowSplitBill] = useState(false);
@@ -146,7 +147,8 @@ export default function SubscriptionCard({
           <View style={styles.info}>
             <Text style={[styles.name, dynamicStyles.text]}>{subscription.name}</Text>
             <Text style={[styles.category, dynamicStyles.subtleText]}>
-              {i18n.t(`categories.${subscription.category}`)}
+              {/* @ts-expect-error Dynamic category name */}
+              {t(`categories.${subscription.category}`)}
             </Text>
           </View>
 
@@ -161,11 +163,15 @@ export default function SubscriptionCard({
             <Text style={[styles.price, dynamicStyles.text]}>
               {maskValue(formatCurrency(subscription.price, subscription.currency))} /{' '}
               {subscription.billingCycle === 'monthly'
-                ? i18n.t('card.perMonth')
-                : i18n.t('card.perYear')}
+                ? t('card.perMonth')
+                : t('card.perYear')}
             </Text>
             {subscription.isFamilyPlan && subscription.memberCount && (
-              <TouchableOpacity onPress={() => setShowSplitBill(true)}>
+              <TouchableOpacity
+                onPress={() => setShowSplitBill(true)}
+                accessibilityRole="button"
+                accessibilityLabel={t('card.splitBill')}
+              >
                 <Text style={[styles.perPersonPrice, dynamicStyles.accentUnderline]}>
                   (
                   {maskValue(
@@ -174,7 +180,7 @@ export default function SubscriptionCard({
                       subscription.currency,
                     ),
                   )}{' '}
-                  / {i18n.t('card.person')})
+                  / {t('card.person')})
                 </Text>
               </TouchableOpacity>
             )}
@@ -185,10 +191,10 @@ export default function SubscriptionCard({
             </Text>
           )}
           <Text style={[styles.date, dynamicStyles.subtleText]}>
-            {i18n.t('card.nextBilling')}{' '}
+            {t('card.nextBilling')}{' '}
             {subscription.nextBillingDate
               ? formatDateLocale(subscription.nextBillingDate)
-              : i18n.t('card.notSet')}
+              : t('card.notSet')}
           </Text>
         </View>
 
@@ -211,9 +217,11 @@ export default function SubscriptionCard({
                 onEdit();
               }
             }}
+            accessibilityRole="button"
+            accessibilityLabel={t('common.edit')}
           >
             <Ionicons name="pencil" size={18} color={colors.text} />
-            <Text style={[styles.actionText, dynamicStyles.text]}>{i18n.t('common.edit')}</Text>
+            <Text style={[styles.actionText, dynamicStyles.text]}>{t('common.edit')}</Text>
           </TouchableOpacity>
 
           <TouchableOpacity
@@ -225,10 +233,12 @@ export default function SubscriptionCard({
                 onDelete();
               }
             }}
+            accessibilityRole="button"
+            accessibilityLabel={t('common.delete')}
           >
             <Ionicons name="trash-outline" size={18} color={colors.expense} />
             <Text style={[styles.actionText, dynamicStyles.expense]}>
-              {i18n.t('common.delete')}
+              {t('common.delete')}
             </Text>
           </TouchableOpacity>
         </View>
@@ -237,10 +247,10 @@ export default function SubscriptionCard({
         <View style={[styles.calendarSync, dynamicStyles.borderTop]}>
           <View style={{ flex: 1 }}>
             <Text style={[styles.calendarLabel, dynamicStyles.text]}>
-              {i18n.t('calendar.syncLabel')}
+              {t('calendar.syncLabel')}
             </Text>
             <Text style={[styles.calendarHint, dynamicStyles.subtleText]}>
-              {i18n.t('calendar.syncHint')}
+              {t('calendar.syncHint')}
             </Text>
           </View>
           <TouchableOpacity
@@ -255,6 +265,9 @@ export default function SubscriptionCard({
               hapticFeedback.light();
               handleSyncToCalendar();
             }}
+            accessibilityRole="switch"
+            accessibilityState={{ checked: !!subscription.calendarEventId }}
+            accessibilityLabel={t('calendar.syncLabel')}
           >
             <View
               style={[

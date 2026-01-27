@@ -1,6 +1,6 @@
 import * as Calendar from 'expo-calendar';
 import { Subscription } from '../types';
-import i18n from '../i18n';
+import { t } from '../i18n/utils';
 
 const SUBTRACK_TAG = '[SubTrack-ID:';
 
@@ -59,13 +59,13 @@ export const calendarSyncService = {
       endDate.setHours(endDate.getHours() + 1);
 
       const eventData: Partial<Calendar.Event> = {
-        title: i18n.t('calendar.eventTitle', {
+        title: t('calendar.eventTitle', {
           icon: subscription.icon,
           name: subscription.name,
         }),
         startDate: eventDate,
         endDate: endDate,
-        notes: `${i18n.t('calendar.eventNotesPrice', {
+        notes: `${t('calendar.eventNotesPrice', {
           price: `${subscription.currency} ${subscription.price}`,
         })}\n\n${SUBTRACK_TAG}${subscription.id}]`,
         alarms: [{ relativeOffset: -24 * 60 }],

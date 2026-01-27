@@ -34,7 +34,19 @@
       "bundler": "metro",
       "output": "single"
     },
-    "plugins": ["expo-router", "expo-localization", "expo-quick-actions"],
+    "plugins": [
+      "expo-router",
+      "expo-localization",
+      "expo-quick-actions",
+      [
+        "@sentry/react-native/expo",
+        {
+          "organization": "subtrack",
+          "project": "react-native",
+          "url": "https://sentry.io/"
+        }
+      ]
+    ],
     "extra": {
       "expoQuickActions": {
         "androidIcons": {

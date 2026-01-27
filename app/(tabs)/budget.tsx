@@ -5,10 +5,11 @@ import { useTheme } from '../../src/context/ThemeContext';
 import { useDatabase } from '../../src/context/DatabaseContext';
 import { BudgetChart, CategoryBreakdown, CategoryTabs } from '../../src/components';
 import { SubscriptionCategory } from '../../src/types';
-import i18n from '../../src/i18n';
+import { useTypedTranslation } from '../../src/hooks/useTypedTranslation';
 
 export default function BudgetScreen() {
   const { colors } = useTheme();
+  const { t } = useTypedTranslation();
   const { subscriptions, settings } = useDatabase();
   const [chartType, setChartType] = useState<'category' | 'timeline'>('timeline');
   const [selectedCategory, setSelectedCategory] = useState<'all' | SubscriptionCategory>('all');
@@ -29,7 +30,7 @@ export default function BudgetScreen() {
     >
       {/* Header */}
       <View style={[styles.header, { backgroundColor: colors.background }]}>
-        <Text style={[styles.headerTitle, { color: colors.text }]}>{i18n.t('screen.budget')}</Text>
+        <Text style={[styles.headerTitle, { color: colors.text }]}>{t('screen.budget')}</Text>
       </View>
 
       <ScrollView style={styles.content}>
@@ -53,7 +54,7 @@ export default function BudgetScreen() {
                 chartType === 'timeline' && { color: '#ffffff' },
               ]}
             >
-              {i18n.t('chart.trendTitle')}
+              {t('chart.trendTitle')}
             </Text>
           </TouchableOpacity>
 
@@ -75,7 +76,7 @@ export default function BudgetScreen() {
                 chartType === 'category' && { color: '#ffffff' },
               ]}
             >
-              {i18n.t('chart.categoryTitle')}
+              {t('chart.categoryTitle')}
             </Text>
           </TouchableOpacity>
         </View>

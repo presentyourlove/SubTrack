@@ -11,7 +11,7 @@ import {
 import { useTheme } from '../../src/context/ThemeContext';
 import { useDatabase } from '../../src/context/DatabaseContext';
 import { CustomReport } from '../../src/types';
-import i18n from '../../src/i18n';
+import { useTypedTranslation } from '../../src/hooks/useTypedTranslation';
 import { Ionicons } from '@expo/vector-icons';
 import GenericChart from '../../src/components/charts/GenericChart';
 import { executeReport } from '../../src/services/db/reports';
@@ -24,6 +24,7 @@ const ReportBuilderModal = React.lazy(
 
 export default function ReportsScreen() {
   const { colors } = useTheme();
+  const { t } = useTypedTranslation();
   const { createReport, getReports, deleteReport, subscriptions, settings } = useDatabase();
 
   const [reports, setReports] = useState<CustomReport[]>([]);
@@ -53,10 +54,10 @@ export default function ReportsScreen() {
   };
 
   const handleDelete = (id: number) => {
-    Alert.alert(i18n.t('common.delete'), i18n.t('reports.deleteConfirm'), [
-      { text: i18n.t('common.cancel'), style: 'cancel' },
+    Alert.alert(t('common.delete'), t('reports.deleteConfirm'), [
+      { text: t('common.cancel'), style: 'cancel' },
       {
-        text: i18n.t('common.delete'),
+        text: t('common.delete'),
         style: 'destructive',
         onPress: async () => {
           await deleteReport(id);
@@ -77,7 +78,7 @@ export default function ReportsScreen() {
           { backgroundColor: colors.card, borderBottomColor: colors.borderColor },
         ]}
       >
-        <Text style={[styles.title, { color: colors.text }]}>{i18n.t('reports.title')}</Text>
+        <Text style={[styles.title, { color: colors.text }]}>{t('reports.title')}</Text>
         <TouchableOpacity onPress={() => setModalVisible(true)} style={styles.addButton}>
           <Ionicons name="add" size={24} color={colors.accent} />
         </TouchableOpacity>
@@ -96,13 +97,13 @@ export default function ReportsScreen() {
               style={{ opacity: 0.5 }}
             />
             <Text style={[styles.emptyText, { color: colors.subtleText }]}>
-              {i18n.t('reports.noReports')}
+              {t('reports.noReports')}
             </Text>
             <TouchableOpacity
               style={[styles.createButton, { backgroundColor: colors.accent }]}
               onPress={() => setModalVisible(true)}
             >
-              <Text style={styles.createButtonText}>{i18n.t('reports.addFirst')}</Text>
+              <Text style={styles.createButtonText}>{t('reports.addFirst')}</Text>
             </TouchableOpacity>
           </View>
         ) : (

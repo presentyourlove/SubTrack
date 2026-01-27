@@ -1,7 +1,7 @@
 import * as Calendar from 'expo-calendar';
 import { Platform } from 'react-native';
 import { Subscription } from '../types';
-import i18n from '../i18n';
+import { t } from '../i18n/utils';
 import { TIME_CONSTANTS } from '../constants/AppConfig';
 
 // 解構時間常數以便計算
@@ -38,12 +38,12 @@ export async function addSubscriptionToCalendar(
   try {
     const hasPermission = await requestCalendarPermissions();
     if (!hasPermission) {
-      throw new Error(i18n.t('calendar.permissionRequired'));
+      throw new Error(t('calendar.permissionRequired'));
     }
 
     const calendarId = await getDefaultCalendarId();
     if (!calendarId) {
-      throw new Error(i18n.t('calendar.noCalendar'));
+      throw new Error(t('calendar.noCalendar'));
     }
 
     const startDate = new Date(subscription.nextBillingDate);
@@ -51,14 +51,14 @@ export async function addSubscriptionToCalendar(
     endDate.setHours(endDate.getHours() + 1);
 
     const cycleName =
-      subscription.billingCycle === 'monthly' ? i18n.t('cycles.monthly') : i18n.t('cycles.yearly');
+      subscription.billingCycle === 'monthly' ? t('cycles.monthly') : t('cycles.yearly');
 
     const eventId = await Calendar.createEventAsync(calendarId, {
-      title: i18n.t('calendar.eventTitle', {
+      title: t('calendar.eventTitle', {
         icon: subscription.icon,
         name: subscription.name,
       }),
-      notes: i18n.t('calendar.eventNotes', {
+      notes: t('calendar.eventNotes', {
         price: subscription.price,
         currency: subscription.currency,
         cycle: cycleName,
@@ -74,7 +74,7 @@ export async function addSubscriptionToCalendar(
     return eventId;
   } catch (error) {
     console.error('Failed to add to calendar:', error);
-    throw new Error(i18n.t('calendar.addFailed'));
+    throw new Error(t('calendar.addFailed'));
   }
 }
 
@@ -89,12 +89,12 @@ export async function addRecurringSubscriptionToCalendar(
   try {
     const hasPermission = await requestCalendarPermissions();
     if (!hasPermission) {
-      throw new Error(i18n.t('calendar.permissionRequired'));
+      throw new Error(t('calendar.permissionRequired'));
     }
 
     const calendarId = await getDefaultCalendarId();
     if (!calendarId) {
-      throw new Error(i18n.t('calendar.noCalendar'));
+      throw new Error(t('calendar.noCalendar'));
     }
 
     const startDate = new Date(subscription.nextBillingDate);
@@ -111,14 +111,14 @@ export async function addRecurringSubscriptionToCalendar(
     };
 
     const cycleName =
-      subscription.billingCycle === 'monthly' ? i18n.t('cycles.monthly') : i18n.t('cycles.yearly');
+      subscription.billingCycle === 'monthly' ? t('cycles.monthly') : t('cycles.yearly');
 
     const eventId = await Calendar.createEventAsync(calendarId, {
-      title: i18n.t('calendar.eventTitle', {
+      title: t('calendar.eventTitle', {
         icon: subscription.icon,
         name: subscription.name,
       }),
-      notes: i18n.t('calendar.eventNotes', {
+      notes: t('calendar.eventNotes', {
         price: subscription.price,
         currency: subscription.currency,
         cycle: cycleName,
@@ -134,7 +134,7 @@ export async function addRecurringSubscriptionToCalendar(
     return eventId;
   } catch (error) {
     console.error('Failed to add recurring event:', error);
-    throw new Error(i18n.t('calendar.recurringFailed'));
+    throw new Error(t('calendar.recurringFailed'));
   }
 }
 

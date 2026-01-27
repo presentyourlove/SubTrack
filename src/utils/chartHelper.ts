@@ -6,6 +6,7 @@ import { Subscription, SubscriptionCategory } from '../types';
 import { convertCurrency } from './currencyHelper';
 import { getDateRange } from './dateHelper';
 import i18n from '../i18n';
+import { t } from '../i18n/utils';
 
 // 圖表資料點
 export interface ChartDataPoint {
@@ -26,12 +27,12 @@ export const CATEGORY_COLORS: { [key in SubscriptionCategory]: string } = {
 // 取得分類名稱
 export function getCategoryName(category: SubscriptionCategory): string {
   const names: { [key in SubscriptionCategory]: string } = {
-    entertainment: i18n.t('categories.entertainment'),
-    productivity: i18n.t('categories.productivity'),
-    lifestyle: i18n.t('categories.lifestyle'),
-    other: i18n.t('categories.other'),
+    entertainment: t('categories.entertainment'),
+    productivity: t('categories.productivity'),
+    lifestyle: t('categories.lifestyle'),
+    other: t('categories.other'),
   };
-  return names[category] || i18n.t('categories.other');
+  return names[category] || t('categories.other');
 }
 
 // 計算訂閱的月費用
@@ -147,9 +148,7 @@ export function getStatsByTimeRange(
       };
     });
   } else if (rangeType === 'month') {
-    const weeks = Array.from({ length: 4 }).map((_, i) =>
-      i18n.t('chart.weekPattern', { week: i + 1 }),
-    );
+    const weeks = Array.from({ length: 4 }).map((_, i) => t('chart.weekPattern', { week: i + 1 }));
     return weeks.map((week, index) => {
       const weekStart = new Date(range.start);
       weekStart.setDate(weekStart.getDate() + index * 7);
@@ -262,19 +261,19 @@ export function getExpenseStatistics(
 
   return [
     {
-      label: i18n.t('cycles.weekly'),
+      label: t('cycles.weekly'),
       value: totalWeekly,
       color: '#3b82f6',
       breakdown: getBreakdown(12 / 52),
     },
     {
-      label: i18n.t('cycles.monthly'),
+      label: t('cycles.monthly'),
       value: totalMonthly,
       color: '#10b981',
       breakdown: getBreakdown(1),
     },
     {
-      label: i18n.t('cycles.yearly'),
+      label: t('cycles.yearly'),
       value: totalYearly,
       color: '#f59e0b',
       breakdown: getBreakdown(12),

@@ -13,6 +13,7 @@ export default {
     close: 'Close',
     days: 'Days',
     password: 'Password',
+    add: 'Add',
   },
   // Tags
   tags: {
@@ -46,6 +47,7 @@ export default {
     invalidCredentials: 'Invalid username or password',
     loginFailed: 'Login failed, please try again later',
     logoutFailed: 'Logout failed',
+    unknown: 'Unknown error',
   },
   // Alert Card
   alert: {
@@ -137,6 +139,7 @@ export default {
     perMonth: 'mo',
     perYear: 'yr',
     person: 'person',
+    splitBill: 'Split Bill',
   },
   // Categories
   categories: {
@@ -221,6 +224,7 @@ export default {
     invalidAmount: 'Please enter a valid amount',
     invalidEmail: 'Invalid email format',
     passwordTooShort: 'Password must be at least 6 characters',
+    passwordTooLong: 'Password must be less than 128 characters',
     loginSuccess: 'Login successful!',
     registerSuccess: 'Registration successful!',
     login: 'Login',
@@ -283,6 +287,14 @@ export default {
     title: 'Search',
     placeholder: 'Search subscriptions, description, category or tags...',
     noResults: 'No subscriptions found',
+    noResults: 'No subscriptions found',
     results: 'Found {{count}} results',
+  },
+  // Workspace
+  workspace: {
+    switch: 'Switch Workspace',
+    new: 'New Workspace',
+    nameInput: 'Workspace Name',
+    switcher: 'Current Workspace: {{name}}',
   },
 };

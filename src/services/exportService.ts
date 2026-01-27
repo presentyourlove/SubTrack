@@ -8,7 +8,7 @@ import * as Sharing from 'expo-sharing';
 import * as Print from 'expo-print';
 import Papa from 'papaparse';
 import { Subscription } from '../types';
-import i18n from '../i18n';
+import { t } from '../i18n/utils';
 
 // CSV 欄位標題 (繁體中文)
 const CSV_HEADERS = ['名稱', '分類', '金額', '幣種', '週期', '開始日期', '下次扣款日', '圖示'];
@@ -69,7 +69,7 @@ export async function exportSubscriptionsToCSV(subscriptions: Subscription[]): P
   if (await Sharing.isAvailableAsync()) {
     await Sharing.shareAsync(file.uri, {
       mimeType: 'text/csv',
-      dialogTitle: i18n.t('export.shareTitle'),
+      dialogTitle: t('export.shareTitle'),
       UTI: 'public.comma-separated-values-text',
     });
   } else {
@@ -170,7 +170,7 @@ export async function exportSubscriptionsToPDF(
   if (await Sharing.isAvailableAsync()) {
     await Sharing.shareAsync(destFile.uri, {
       mimeType: 'application/pdf',
-      dialogTitle: i18n.t('export.shareTitle'),
+      dialogTitle: t('export.shareTitle'),
       UTI: 'com.adobe.pdf',
     });
   } else {

@@ -1,7 +1,9 @@
+import '../src/config/env'; // Validate environment variables on startup
 import { useEffect } from 'react';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { Stack, useRouter } from 'expo-router';
 import { useQuickActionCallback } from 'expo-quick-actions/hooks';
+import * as Sentry from '@sentry/react-native';
 import { ThemeProvider } from '../src/context/ThemeContext';
 import { AuthProvider } from '../src/context/AuthContext';
 import { DatabaseProvider } from '../src/context/DatabaseContext';
@@ -9,10 +11,14 @@ import { SecurityProvider } from '../src/context/SecurityContext';
 import { ToastProvider } from '../src/context/ToastContext';
 import { LockScreen } from '../src/components/LockScreen';
 import { requestNotificationPermissions } from '../src/utils/notificationHelper';
+import { initSentry } from '../src/services/sentry';
+
+// Initialize Sentry
+initSentry();
 
 const queryClient = new QueryClient();
 
-export default function RootLayout() {
+function RootLayout() {
   const router = useRouter();
 
   // 處理快速操作 (Quick Actions)
@@ -64,3 +70,5 @@ export default function RootLayout() {
     </QueryClientProvider>
   );
 }
+
+export default Sentry.wrap(RootLayout);

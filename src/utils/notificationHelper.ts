@@ -2,7 +2,7 @@ import * as Notifications from 'expo-notifications';
 import { Platform } from 'react-native';
 import { Subscription } from '../types';
 import { getDaysUntil } from './dateHelper';
-import i18n from '../i18n';
+import { t } from '../i18n/utils';
 
 // 設定通知處理器
 Notifications.setNotificationHandler({
@@ -51,8 +51,8 @@ export async function scheduleSubscriptionNotification(
 
     const notificationId = await Notifications.scheduleNotificationAsync({
       content: {
-        title: i18n.t('notification.upcomingTitle'),
-        body: i18n.t('notification.upcomingBody', {
+        title: t('notification.upcomingTitle'),
+        body: t('notification.upcomingBody', {
           name: subscription.name,
           days: daysBefore,
           price: subscription.price,
@@ -111,7 +111,7 @@ export async function scheduleAllSubscriptionNotifications(
 
   const hasPermission = await requestNotificationPermissions();
   if (!hasPermission) {
-    throw new Error(i18n.t('error.permissionRequired'));
+    throw new Error(t('error.permissionRequired'));
   }
 
   // 先取消所有現有通知
@@ -131,13 +131,13 @@ export async function sendTestNotification(): Promise<void> {
 
   const hasPermission = await requestNotificationPermissions();
   if (!hasPermission) {
-    throw new Error(i18n.t('error.permissionRequired'));
+    throw new Error(t('error.permissionRequired'));
   }
 
   await Notifications.scheduleNotificationAsync({
     content: {
-      title: i18n.t('notification.testTitle'),
-      body: i18n.t('notification.testBody'),
+      title: t('notification.testTitle'),
+      body: t('notification.testBody'),
     },
     trigger: {
       type: Notifications.SchedulableTriggerInputTypes.TIME_INTERVAL,

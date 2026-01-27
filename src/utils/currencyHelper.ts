@@ -4,6 +4,7 @@
 
 import { DEFAULT_EXCHANGE_RATES } from '../constants/AppConfig';
 import i18n from '../i18n';
+import { t } from '../i18n/utils';
 
 // 幣別符號對應
 export const CURRENCY_SYMBOLS: { [key: string]: string } = {
@@ -29,7 +30,8 @@ export function getCurrencySymbol(currency: string): string {
 
 // 取得幣別名稱
 export function getCurrencyName(currency: string): string {
-  return i18n.t(`currencyNames.${currency}`, { defaultValue: currency });
+  // @ts-expect-error Dynamic currency key fallback
+  return t(`currencyNames.${currency}`, { defaultValue: currency });
 }
 
 // 格式化金額 (加上幣別符號和千分位)

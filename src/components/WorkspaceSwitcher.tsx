@@ -4,10 +4,11 @@ import { Ionicons } from '@expo/vector-icons';
 import { useTheme } from '../context/ThemeContext';
 import { useDatabase } from '../context/DatabaseContext';
 import { Workspace } from '../types';
-import i18n from '../i18n';
+import { useTypedTranslation } from '../hooks/useTypedTranslation';
 
 export default function WorkspaceSwitcher() {
   const { colors } = useTheme();
+  const { t } = useTypedTranslation();
   const { workspaces, currentWorkspace, switchWorkspace, createWorkspace } = useDatabase();
   const [modalVisible, setModalVisible] = useState(false);
   const [isCreating, setIsCreating] = useState(false);
@@ -24,7 +25,6 @@ export default function WorkspaceSwitcher() {
       await createWorkspace(newName, newIcon);
       setNewName('');
       setIsCreating(false);
-      // Optional: switch to new workspace? Auto-refresh handles showing it in list
     }
   };
 
@@ -54,6 +54,9 @@ export default function WorkspaceSwitcher() {
       <TouchableOpacity
         style={[styles.switcherButton, dynamicStyles.switcherButton]}
         onPress={() => setModalVisible(true)}
+        accessibilityRole="button"
+        accessibilityLabel={t('workspace.switcher', { name: currentWorkspace.name })}
+        accessibilityHint={t('workspace.switch')}
       >
         <Text style={styles.icon}>{currentWorkspace.icon}</Text>
         <Text style={[styles.name, dynamicStyles.text]}>{currentWorkspace.name}</Text>
@@ -70,10 +73,11 @@ export default function WorkspaceSwitcher() {
           style={styles.modalOverlay}
           activeOpacity={1}
           onPress={() => setModalVisible(false)}
+          accessibilityLabel={t('common.close')}
         >
           <View style={[styles.modalContent, dynamicStyles.modalContent]}>
-            <Text style={[styles.modalTitle, dynamicStyles.text]}>
-              {i18n.t('workspace.switch', { defaultValue: 'Switch Workspace' })}
+            <Text style={[styles.modalTitle, dynamicStyles.text]} accessibilityRole="header">
+              {t('workspace.switch')}
             </Text>
 
             <FlatList
@@ -86,6 +90,9 @@ export default function WorkspaceSwitcher() {
                     item.id === currentWorkspace.id && dynamicStyles.itemActive,
                   ]}
                   onPress={() => handleSwitch(item)}
+                  accessibilityRole="button"
+                  accessibilityState={{ selected: item.id === currentWorkspace.id }}
+                  accessibilityLabel={item.name}
                 >
                   <Text style={styles.workspaceIcon}>{item.icon}</Text>
                   <Text style={[styles.workspaceName, dynamicStyles.text]}>{item.name}</Text>
@@ -104,16 +111,24 @@ export default function WorkspaceSwitcher() {
                   placeholderTextColor={colors.subtleText}
                   value={newName}
                   onChangeText={setNewName}
+                  accessibilityLabel={t('workspace.nameInput')}
                 />
                 <View style={styles.createActions}>
                   <TouchableOpacity
                     onPress={handleCreate}
                     style={[styles.createBtn, dynamicStyles.createBtn]}
+                    accessibilityRole="button"
+                    accessibilityLabel={t('common.add')}
                   >
-                    <Text style={{ color: '#fff' }}>Add</Text>
+                    <Text style={{ color: '#fff' }}>{t('common.add')}</Text>
                   </TouchableOpacity>
-                  <TouchableOpacity onPress={() => setIsCreating(false)} style={styles.cancelBtn}>
-                    <Text style={{ color: colors.subtleText }}>Cancel</Text>
+                  <TouchableOpacity
+                    onPress={() => setIsCreating(false)}
+                    style={styles.cancelBtn}
+                    accessibilityRole="button"
+                    accessibilityLabel={t('common.cancel')}
+                  >
+                    <Text style={{ color: colors.subtleText }}>{t('common.cancel')}</Text>
                   </TouchableOpacity>
                 </View>
               </View>
@@ -121,10 +136,12 @@ export default function WorkspaceSwitcher() {
               <TouchableOpacity
                 style={[styles.addButton, dynamicStyles.addButton]}
                 onPress={() => setIsCreating(true)}
+                accessibilityRole="button"
+                accessibilityLabel={t('workspace.new')}
               >
                 <Ionicons name="add" size={20} color={colors.accent} />
                 <Text style={[styles.addText, dynamicStyles.addText]}>
-                  {i18n.t('workspace.new', { defaultValue: 'New Workspace' })}
+                  {t('workspace.new')}
                 </Text>
               </TouchableOpacity>
             )}

@@ -4,6 +4,7 @@
  */
 
 import i18n from '../i18n';
+import { t } from '../i18n/utils';
 import { TIME_CONSTANTS, REMINDER_CONSTANTS, URGENCY_THRESHOLDS } from '../constants/AppConfig';
 
 // 解構時間常數以便使用
@@ -180,19 +181,19 @@ export function formatRelativeTime(date: Date | string): string {
   const days = getDaysUntil(date);
 
   if (days < 0) {
-    return i18n.t('date.expired');
+    return t('date.expired');
   } else if (days === 0) {
-    return i18n.t('date.today');
+    return t('date.today');
   } else if (days === 1) {
-    return i18n.t('date.tomorrow');
+    return t('date.tomorrow');
   } else if (days <= DAYS_PER_WEEK) {
-    return i18n.t('date.daysLater', { days });
+    return t('date.daysLater', { days });
   } else if (days <= DAYS_PER_MONTH) {
     const weeks = Math.floor(days / DAYS_PER_WEEK);
-    return i18n.t('date.weeksLater', { weeks });
+    return t('date.weeksLater', { weeks });
   } else {
     const months = Math.floor(days / DAYS_PER_MONTH);
-    return i18n.t('date.monthsLater', { months });
+    return t('date.monthsLater', { months });
   }
 }
 

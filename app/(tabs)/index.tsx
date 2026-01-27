@@ -13,13 +13,14 @@ import CategoryTabs from '../../src/components/CategoryTabs';
 import AlertCard from '../../src/components/AlertCard';
 import WorkspaceSwitcher from '../../src/components/WorkspaceSwitcher';
 import { PrivacyToggle, OptimizedList } from '../../src/components';
-import i18n from '../../src/i18n';
+import { useTypedTranslation } from '../../src/hooks/useTypedTranslation';
 import TagChip from '../../src/components/TagChip';
 import { hapticFeedback } from '../../src/utils/haptics';
 
 export default function SubscriptionsScreen() {
   const router = useRouter();
   const { colors } = useTheme();
+  const { t } = useTypedTranslation();
   const {
     subscriptions,
     tags,
@@ -98,7 +99,7 @@ export default function SubscriptionsScreen() {
       setEditingId(null);
     } catch (error) {
       console.error('Failed to save subscription:', error);
-      alert(i18n.t('common.error'));
+      alert(t('common.error'));
     }
   };
 
@@ -171,7 +172,7 @@ export default function SubscriptionsScreen() {
                         { color: selectedTagId === null ? '#ffffff' : colors.text },
                       ]}
                     >
-                      {i18n.t('tags.allTags')}
+                      {t('tags.allTags')}
                     </Text>
                   </TouchableOpacity>
                   {tags.map((tag) => (
@@ -195,14 +196,14 @@ export default function SubscriptionsScreen() {
             <Ionicons name="file-tray-outline" size={64} color={colors.subtleText} />
             <Text style={[styles.emptyText, { color: colors.subtleText }]}>
               {selectedCategory === 'all'
-                ? i18n.t('subscription.emptyList')
-                : i18n.t('subscription.emptyCategory')}
+                ? t('subscription.emptyList')
+                : t('subscription.emptyCategory')}
             </Text>
             <TouchableOpacity
               style={[styles.emptyButton, { backgroundColor: colors.accent }]}
               onPress={handleAddPress}
             >
-              <Text style={styles.emptyButtonText}>{i18n.t('subscription.addFirst')}</Text>
+              <Text style={styles.emptyButtonText}>{t('subscription.addFirst')}</Text>
             </TouchableOpacity>
           </View>
         }

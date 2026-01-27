@@ -321,9 +321,9 @@ Presentyourlove
 #### �️ 品質與穩定性 (Quality & Stability)
 
 - [ ] **�🐞 錯誤監控 (Sentry Integration)**: 整合 Sentry SDK 以追蹤生產環境的 Crash 與效能問題 (目前缺席)。
-- [ ] **🛡️ 環境變數驗證 (Env Validation)**: 引入 `zod` 在啟動時驗證 `process.env`，防止缺少 Config 導致的 Runtime Error。
+- [x] **🛡️ 環境變數驗證 (Env Validation)**: 引入 `zod` 在啟動時驗證 `process.env`，防止缺少 Config 導致的 Runtime Error。
 - [ ] **�️ 強型別 i18n (Typed i18n)**: 建立翻譯 Key 的型別檢查機制。
-- [ ] **♿ 無障礙優化 (A11y)**: 引入自動化檢測與改善螢幕閱讀器體驗。
+- [x] **♿ 無障礙優化 (A11y)**: 引入自動化檢測與改善螢幕閱讀器體驗。
 
 ---
 
