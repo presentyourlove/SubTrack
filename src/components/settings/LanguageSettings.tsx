@@ -38,6 +38,7 @@ export default function LanguageSettings() {
       <View style={styles.options}>
         {languages.map((lang) => (
           <TouchableOpacity
+            accessibilityRole="button"
             key={lang.code}
             style={[
               styles.option,

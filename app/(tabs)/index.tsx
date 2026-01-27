@@ -118,12 +118,14 @@ export default function SubscriptionsScreen() {
         <View style={styles.headerRight}>
           <PrivacyToggle />
           <TouchableOpacity
+            accessibilityRole="button"
             style={[styles.iconButton, { backgroundColor: colors.card }]}
             onPress={() => router.push('/search')}
           >
             <Ionicons name="search" size={24} color={colors.text} />
           </TouchableOpacity>
           <TouchableOpacity
+            accessibilityRole="button"
             style={[styles.addButton, { backgroundColor: colors.accent }]}
             onPress={handleAddPress}
           >
@@ -156,6 +158,7 @@ export default function SubscriptionsScreen() {
                   contentContainerStyle={styles.tagFilterContent}
                 >
                   <TouchableOpacity
+                    accessibilityRole="button"
                     style={[
                       styles.tagFilterChip,
                       { borderColor: colors.borderColor },
@@ -200,6 +203,7 @@ export default function SubscriptionsScreen() {
                 : t('subscription.emptyCategory')}
             </Text>
             <TouchableOpacity
+              accessibilityRole="button"
               style={[styles.emptyButton, { backgroundColor: colors.accent }]}
               onPress={handleAddPress}
             >

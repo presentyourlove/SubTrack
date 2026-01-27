@@ -119,6 +119,7 @@ export default function ValueConverterSettings() {
           {/* Mode Selection */}
           <View style={styles.typeSelector}>
             <TouchableOpacity
+              accessibilityRole="button"
               style={[
                 styles.typeButton,
                 salaryType === 'hourly' && { backgroundColor: colors.accent },
@@ -133,6 +134,7 @@ export default function ValueConverterSettings() {
               </Text>
             </TouchableOpacity>
             <TouchableOpacity
+              accessibilityRole="button"
               style={[
                 styles.typeButton,
                 salaryType === 'monthly' && { backgroundColor: colors.accent },
@@ -161,6 +163,7 @@ export default function ValueConverterSettings() {
             <View style={[styles.inputContainer, { backgroundColor: colors.inputBackground }]}>
               <Text style={[styles.currencyPrefix, { color: colors.subtleText }]}>$</Text>
               <TextInput
+                accessibilityLabel="Text input field"
                 style={[styles.input, { color: colors.text }]}
                 value={salaryAmount}
                 onChangeText={handleAmountChange}
@@ -180,6 +183,7 @@ export default function ValueConverterSettings() {
                 </Text>
                 <View style={[styles.inputContainer, { backgroundColor: colors.inputBackground }]}>
                   <TextInput
+                    accessibilityLabel="Text input field"
                     style={[styles.input, { color: colors.text }]}
                     value={workDaysPerMonth}
                     onChangeText={handleDaysChange}
@@ -193,6 +197,7 @@ export default function ValueConverterSettings() {
                 </Text>
                 <View style={[styles.inputContainer, { backgroundColor: colors.inputBackground }]}>
                   <TextInput
+                    accessibilityLabel="Text input field"
                     style={[styles.input, { color: colors.text }]}
                     value={workHoursPerDay}
                     onChangeText={handleHoursChange}

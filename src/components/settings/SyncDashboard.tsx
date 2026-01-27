@@ -69,6 +69,7 @@ export default function SyncDashboard() {
       )}
 
       <TouchableOpacity
+        accessibilityRole="button"
         style={[
           styles.syncButton,
           { backgroundColor: syncing ? colors.borderColor : colors.accent },

@@ -35,6 +35,7 @@ export default function BasicInfo({
       <View style={styles.field}>
         <Text style={[styles.label, { color: colors.text }]}>{i18n.t('subscription.name')} *</Text>
         <TextInput
+          accessibilityLabel="Text input field"
           style={[styles.input, { backgroundColor: colors.inputBackground, color: colors.text }]}
           value={name}
           onChangeText={setName}
@@ -48,6 +49,7 @@ export default function BasicInfo({
         <View style={styles.iconGrid}>
           {/* 自定義圖片按鈕 */}
           <TouchableOpacity
+            accessibilityRole="button"
             style={[
               styles.iconButton,
               { backgroundColor: colors.inputBackground },
@@ -84,6 +86,7 @@ export default function BasicInfo({
 
           {commonIcons.map((emoji) => (
             <TouchableOpacity
+              accessibilityRole="button"
               key={emoji}
               style={[
                 styles.iconButton,
@@ -116,6 +119,7 @@ export default function BasicInfo({
               {i18n.t('subscription.memberCount')}
             </Text>
             <TextInput
+              accessibilityLabel="Text input field"
               style={[
                 styles.input,
                 { backgroundColor: colors.inputBackground, color: colors.text },

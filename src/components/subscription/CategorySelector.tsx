@@ -27,6 +27,7 @@ export default function CategorySelector({ category, setCategory }: CategorySele
       <View style={styles.categoryButtons}>
         {categories.map((cat) => (
           <TouchableOpacity
+            accessibilityRole="button"
             key={cat.value}
             style={[
               styles.categoryButton,

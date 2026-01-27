@@ -50,6 +50,7 @@ export default function PaymentInfo({
         <Text style={[styles.label, { color: colors.text }]}>{i18n.t('subscription.price')} *</Text>
         <View style={styles.row}>
           <TextInput
+            accessibilityLabel="Text input field"
             style={[
               styles.input,
               styles.priceInput,
@@ -62,6 +63,7 @@ export default function PaymentInfo({
             keyboardType="numeric"
           />
           <TouchableOpacity
+            accessibilityRole="button"
             style={[styles.currencyButton, { backgroundColor: colors.inputBackground }]}
             onPress={() => setCurrencyModalVisible(true)}
           >
@@ -78,6 +80,7 @@ export default function PaymentInfo({
         <View style={styles.cycleContainer}>
           {(['weekly', 'monthly', 'quarterly', 'yearly'] as BillingCycle[]).map((cycle) => (
             <TouchableOpacity
+              accessibilityRole="button"
               key={cycle}
               style={[
                 styles.cycleButton,
@@ -131,6 +134,7 @@ export default function PaymentInfo({
         ) : (
           <>
             <TouchableOpacity
+              accessibilityRole="button"
               style={[
                 styles.input,
                 { backgroundColor: colors.inputBackground, justifyContent: 'center' },
@@ -170,6 +174,7 @@ export default function PaymentInfo({
         onRequestClose={() => setCurrencyModalVisible(false)}
       >
         <TouchableOpacity
+          accessibilityRole="button"
           style={styles.modalOverlay}
           activeOpacity={1}
           onPress={() => setCurrencyModalVisible(false)}
@@ -183,6 +188,7 @@ export default function PaymentInfo({
               keyExtractor={(item) => item}
               renderItem={({ item }) => (
                 <TouchableOpacity
+                  accessibilityRole="button"
                   style={[
                     styles.currencyOption,
                     item === currency && { backgroundColor: colors.inputBackground },

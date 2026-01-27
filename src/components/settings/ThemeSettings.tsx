@@ -11,6 +11,7 @@ export default function ThemeSettings() {
   return (
     <>
       <TouchableOpacity
+        accessibilityRole="button"
         style={[
           styles.settingItem,
           { backgroundColor: colors.card, borderColor: colors.borderColor },
@@ -43,13 +44,14 @@ export default function ThemeSettings() {
               <Text style={[styles.modalTitle, { color: colors.text }]}>
                 {i18n.t('settings.theme')}
               </Text>
-              <TouchableOpacity onPress={() => setModalVisible(false)}>
+              <TouchableOpacity accessibilityRole="button" onPress={() => setModalVisible(false)}>
                 <Ionicons name="close" size={24} color={colors.text} />
               </TouchableOpacity>
             </View>
 
             <View style={styles.modalContent}>
               <TouchableOpacity
+                accessibilityRole="button"
                 style={[
                   styles.themeOption,
                   { backgroundColor: colors.card, borderColor: colors.borderColor },
@@ -71,6 +73,7 @@ export default function ThemeSettings() {
               </TouchableOpacity>
 
               <TouchableOpacity
+                accessibilityRole="button"
                 style={[
                   styles.themeOption,
                   { backgroundColor: colors.card, borderColor: colors.borderColor },

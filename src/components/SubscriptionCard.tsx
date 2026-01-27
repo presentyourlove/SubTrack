@@ -162,9 +162,7 @@ export default function SubscriptionCard({
           <View style={styles.priceContainer}>
             <Text style={[styles.price, dynamicStyles.text]}>
               {maskValue(formatCurrency(subscription.price, subscription.currency))} /{' '}
-              {subscription.billingCycle === 'monthly'
-                ? t('card.perMonth')
-                : t('card.perYear')}
+              {subscription.billingCycle === 'monthly' ? t('card.perMonth') : t('card.perYear')}
             </Text>
             {subscription.isFamilyPlan && subscription.memberCount && (
               <TouchableOpacity
@@ -237,9 +235,7 @@ export default function SubscriptionCard({
             accessibilityLabel={t('common.delete')}
           >
             <Ionicons name="trash-outline" size={18} color={colors.expense} />
-            <Text style={[styles.actionText, dynamicStyles.expense]}>
-              {t('common.delete')}
-            </Text>
+            <Text style={[styles.actionText, dynamicStyles.expense]}>{t('common.delete')}</Text>
           </TouchableOpacity>
         </View>
 

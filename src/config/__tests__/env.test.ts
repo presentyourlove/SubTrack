@@ -25,7 +25,7 @@ describe('Env Validation', () => {
   it('allows optional variables to be missing', () => {
     // Verify process.env exists before modification
     const originalDsn = process.env.EXPO_PUBLIC_SENTRY_DSN;
-    
+
     try {
       // Use defineProperty to bypass strict mode limitations if any
       Object.defineProperty(process.env, 'EXPO_PUBLIC_SENTRY_DSN', {

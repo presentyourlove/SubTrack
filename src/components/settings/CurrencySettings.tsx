@@ -136,7 +136,9 @@ export default function CurrencySettings() {
         onPress={() => setModalVisible(true)}
         accessibilityRole="button"
         accessibilityLabel={i18n.t('settings.currency')}
-        accessibilityHint={i18n.t('settings.mainCurrency', { currency: settings?.mainCurrency || 'TWD' })}
+        accessibilityHint={i18n.t('settings.mainCurrency', {
+          currency: settings?.mainCurrency || 'TWD',
+        })}
       >
         <View style={styles.settingIcon}>
           <Ionicons name="cash" size={24} color={colors.accent} />
@@ -262,6 +264,7 @@ export default function CurrencySettings() {
                 <Text style={[styles.sectionSubtitle, { color: colors.text }]}>新增幣別</Text>
                 <View style={styles.addCurrencyRow}>
                   <TextInput
+                    accessibilityLabel="Text input field"
                     style={[
                       styles.smallInput,
                       { color: colors.text, borderColor: colors.borderColor },
@@ -274,6 +277,7 @@ export default function CurrencySettings() {
                     maxLength={3}
                   />
                   <TextInput
+                    accessibilityLabel="Text input field"
                     style={[
                       styles.smallInput,
                       { color: colors.text, borderColor: colors.borderColor },
@@ -315,6 +319,7 @@ export default function CurrencySettings() {
                       )}
                     </View>
                     <TextInput
+                      accessibilityLabel="Text input field"
                       style={[
                         styles.rateInput,
                         {

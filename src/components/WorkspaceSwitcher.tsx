@@ -140,9 +140,7 @@ export default function WorkspaceSwitcher() {
                 accessibilityLabel={t('workspace.new')}
               >
                 <Ionicons name="add" size={20} color={colors.accent} />
-                <Text style={[styles.addText, dynamicStyles.addText]}>
-                  {t('workspace.new')}
-                </Text>
+                <Text style={[styles.addText, dynamicStyles.addText]}>{t('workspace.new')}</Text>
               </TouchableOpacity>
             )}
           </View>

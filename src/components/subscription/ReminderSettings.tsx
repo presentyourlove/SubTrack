@@ -97,6 +97,7 @@ export default function ReminderSettings({
                   />
                 ) : (
                   <TouchableOpacity
+                    accessibilityRole="button"
                     style={[styles.input, { backgroundColor: colors.inputBackground }]}
                     onPress={() => setShowTimePicker(true)}
                   >
@@ -113,6 +114,7 @@ export default function ReminderSettings({
                   {i18n.t('subscription.reminderDays')}
                 </Text>
                 <TouchableOpacity
+                  accessibilityRole="button"
                   style={[styles.input, { backgroundColor: colors.inputBackground }]}
                   onPress={() => setShowDaysPicker(true)}
                 >
@@ -148,6 +150,7 @@ export default function ReminderSettings({
         onRequestClose={() => setShowDaysPicker(false)}
       >
         <TouchableOpacity
+          accessibilityRole="button"
           style={styles.modalOverlay}
           activeOpacity={1}
           onPress={() => setShowDaysPicker(false)}
@@ -161,6 +164,7 @@ export default function ReminderSettings({
               keyExtractor={(item) => item.toString()}
               renderItem={({ item }) => (
                 <TouchableOpacity
+                  accessibilityRole="button"
                   style={[
                     styles.currencyOption, // Reusing similar style
                     item === reminderDays && { backgroundColor: colors.inputBackground },

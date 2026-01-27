@@ -37,6 +37,7 @@ export default function BudgetScreen() {
         {/* 圖表類型切換 */}
         <View style={styles.chartTypeContainer}>
           <TouchableOpacity
+            accessibilityRole="button"
             style={[
               styles.chartTypeButton,
               { backgroundColor: colors.card, borderColor: colors.borderColor },
@@ -59,6 +60,7 @@ export default function BudgetScreen() {
           </TouchableOpacity>
 
           <TouchableOpacity
+            accessibilityRole="button"
             style={[
               styles.chartTypeButton,
               { backgroundColor: colors.card, borderColor: colors.borderColor },

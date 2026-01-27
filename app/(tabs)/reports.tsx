@@ -79,7 +79,11 @@ export default function ReportsScreen() {
         ]}
       >
         <Text style={[styles.title, { color: colors.text }]}>{t('reports.title')}</Text>
-        <TouchableOpacity onPress={() => setModalVisible(true)} style={styles.addButton}>
+        <TouchableOpacity
+          accessibilityRole="button"
+          onPress={() => setModalVisible(true)}
+          style={styles.addButton}
+        >
           <Ionicons name="add" size={24} color={colors.accent} />
         </TouchableOpacity>
       </View>
@@ -100,6 +104,7 @@ export default function ReportsScreen() {
               {t('reports.noReports')}
             </Text>
             <TouchableOpacity
+              accessibilityRole="button"
               style={[styles.createButton, { backgroundColor: colors.accent }]}
               onPress={() => setModalVisible(true)}
             >
@@ -113,7 +118,10 @@ export default function ReportsScreen() {
               <View key={report.id} style={styles.chartWrapper}>
                 <View style={styles.chartHeader}>
                   <Text style={[styles.chartTitle, { color: colors.text }]}>{report.title}</Text>
-                  <TouchableOpacity onPress={() => handleDelete(report.id)}>
+                  <TouchableOpacity
+                    accessibilityRole="button"
+                    onPress={() => handleDelete(report.id)}
+                  >
                     <Ionicons name="trash-outline" size={20} color={colors.expense} />
                   </TouchableOpacity>
                 </View>

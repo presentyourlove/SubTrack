@@ -53,7 +53,7 @@ jest.mock('react-native-reanimated', () => {
       Image: View,
       ScrollView: View,
       FlatList: View,
-      call: () => { },
+      call: () => {},
       createAnimatedComponent: (component) => component,
     },
     useSharedValue: (init) => ({ value: init }),

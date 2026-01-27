@@ -60,7 +60,7 @@ export default function ReportBuilderModal({ visible, onClose, onSave }: ReportB
         />
       )}
       <Text style={[styles.optionText, { color: selected ? '#fff' : colors.text }]}>{label}</Text>
-    </TouchableOpacity >
+    </TouchableOpacity>
   );
 
   return (
@@ -93,6 +93,7 @@ export default function ReportBuilderModal({ visible, onClose, onSave }: ReportB
                 ]}
               >
                 <TextInput
+                  accessibilityLabel="Text input field"
                   style={[styles.input, { color: colors.text }]}
                   value={title}
                   onChangeText={setTitle}

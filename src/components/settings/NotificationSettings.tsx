@@ -64,6 +64,7 @@ export default function NotificationSettings() {
   return (
     <>
       <TouchableOpacity
+        accessibilityRole="button"
         style={[
           styles.settingItem,
           { backgroundColor: colors.card, borderColor: colors.borderColor },
@@ -96,7 +97,7 @@ export default function NotificationSettings() {
               <Text style={[styles.modalTitle, { color: colors.text }]}>
                 {i18n.t('settings.notifications')}
               </Text>
-              <TouchableOpacity onPress={() => setModalVisible(false)}>
+              <TouchableOpacity accessibilityRole="button" onPress={() => setModalVisible(false)}>
                 <Ionicons name="close" size={24} color={colors.text} />
               </TouchableOpacity>
             </View>
@@ -124,6 +125,7 @@ export default function NotificationSettings() {
                       通知權限已拒絕
                     </Text>
                     <TouchableOpacity
+                      accessibilityRole="button"
                       style={[styles.button, { backgroundColor: colors.accent, marginTop: 12 }]}
                       onPress={openSettings}
                     >

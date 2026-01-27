@@ -187,6 +187,7 @@ export function ServiceCatalogModal({
               style={styles.searchIcon}
             />
             <TextInput
+              accessibilityLabel="Text input field"
               style={styles.searchInput}
               placeholder={i18n.t('serviceCatalog.search')}
               placeholderTextColor={isDark ? '#8e8e93' : '#999999'}

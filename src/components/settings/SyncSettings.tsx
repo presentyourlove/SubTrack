@@ -101,6 +101,7 @@ export default function SyncSettings() {
   return (
     <>
       <TouchableOpacity
+        accessibilityRole="button"
         style={[
           styles.settingItem,
           { backgroundColor: colors.card, borderColor: colors.borderColor },
@@ -135,7 +136,7 @@ export default function SyncSettings() {
               <Text style={[styles.modalTitle, { color: colors.text }]}>
                 {i18n.t('settings.sync')}
               </Text>
-              <TouchableOpacity onPress={() => setModalVisible(false)}>
+              <TouchableOpacity accessibilityRole="button" onPress={() => setModalVisible(false)}>
                 <Ionicons name="close" size={24} color={colors.text} />
               </TouchableOpacity>
             </View>
@@ -147,6 +148,7 @@ export default function SyncSettings() {
                     {i18n.t('validation.login')} / {i18n.t('validation.register')}
                   </Text>
                   <TextInput
+                    accessibilityLabel="Text input field"
                     style={[
                       styles.input,
                       {
@@ -163,6 +165,7 @@ export default function SyncSettings() {
                     autoCapitalize="none"
                   />
                   <TextInput
+                    accessibilityLabel="Text input field"
                     style={[
                       styles.input,
                       {
@@ -179,6 +182,7 @@ export default function SyncSettings() {
                   />
                   <View style={{ gap: 16, marginTop: 8 }}>
                     <TouchableOpacity
+                      accessibilityRole="button"
                       style={[
                         styles.button,
                         {
@@ -201,7 +205,7 @@ export default function SyncSettings() {
                       <Text style={{ color: colors.subtleText, fontSize: 14 }}>
                         {i18n.t('settings.noAccount')}
                       </Text>
-                      <TouchableOpacity onPress={handleRegister}>
+                      <TouchableOpacity accessibilityRole="button" onPress={handleRegister}>
                         <Text style={{ color: colors.accent, fontWeight: 'bold', fontSize: 14 }}>
                           {i18n.t('settings.registerNow')}
                         </Text>
@@ -220,6 +224,7 @@ export default function SyncSettings() {
                   </Text>
                   <View style={styles.buttonRow}>
                     <TouchableOpacity
+                      accessibilityRole="button"
                       style={[styles.button, { backgroundColor: colors.accent }]}
                       onPress={handleSyncToCloud}
                     >
@@ -227,6 +232,7 @@ export default function SyncSettings() {
                       <Text style={styles.buttonText}>{i18n.t('settings.upload')}</Text>
                     </TouchableOpacity>
                     <TouchableOpacity
+                      accessibilityRole="button"
                       style={[styles.button, { backgroundColor: colors.accent }]}
                       onPress={handleSyncFromCloud}
                     >
@@ -236,6 +242,7 @@ export default function SyncSettings() {
                   </View>
 
                   <TouchableOpacity
+                    accessibilityRole="button"
                     style={[styles.button, { backgroundColor: colors.expense, marginTop: 24 }]}
                     onPress={handleLogout}
                   >
