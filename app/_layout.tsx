@@ -12,7 +12,13 @@ import { ToastProvider } from '../src/context/ToastContext';
 import { LockScreen } from '../src/components/LockScreen';
 import { requestNotificationPermissions } from '../src/utils/notificationHelper';
 import { initSentry } from '../src/services/sentry';
-import { WebGlobalStyles } from '../src/components/WebGlobalStyles';
+import { useFonts } from 'expo-font';
+import Ionicons from '@expo/vector-icons/Ionicons';
+import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
+import * as SplashScreen from 'expo-splash-screen';
+
+// Prevent splash screen from auto-hiding
+SplashScreen.preventAutoHideAsync();
 
 // Initialize Sentry
 initSentry();
@@ -21,6 +27,22 @@ const queryClient = new QueryClient();
 
 function RootLayout() {
   const router = useRouter();
+
+  // Load fonts
+  const [loaded, error] = useFonts({
+    ...Ionicons.font,
+    ...MaterialCommunityIcons.font,
+  });
+
+  useEffect(() => {
+    if (error) throw error;
+  }, [error]);
+
+  useEffect(() => {
+    if (loaded) {
+      SplashScreen.hideAsync();
+    }
+  }, [loaded]);
 
   // 處理快速操作 (Quick Actions)
   useQuickActionCallback((action) => {
@@ -51,6 +73,10 @@ function RootLayout() {
 
     setupNotifications();
   }, []);
+
+  if (!loaded) {
+    return null;
+  }
 
   return (
     <QueryClientProvider client={queryClient}>
