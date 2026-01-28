@@ -42,6 +42,10 @@
 - **ESLint + Prettier**：自動化代碼風格檢查與格式化 (LF Line Endings)，保持代碼整潔一致。
 - **i18n 國際化**：所有 UI 字串提取至資源檔 (`src/i18n`)，無 Hardcoded 字串。
 - **Architecture**：採用 Feature-First 分層架構，服務層 (Service) 與 UI 層分離。
+- **Quality Assurance**：
+  - **Zod Validation**：啟動時強制驗證環境變數 (`src/config/env.ts`)，避免 Config 缺失。
+  - **Accessibility (A11y)**：符合 WCAG 標準，支援完整的螢幕閱讀器與動態字體體驗。
+  - **Sentry**：整合 Sentry 進行即時錯誤追蹤與效能監控。
 - **Performance**：
   - **JSI Binding**：資料庫直接調用 C++ 層，避開 JS Bridge。
   - **FlashList**：列表渲染效能優化。
@@ -115,10 +119,11 @@ npm run ios
 ### Tools
 
 - **2026-01-20**: Comprehensive linting and type error fixes across test suite (29 files).
-- **2026-01-20**: Achieved **79.22% Test Coverage**, implementing Database Migration & Web Platform consistency tests.
-- **2026-01-26**: 修復 Lint 錯誤、測試環境 (Jest ESM/require) 與日期邏輯；清理 Charts 元件；**達成 100% Type Check 通過**。
 - **2026-01-26**: 架構優化完成：MMKV 儲存層、Platform Resolution、Context 渲染優化。
-- **2026-01-27**: 修復 Jest 設定範圍與無障礙 Lint 警告 (Jest Setup Scope & A11y Lint Fixes)。
+- **2026-01-28**: 品質工程里程碑：
+  - **100% Type Check**: 消除所有 `no-implicit-any` 與型別錯誤。
+  - **Test Stability**: 修復 Jest 環境 (ESM/require) 與所有 Flaky Tests。
+  - **A11y**: 引入 `eslint-plugin-react-native-a11y` 並修復核心組件無障礙問題。
 - **Linting**: ESLint, Prettier
 - **Build**: EAS (Expo Application Services)
 
@@ -307,24 +312,6 @@ Presentyourlove
 ### 🤖 V3.0 智慧化與創新 (AI & Smart Features)
 
 - [ ] **🧩 桌面小工具 (Widgets)**: 在 iOS/Android 主畫面直接查看即將扣款項目 (基於 Expo Widget API)。
-
-### 🔧 具體優化工程 (Engineering Improvements)
-
-#### 🚀 效能與架構 (Performance & Architecture)
-
-- [x] **🚀 真・懶加載 (True Lazy Loading)**: 將 `xlsx` 與 `firebase` 改為動態導入 (`await import`)，優化啟動速度。
-- [x] **⚡ MMKV 儲存層**: 替換 `AsyncStorage`，大幅提升讀寫效能。
-- [x] **🏎️ Context 渲染優化**: 為 `DatabaseContext` 與 `AuthContext` 的 `value` 物件加上 `useMemo`，防止非必要的 Re-renders。
-- [x] **📱 平台差異化拆分 (Platform Resolution)**: 重構 `src/services/index.ts`，利用 `.native.ts` 與 `.web.ts` 後綴機制取代 Runtime Check，縮減 Bundle Size 並避免 Web 端載入 Native 模組。
-- [x] **🔄 React Query**: 引入資料快取與同步管理庫。
-- [x] **🎨 樣式效能 (Style Memoization)**: 提取所有 `style={{...}}` 行內樣式至 `StyleSheet.create` 或使用 `useMemo`，減少 Render 期間的物件配置。
-
-#### �️ 品質與穩定性 (Quality & Stability)
-
-- - [x] **🐞 錯誤監控 (Sentry Integration)**: 整合 Sentry SDK 以追蹤生產環境的 Crash 與效能問題 (目前缺席)。
-- [x] **🛡️ 環境變數驗證 (Env Validation)**: 引入 `zod` 在啟動時驗證 `process.env`，防止缺少 Config 導致的 Runtime Error。
-- - [x] **🗣️ 強型別 i18n (Typed i18n)**: 建立翻譯 Key 的型別檢查機制。
-- [x] **♿ 無障礙優化 (A11y)**: 引入自動化檢測與改善螢幕閱讀器體驗。
 
 ---
 
