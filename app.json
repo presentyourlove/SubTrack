@@ -31,10 +31,7 @@
       "bundler": "metro",
       "output": "single"
     },
-    "plugins": [
-      "expo-router",
-      "expo-localization"
-    ],
+    "plugins": ["expo-router", "expo-localization"],
     "experiments": {
       "typedRoutes": true,
       "baseUrl": "/SubTrack/"
