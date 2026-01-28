@@ -21,11 +21,11 @@ jest.mock('../../utils/chartHelper', () => ({
   getExpenseStatistics: jest.fn().mockReturnValue([{ label: 'Jan', value: 200, color: '#00ff00' }]),
 }));
 
-jest.mock('../charts/SkiaPieChart', () => ({
+jest.mock('../visualizations/charts/SkiaPieChart', () => ({
   SkiaPieChart: () => null,
 }));
 
-jest.mock('../charts/SkiaBarChart', () => ({
+jest.mock('../visualizations/charts/SkiaBarChart', () => ({
   SkiaBarChart: () => null,
 }));
 

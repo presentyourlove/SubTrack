@@ -40,7 +40,7 @@ jest.mock('@expo/vector-icons', () => ({
 }));
 
 // Mock Lazy Import
-jest.mock('../../ImportPreviewModal', () => ({
+jest.mock('../../modals/ImportPreviewModal', () => ({
   ImportPreviewModal: (props: { visible: boolean; onConfirm: () => void }) => {
     // eslint-disable-next-line @typescript-eslint/no-require-imports
     const { View } = require('react-native');

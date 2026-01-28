@@ -130,8 +130,8 @@ export const SkiaPieChart = ({
               key={index}
               path={slice.path}
               color={slice.color}
-            // Determine if we need to subtract hole
-            // Skia typically paints in order. We can paint hole at the end.
+              // Determine if we need to subtract hole
+              // Skia typically paints in order. We can paint hole at the end.
             />
           );
         })}

@@ -61,7 +61,7 @@ jest.mock('../../../context/ThemeContext', () => ({
 }));
 
 // Mock SubscriptionCard
-jest.mock('../../SubscriptionCard', () => {
+jest.mock('../../cards/SubscriptionCard', () => {
   const {
     View: MockView,
     Text: MockText,
@@ -91,7 +91,7 @@ jest.mock('../../SubscriptionCard', () => {
 });
 
 // Mock AddSubscriptionModal
-jest.mock('../../AddSubscriptionModal', () => {
+jest.mock('../../modals/AddSubscriptionModal', () => {
   const { View: MockView } = jest.requireActual('react-native');
   const MockAddSubscriptionModal = ({ visible }: { visible: boolean }) => {
     if (!visible) return null;

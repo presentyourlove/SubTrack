@@ -4,7 +4,7 @@ import { ToastProvider, useToast } from '../ToastContext';
 import { Text, Button } from 'react-native';
 
 // Mock Toast component to avoid testing UI details and animations
-jest.mock('../../components/Toast', () => {
+jest.mock('../../components/ui/Toast', () => {
   // eslint-disable-next-line @typescript-eslint/no-require-imports
   const React = require('react');
   // eslint-disable-next-line @typescript-eslint/no-require-imports
