@@ -27,13 +27,9 @@ describe('Env Validation', () => {
     const originalDsn = process.env.EXPO_PUBLIC_SENTRY_DSN;
 
     try {
-      // Use defineProperty to bypass strict mode limitations if any
-      Object.defineProperty(process.env, 'EXPO_PUBLIC_SENTRY_DSN', {
-        value: undefined,
-        writable: true,
-      });
+      // use delete as process.env is a plain object in our mock setup
+      delete process.env.EXPO_PUBLIC_SENTRY_DSN;
     } catch (e) {
-      // Fallback
       delete process.env.EXPO_PUBLIC_SENTRY_DSN;
     }
 
