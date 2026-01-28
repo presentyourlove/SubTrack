@@ -12,6 +12,7 @@ import { ToastProvider } from '../src/context/ToastContext';
 import { LockScreen } from '../src/components/LockScreen';
 import { requestNotificationPermissions } from '../src/utils/notificationHelper';
 import { initSentry } from '../src/services/sentry';
+import { WebGlobalStyles } from '../src/components/WebGlobalStyles';
 
 // Initialize Sentry
 initSentry();
@@ -58,6 +59,7 @@ function RootLayout() {
           <DatabaseProvider>
             <SecurityProvider>
               <ToastProvider>
+                <WebGlobalStyles />
                 <Stack screenOptions={{ headerShown: false }}>
                   <Stack.Screen name="(tabs)" />
                 </Stack>
