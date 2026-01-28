@@ -24,13 +24,8 @@ describe('Env Validation', () => {
 
   it('allows optional variables to be missing', () => {
     // Verify process.env exists before modification
-    const originalDsn = process.env?.EXPO_PUBLIC_SENTRY_DSN;
-
-    try {
-      // use delete as process.env is a plain object in our mock setup
-      delete process.env.EXPO_PUBLIC_SENTRY_DSN;
-    } catch (e) {
-      delete process.env.EXPO_PUBLIC_SENTRY_DSN;
+    if (process.env) {
+      process.env.EXPO_PUBLIC_SENTRY_DSN = undefined;
     }
 
     // Should not throw
