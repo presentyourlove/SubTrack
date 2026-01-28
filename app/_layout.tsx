@@ -85,7 +85,6 @@ function RootLayout() {
           <DatabaseProvider>
             <SecurityProvider>
               <ToastProvider>
-                <WebGlobalStyles />
                 <Stack screenOptions={{ headerShown: false }}>
                   <Stack.Screen name="(tabs)" />
                 </Stack>
