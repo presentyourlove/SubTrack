@@ -15,11 +15,6 @@ import { initSentry } from '../src/services/sentry';
 import { useFonts } from 'expo-font';
 import Ionicons from '@expo/vector-icons/Ionicons';
 import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
-import * as SplashScreen from 'expo-splash-screen';
-
-// Prevent splash screen from auto-hiding
-SplashScreen.preventAutoHideAsync();
-
 // Initialize Sentry
 initSentry();
 
@@ -35,14 +30,8 @@ function RootLayout() {
   });
 
   useEffect(() => {
-    if (error) throw error;
+    if (error) console.error('Font loading error:', error);
   }, [error]);
-
-  useEffect(() => {
-    if (loaded) {
-      SplashScreen.hideAsync();
-    }
-  }, [loaded]);
 
   // 處理快速操作 (Quick Actions)
   useQuickActionCallback((action) => {
@@ -74,9 +63,9 @@ function RootLayout() {
     setupNotifications();
   }, []);
 
-  if (!loaded) {
-    return null;
-  }
+  // if (!loaded) {
+  //   return null;
+  // }
 
   return (
     <QueryClientProvider client={queryClient}>
