@@ -24,7 +24,7 @@ function RootLayout() {
   const router = useRouter();
 
   // Load fonts
-  const [loaded, error] = useFonts({
+  const [_, error] = useFonts({
     ...Ionicons.font,
     ...MaterialCommunityIcons.font,
   });
