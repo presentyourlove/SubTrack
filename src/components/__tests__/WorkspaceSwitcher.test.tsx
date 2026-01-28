@@ -68,8 +68,8 @@ describe('WorkspaceSwitcher', () => {
       fireEvent.press(button);
     }
 
-    // i18n returns default value
-    expect(getByText('Switch Workspace')).toBeTruthy();
+    // i18n returns default value (key)
+    expect(getByText('workspace.switch')).toBeTruthy();
   });
 
   it('calls switchWorkspace when workspace item is pressed', async () => {
@@ -98,8 +98,8 @@ describe('WorkspaceSwitcher', () => {
       fireEvent.press(button);
     }
 
-    // i18n returns default value
-    expect(getByText('New Workspace')).toBeTruthy();
+    // i18n returns default value (key)
+    expect(getByText('workspace.new')).toBeTruthy();
   });
 
   it('shows create input when new workspace button is pressed', () => {
@@ -112,7 +112,7 @@ describe('WorkspaceSwitcher', () => {
     }
 
     // Press new workspace button
-    fireEvent.press(getByText('New Workspace'));
+    fireEvent.press(getByText('workspace.new'));
 
     // Input should be visible
     expect(getByPlaceholderText('Name')).toBeTruthy();
@@ -128,14 +128,14 @@ describe('WorkspaceSwitcher', () => {
     }
 
     // Press new workspace button
-    fireEvent.press(getByText('New Workspace'));
+    fireEvent.press(getByText('workspace.new'));
 
     // Fill in name
     const input = getByPlaceholderText('Name');
     fireEvent.changeText(input, 'My Workspace');
 
     // Submit
-    fireEvent.press(getByText('Add'));
+    fireEvent.press(getByText('common.add'));
 
     await waitFor(() => {
       expect(mockCreateWorkspace).toHaveBeenCalledWith('My Workspace', '💼');
@@ -152,14 +152,14 @@ describe('WorkspaceSwitcher', () => {
     }
 
     // Press new workspace button
-    fireEvent.press(getByText('New Workspace'));
+    fireEvent.press(getByText('workspace.new'));
 
     // Cancel
-    fireEvent.press(getByText('Cancel'));
+    fireEvent.press(getByText('common.cancel'));
 
     // Input should be hidden, new workspace button visible
     expect(queryByPlaceholderText('Name')).toBeNull();
-    expect(getByText('New Workspace')).toBeTruthy();
+    expect(getByText('workspace.new')).toBeTruthy();
   });
 
   it('does not create workspace with empty name', async () => {
@@ -172,10 +172,10 @@ describe('WorkspaceSwitcher', () => {
     }
 
     // Press new workspace button
-    fireEvent.press(getByText('New Workspace'));
+    fireEvent.press(getByText('workspace.new'));
 
     // Leave name empty and submit
-    fireEvent.press(getByText('Add'));
+    fireEvent.press(getByText('common.add'));
 
     await waitFor(() => {
       expect(mockCreateWorkspace).not.toHaveBeenCalled();

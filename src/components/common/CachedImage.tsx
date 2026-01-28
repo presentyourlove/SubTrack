@@ -23,7 +23,6 @@ export const CachedImage: React.FC<CachedImageProps> = ({
     <View style={[styles.container, style]}>
       <Image
         style={StyleSheet.absoluteFill}
-
         source={typeof source === 'string' ? { uri: source } : source}
         placeholder={placeholder}
         contentFit={contentFit}

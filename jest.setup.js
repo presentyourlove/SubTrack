@@ -172,44 +172,11 @@ jest.mock('expo-localization', () => ({
 }));
 
 // Mock i18n
-const enTranslations = {
-  common: {
-    cancel: 'Cancel',
-    confirm: 'Confirm',
-    save: 'Save',
-    edit: 'Edit',
-    delete: 'Delete',
-    back: 'Back',
-    loading: 'Loading...',
-    error: 'Error',
-    success: 'Success',
-    close: 'Close',
-    days: 'Days',
-    password: 'Password',
-    add: 'Add',
-  },
-  workspace: {
-    switch: 'Switch Workspace',
-    new: 'New Workspace',
-    nameInput: 'Workspace Name',
-    switcher: 'Current Workspace: {{name}}',
-  },
-  settings: {
-    notifications: 'Notifications',
-  },
-  // Add other necessary keys if more tests fail, or load fully if needed.
-  // For now, including keys for WorkspaceSwitcher and basic common.
-};
-
 jest.mock('./src/i18n', () => {
   return {
-    t: jest.fn((key) => {
-      const keys = key.split('.');
-      let value = enTranslations;
-      for (const k of keys) {
-        value = value?.[k];
-      }
-      return value || key;
+    t: jest.fn((key, options) => {
+      // Return key to match strict test expectations (e.g. getAllByText('settings.notifications'))
+      return key;
     }),
     locale: 'en-US',
   };
