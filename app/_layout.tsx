@@ -24,6 +24,7 @@ function RootLayout() {
   const router = useRouter();
 
   // Load fonts
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [_, error] = useFonts({
     ...Ionicons.font,
     ...MaterialCommunityIcons.font,
@@ -62,6 +63,25 @@ function RootLayout() {
 
     setupNotifications();
   }, []);
+
+  // Web fallback for icon fonts
+  if (typeof document !== 'undefined') {
+    const style = document.createElement('style');
+    if (!document.getElementById('expo-font-fallback')) {
+      style.id = 'expo-font-fallback';
+      style.textContent = `
+          @font-face {
+            font-family: 'MaterialCommunityIcons';
+            src: url('https://unpkg.com/@expo/vector-icons/build/vendor/react-native-vector-icons/Fonts/MaterialCommunityIcons.ttf') format('truetype');
+          }
+          @font-face {
+            font-family: 'Ionicons';
+            src: url('https://unpkg.com/@expo/vector-icons/build/vendor/react-native-vector-icons/Fonts/Ionicons.ttf') format('truetype');
+          }
+        `;
+      document.head.appendChild(style);
+    }
+  }
 
   // if (!loaded) {
   //   return null;
