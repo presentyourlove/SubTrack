@@ -15,11 +15,7 @@
     },
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "com.subtrack.app",
-      "infoPlist": {
-        "NSFaceIDUsageDescription": "SubTrack 需要生物辨識權限以保護您的財務資料。",
-        "ITSAppUsesNonExemptEncryption": false
-      }
+      "bundleIdentifier": "com.subtrack.app"
     },
     "android": {
       "adaptiveIcon": {
@@ -37,44 +33,11 @@
     },
     "plugins": [
       "expo-router",
-      "expo-localization",
-      "expo-quick-actions",
-      [
-        "@sentry/react-native/expo",
-        {
-          "organization": "subtrack",
-          "project": "react-native",
-          "url": "https://sentry.io/"
-        }
-      ]
+      "expo-localization"
     ],
-    "extra": {
-      "expoQuickActions": {
-        "androidIcons": {
-          "shortcut_add": {
-            "foregroundImage": "./assets/adaptive-icon.png"
-          },
-          "shortcut_search": {
-            "foregroundImage": "./assets/adaptive-icon.png"
-          },
-          "shortcut_summary": {
-            "foregroundImage": "./assets/adaptive-icon.png"
-          }
-        },
-        "iosIcons": {
-          "shortcut_add": "add",
-          "shortcut_search": "search",
-          "shortcut_summary": "chart.bar"
-        }
-      },
-      "router": {},
-      "eas": {
-        "projectId": "d8ff7a86-b311-4091-bc77-557ef02ebde4"
-      }
-    },
-    "jsEngine": "hermes",
     "experiments": {
-      "typedRoutes": true
+      "typedRoutes": true,
+      "baseUrl": "/SubTrack/"
     }
   }
 }
