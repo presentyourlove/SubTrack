@@ -1,6 +1,6 @@
 import React from 'react';
 import { render, fireEvent } from '@testing-library/react-native';
-import TagChip from '../TagChip';
+import TagChip from '../ui/TagChip';
 import { ThemeProvider } from '../../context/ThemeContext';
 
 const renderWithProviders = (component: React.ReactElement) => {

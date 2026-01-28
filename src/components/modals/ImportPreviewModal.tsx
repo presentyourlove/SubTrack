@@ -14,8 +14,8 @@ import {
   useColorScheme,
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
-import { Subscription } from '../types';
-import i18n from '../i18n';
+import { Subscription } from '../../types';
+import i18n from '../../i18n';
 
 interface ImportPreviewModalProps {
   visible: boolean;

@@ -2,7 +2,7 @@ import React, { useEffect } from 'react';
 import { View } from 'react-native';
 import { Canvas, Path, Skia } from '@shopify/react-native-skia';
 import { useSharedValue, withTiming, Easing } from 'react-native-reanimated';
-import { useTheme } from '../../context/ThemeContext';
+import { useTheme } from '../../../context/ThemeContext';
 
 export interface SkiaChartData {
   label: string;
@@ -130,8 +130,8 @@ export const SkiaPieChart = ({
               key={index}
               path={slice.path}
               color={slice.color}
-              // Determine if we need to subtract hole
-              // Skia typically paints in order. We can paint hole at the end.
+            // Determine if we need to subtract hole
+            // Skia typically paints in order. We can paint hole at the end.
             />
           );
         })}

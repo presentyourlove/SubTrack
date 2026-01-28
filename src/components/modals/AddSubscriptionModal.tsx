@@ -1,18 +1,18 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, Modal, TouchableOpacity, ScrollView, Alert } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
-import { useTheme } from '../context/ThemeContext';
-import { useDatabase } from '../context/DatabaseContext';
-import { SubscriptionCategory, BillingCycle, Subscription } from '../types';
-import { parseTime, formatTime, getDefaultReminderTime } from '../utils/dateHelper';
-import i18n from '../i18n';
-import { hapticFeedback } from '../utils/haptics';
+import { useTheme } from '../../context/ThemeContext';
+import { useDatabase } from '../../context/DatabaseContext';
+import { SubscriptionCategory, BillingCycle, Subscription } from '../../types';
+import { parseTime, formatTime, getDefaultReminderTime } from '../../utils/dateHelper';
+import i18n from '../../i18n';
+import { hapticFeedback } from '../../utils/haptics';
 
-import BasicInfo from './subscription/BasicInfo';
-import CategorySelector from './subscription/CategorySelector';
-import PaymentInfo from './subscription/PaymentInfo';
-import ReminderSettings from './subscription/ReminderSettings';
-import { TagSelector } from './TagSelector';
+import BasicInfo from '../subscription/BasicInfo';
+import CategorySelector from '../subscription/CategorySelector';
+import PaymentInfo from '../subscription/PaymentInfo';
+import ReminderSettings from '../subscription/ReminderSettings';
+import { TagSelector } from '../ui/TagSelector';
 
 type AddSubscriptionModalProps = {
   visible: boolean;

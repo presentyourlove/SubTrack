@@ -1,9 +1,9 @@
 import { View, Text, StyleSheet, ScrollView } from 'react-native';
-import { useTheme } from '../context/ThemeContext';
-import { Subscription } from '../types';
-import { getStatsByApp } from '../utils/chartHelper';
-import { formatCurrency } from '../utils/currencyHelper';
-import i18n from '../i18n';
+import { useTheme } from '../../context/ThemeContext';
+import { Subscription } from '../../types';
+import { getStatsByApp } from '../../utils/chartHelper';
+import { formatCurrency } from '../../utils/currencyHelper';
+import i18n from '../../i18n';
 
 type CategoryBreakdownProps = {
   subscriptions: Subscription[];

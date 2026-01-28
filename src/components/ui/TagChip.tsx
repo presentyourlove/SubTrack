@@ -5,7 +5,7 @@
 
 import React from 'react';
 import { View, Text, TouchableOpacity, StyleSheet, useColorScheme } from 'react-native';
-import { Tag } from '../types';
+import { Tag } from '../../types';
 
 interface TagChipProps {
   tag: Tag;

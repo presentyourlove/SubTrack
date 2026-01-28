@@ -22,7 +22,7 @@ import i18n from '../../i18n';
 
 // 智慧分包：延遲載入重型預覽組件 (Bundle Splitting)
 const ImportPreviewModal = React.lazy(() =>
-  import('../ImportPreviewModal').then((m) => ({ default: m.ImportPreviewModal })),
+  import('../modals/ImportPreviewModal').then((m) => ({ default: m.ImportPreviewModal })),
 );
 
 export function DataManagement(): React.ReactElement {

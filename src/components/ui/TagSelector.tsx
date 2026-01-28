@@ -15,9 +15,9 @@ import {
   Alert,
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
-import { Tag, TAG_COLORS } from '../types';
+import { Tag, TAG_COLORS } from '../../types';
 import { TagChip } from './TagChip';
-import i18n from '../i18n';
+import i18n from '../../i18n';
 
 interface TagSelectorProps {
   tags: Tag[];

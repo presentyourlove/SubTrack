@@ -1,8 +1,8 @@
 import { View, Text, StyleSheet } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
-import { useDatabase } from '../context/DatabaseContext';
-import { getDaysUntil } from '../utils/dateHelper';
-import i18n from '../i18n';
+import { useDatabase } from '../../context/DatabaseContext';
+import { getDaysUntil } from '../../utils/dateHelper';
+import i18n from '../../i18n';
 
 export default function AlertCard() {
   const { subscriptions } = useDatabase();

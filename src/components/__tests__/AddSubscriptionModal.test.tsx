@@ -1,6 +1,6 @@
 import React from 'react';
 import { render, fireEvent } from '@testing-library/react-native';
-import AddSubscriptionModal from '../AddSubscriptionModal';
+import AddSubscriptionModal from '../modals/AddSubscriptionModal';
 
 // Mock dependencies
 jest.mock('../../context/ThemeContext', () => ({
@@ -42,7 +42,7 @@ jest.mock('../../services/imageService', () => ({
 }));
 
 // Mock TagSelector
-jest.mock('../TagSelector', () => {
+jest.mock('../ui/TagSelector', () => {
   const React = require('react');
   const { View, Text } = require('react-native');
   return {

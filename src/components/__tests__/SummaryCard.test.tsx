@@ -1,6 +1,6 @@
 import React from 'react';
 import { render } from '@testing-library/react-native';
-import SummaryCard from '../SummaryCard';
+import SummaryCard from '../cards/SummaryCard';
 
 // Mock dependencies
 jest.mock('../../context/ThemeContext', () => ({

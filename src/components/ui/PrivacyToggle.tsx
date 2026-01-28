@@ -1,9 +1,9 @@
 import React from 'react';
 import { TouchableOpacity, StyleSheet } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
-import { useDatabase } from '../context/DatabaseContext';
-import { useTheme } from '../context/ThemeContext';
-import { hapticFeedback } from '../utils/haptics';
+import { useDatabase } from '../../context/DatabaseContext';
+import { useTheme } from '../../context/ThemeContext';
+import { hapticFeedback } from '../../utils/haptics';
 
 export default function PrivacyToggle() {
   const { settings, updateSettings } = useDatabase();

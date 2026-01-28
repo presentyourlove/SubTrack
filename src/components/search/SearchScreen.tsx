@@ -2,12 +2,12 @@ import React, { useState, useMemo } from 'react';
 import { View, Text, StyleSheet, TextInput, TouchableOpacity } from 'react-native';
 import { useTheme } from '../../context/ThemeContext';
 import { useDatabase } from '../../context/DatabaseContext';
-import SubscriptionCard from '../SubscriptionCard';
+import SubscriptionCard from '../cards/SubscriptionCard';
 import { Ionicons } from '@expo/vector-icons';
 import i18n from '../../i18n';
 import { useRouter } from 'expo-router';
 import { Subscription } from '../../types';
-import AddSubscriptionModal from '../AddSubscriptionModal';
+import AddSubscriptionModal from '../modals/AddSubscriptionModal';
 import { hapticFeedback } from '../../utils/haptics';
 import { OptimizedList } from '../common/OptimizedList';
 

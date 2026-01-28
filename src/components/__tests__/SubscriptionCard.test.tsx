@@ -1,6 +1,6 @@
 import React from 'react';
 import { render, fireEvent } from '@testing-library/react-native';
-import SubscriptionCard from '../SubscriptionCard';
+import SubscriptionCard from '../cards/SubscriptionCard';
 import { useTheme } from '../../context/ThemeContext';
 
 // Mock ThemeContext

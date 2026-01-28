@@ -1,10 +1,10 @@
 import { useMemo } from 'react';
 import { View, Text, StyleSheet } from 'react-native';
-import { useTheme } from '../context/ThemeContext';
-import { useDatabase } from '../context/DatabaseContext';
-import { formatCurrency, convertCurrency } from '../utils/currencyHelper';
-import i18n from '../i18n';
-import { usePrivacy } from '../hooks/usePrivacy';
+import { useTheme } from '../../context/ThemeContext';
+import { useDatabase } from '../../context/DatabaseContext';
+import { formatCurrency, convertCurrency } from '../../utils/currencyHelper';
+import i18n from '../../i18n';
+import { usePrivacy } from '../../hooks/usePrivacy';
 
 export default function SummaryCard() {
   const { colors } = useTheme();

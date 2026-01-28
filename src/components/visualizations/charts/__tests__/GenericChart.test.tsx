@@ -3,7 +3,7 @@ import { render } from '@testing-library/react-native';
 import GenericChart from '../GenericChart';
 
 // Mock dependencies
-jest.mock('../../../context/ThemeContext', () => ({
+jest.mock('../../../../context/ThemeContext', () => ({
   useTheme: () => ({
     colors: {
       card: '#ffffff',

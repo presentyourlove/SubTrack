@@ -1,6 +1,6 @@
 import React from 'react';
 import { render, act } from '@testing-library/react-native';
-import Toast from '../Toast';
+import Toast from '../ui/Toast';
 
 describe('Toast', () => {
   beforeEach(() => {

@@ -1,6 +1,6 @@
 import React from 'react';
 import { render, fireEvent, waitFor } from '@testing-library/react-native';
-import SplitBillModal from '../SplitBillModal';
+import SplitBillModal from '../modals/SplitBillModal';
 import { ThemeProvider } from '../../context/ThemeContext';
 import { Subscription } from '../../types';
 import * as MemberService from '../../services/db/members';

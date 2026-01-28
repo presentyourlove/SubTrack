@@ -1,6 +1,6 @@
 import React from 'react';
 import { render } from '@testing-library/react-native';
-import CategoryBreakdown from '../CategoryBreakdown';
+import CategoryBreakdown from '../visualizations/CategoryBreakdown';
 
 // Mock dependencies
 jest.mock('../../context/ThemeContext', () => ({

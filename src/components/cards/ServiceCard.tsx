@@ -5,8 +5,8 @@
 
 import React from 'react';
 import { Text, TouchableOpacity, StyleSheet, useColorScheme } from 'react-native';
-import { ServiceTemplate } from '../constants/serviceCatalog';
-import i18n from '../i18n';
+import { ServiceTemplate } from '../../constants/serviceCatalog';
+import i18n from '../../i18n';
 
 interface ServiceCardProps {
   service: ServiceTemplate;

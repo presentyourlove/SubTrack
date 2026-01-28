@@ -13,7 +13,7 @@ import { useDatabase } from '../../src/context/DatabaseContext';
 import { CustomReport } from '../../src/types';
 import { useTypedTranslation } from '../../src/hooks/useTypedTranslation';
 import { Ionicons } from '@expo/vector-icons';
-import GenericChart from '../../src/components/charts/GenericChart';
+import GenericChart from '../../src/components/visualizations/charts/GenericChart';
 import { executeReport } from '../../src/services/db/reports';
 import { useFocusEffect } from 'expo-router';
 

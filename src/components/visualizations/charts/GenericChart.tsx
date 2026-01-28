@@ -1,53 +1,48 @@
+import React from 'react';
 import { View, Text, StyleSheet } from 'react-native';
-import { useTheme } from '../context/ThemeContext';
-import { Subscription, SubscriptionCategory } from '../types';
-import { getStatsByCategory, getExpenseStatistics } from '../utils/chartHelper';
-import i18n from '../i18n';
-import { SkiaPieChart, SkiaChartData } from './charts/SkiaPieChart';
-import { SkiaBarChart, SkiaBarDataPoint } from './charts/SkiaBarChart';
+import { useTheme } from '../../../context/ThemeContext';
+import { ChartData } from '../../../services/db/reports';
+import { SkiaPieChart, SkiaChartData } from './SkiaPieChart';
+import { SkiaBarChart, SkiaBarDataPoint } from './SkiaBarChart';
 
-type BudgetChartProps = {
-  subscriptions: Subscription[];
-  chartType: 'category' | 'timeline';
-  selectedCategory?: 'all' | SubscriptionCategory;
-  currency: string;
-  exchangeRates: { [key: string]: number };
+type GenericChartProps = {
+  data: ChartData[];
+  type: 'pie' | 'bar';
+  title?: string;
+  height?: number;
 };
 
-export default function BudgetChart({
-  subscriptions,
-  chartType,
-  selectedCategory: _selectedCategory = 'all',
-  currency,
-  exchangeRates,
-}: BudgetChartProps) {
+export default function GenericChart({ data, type, title, height = 200 }: GenericChartProps) {
   const { colors } = useTheme();
 
-  // 取得圖表資料
-  const rawData =
-    chartType === 'category'
-      ? getStatsByCategory(subscriptions, currency, exchangeRates)
-      : getExpenseStatistics(subscriptions, currency, exchangeRates);
+  if (!data || data.length === 0) {
+    return (
+      <View style={[styles.container, { backgroundColor: colors.card, height }]}>
+        {title && <Text style={[styles.title, { color: colors.text }]}>{title}</Text>}
+        <View style={styles.center}>
+          <Text style={{ color: colors.subtleText }}>No data available</Text>
+        </View>
+      </View>
+    );
+  }
 
-  if (chartType === 'category') {
-    // Transform to SkiaPieChart format
-    const pieData: SkiaChartData[] = rawData.map((d) => ({
+  // == PIE CHART ==
+  if (type === 'pie') {
+    const pieData: SkiaChartData[] = data.map((d) => ({
       label: d.label,
       value: d.value,
       color: d.color || colors.accent,
     }));
-
-    // Calculate details for legend
     const total = pieData.reduce((sum, d) => sum + d.value, 0);
 
     return (
       <View style={[styles.container, { backgroundColor: colors.card }]}>
-        <Text style={[styles.title, { color: colors.text }]}>{i18n.t('chart.categoryTitle')}</Text>
+        {title && <Text style={[styles.title, { color: colors.text }]}>{title}</Text>}
 
         <View style={styles.contentRow}>
           <SkiaPieChart data={pieData} size={160} innerRadius={60} />
 
-          {/* Custom Legend */}
+          {/* Legend */}
           <View style={styles.legendContainer}>
             {pieData.map((item, index) => {
               const percentage = total > 0 ? (item.value / total) * 100 : 0;
@@ -55,7 +50,9 @@ export default function BudgetChart({
                 <View key={index} style={styles.legendItem}>
                   <View style={[styles.colorDot, { backgroundColor: item.color }]} />
                   <View>
-                    <Text style={[styles.legendLabel, { color: colors.text }]}>{item.label}</Text>
+                    <Text style={[styles.legendLabel, { color: colors.text }]} numberOfLines={1}>
+                      {item.label}
+                    </Text>
                     <Text style={[styles.legendValue, { color: colors.subtleText }]}>
                       {percentage.toFixed(1)}%
                     </Text>
@@ -69,19 +66,18 @@ export default function BudgetChart({
     );
   }
 
-  // Bar Chart
-  const barData: SkiaBarDataPoint[] = rawData.map((d) => ({
+  // == BAR CHART ==
+  const barData: SkiaBarDataPoint[] = data.map((d) => ({
     label: d.label,
     value: d.value,
-    color: d.color,
-    breakdown: d.breakdown,
+    color: d.color || colors.accent,
   }));
 
   return (
     <View style={[styles.container, { backgroundColor: colors.card }]}>
-      <Text style={[styles.title, { color: colors.text }]}>{i18n.t('chart.expenseTitle')}</Text>
-      <View style={{ height: 240, width: '100%' }}>
-        <SkiaBarChart data={barData} height={240} showLabels={true} />
+      {title && <Text style={[styles.title, { color: colors.text }]}>{title}</Text>}
+      <View style={{ height: height - 40, width: '100%' }}>
+        <SkiaBarChart data={barData} height={height - 40} showLabels={true} />
       </View>
     </View>
   );
@@ -98,6 +94,11 @@ const styles = StyleSheet.create({
     fontWeight: '600',
     marginBottom: 16,
   },
+  center: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
   contentRow: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -106,7 +107,7 @@ const styles = StyleSheet.create({
   legendContainer: {
     flex: 1,
     marginLeft: 20,
-    gap: 12,
+    gap: 8,
   },
   legendItem: {
     flexDirection: 'row',
@@ -119,6 +120,7 @@ const styles = StyleSheet.create({
     borderRadius: 6,
   },
   legendLabel: {
+    flex: 1,
     fontSize: 14,
     fontWeight: '500',
   },

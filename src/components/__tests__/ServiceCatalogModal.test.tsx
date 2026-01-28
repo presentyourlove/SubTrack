@@ -1,6 +1,6 @@
 import React from 'react';
 import { render, fireEvent } from '@testing-library/react-native';
-import ServiceCatalogModal from '../ServiceCatalogModal';
+import ServiceCatalogModal from '../modals/ServiceCatalogModal';
 import { ThemeProvider } from '../../context/ThemeContext';
 
 const renderWithProviders = (component: React.ReactElement) => {

@@ -8,7 +8,7 @@ import {
   useDerivedValue,
   SharedValue,
 } from 'react-native-reanimated';
-import { useTheme } from '../../context/ThemeContext';
+import { useTheme } from '../../../context/ThemeContext';
 
 export interface SkiaBarDataPoint {
   label: string;

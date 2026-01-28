@@ -1,7 +1,7 @@
 import React from 'react';
 import { render, fireEvent, waitFor } from '@testing-library/react-native';
 import { Alert } from 'react-native';
-import { TagSelector } from '../TagSelector';
+import { TagSelector } from '../ui/TagSelector';
 
 // Mock dependencies
 jest.mock('react-native/Libraries/Utilities/useColorScheme', () => ({

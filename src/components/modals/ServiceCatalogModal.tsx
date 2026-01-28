@@ -18,11 +18,11 @@ import {
   ServiceTemplate,
   getServicesByCategory,
   searchServices,
-} from '../constants/serviceCatalog';
-import { SubscriptionCategory } from '../types';
-import { ServiceCard } from './ServiceCard';
-import i18n from '../i18n';
-import { OptimizedList } from './common/OptimizedList';
+} from '../../constants/serviceCatalog';
+import { SubscriptionCategory } from '../../types';
+import { ServiceCard } from '../cards/ServiceCard';
+import i18n from '../../i18n';
+import { OptimizedList } from '../common/OptimizedList';
 
 interface ServiceCatalogModalProps {
   visible: boolean;

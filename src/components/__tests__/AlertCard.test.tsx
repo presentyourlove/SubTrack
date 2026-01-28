@@ -1,6 +1,6 @@
 import React from 'react';
 import { render } from '@testing-library/react-native';
-import AlertCard from '../AlertCard';
+import AlertCard from '../cards/AlertCard';
 
 // Mock dependencies
 jest.mock('../../context/DatabaseContext', () => ({

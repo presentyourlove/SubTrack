@@ -137,7 +137,11 @@ SubTrack/
 │   ├── (tabs)/               # 底部導航頁面 (Home, Reports, Settings)
 │   └── _layout.tsx           # 根導航配置與 Provider 注入
 ├── src/
-│   ├── components/           # UI 元件庫
+│   ├── components/           # UI 元件庫 (Cards, Modals, Visualizations, UI)
+│   │   ├── cards/            # 資訊卡片 (SubscriptionCard, ServiceCard)
+│   │   ├── modals/           # 彈出視窗 (AddSubscription, SplitBill)
+│   │   ├── visualizations/   # 圖表與數據呈現 (Charts, Breakdowns)
+│   │   └── ui/               # 共用 UI 元件 (Buttons, Chips, Toggles)
 │   │   ├── common/           # 通用原子元件 (OptimizedList, CachedImage)
 │   │   ├── settings/         # 設定頁面組件
 │   │   └── subscription/     # 訂閱卡片與表單

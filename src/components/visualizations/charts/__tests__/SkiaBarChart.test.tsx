@@ -3,7 +3,7 @@ import { render, fireEvent } from '@testing-library/react-native';
 import { SkiaBarChart, SkiaBarDataPoint } from '../SkiaBarChart';
 
 // Mock ThemeContext
-jest.mock('../../../context/ThemeContext', () => ({
+jest.mock('../../../../context/ThemeContext', () => ({
   useTheme: () => ({
     colors: {
       accent: '#007AFF',

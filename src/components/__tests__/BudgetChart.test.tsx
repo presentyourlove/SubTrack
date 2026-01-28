@@ -1,6 +1,6 @@
 import React from 'react';
 import { render } from '@testing-library/react-native';
-import BudgetChart from '../BudgetChart';
+import BudgetChart from '../visualizations/BudgetChart';
 
 // Mock dependencies
 jest.mock('../../context/ThemeContext', () => ({

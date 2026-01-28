@@ -1,6 +1,6 @@
 import React from 'react';
 import { render, fireEvent } from '@testing-library/react-native';
-import { ImportPreviewModal } from '../ImportPreviewModal';
+import { ImportPreviewModal } from '../modals/ImportPreviewModal';
 
 describe('ImportPreviewModal', () => {
   const defaultProps = {

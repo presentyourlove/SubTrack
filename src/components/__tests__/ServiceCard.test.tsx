@@ -1,6 +1,6 @@
 import React from 'react';
 import { render, fireEvent } from '@testing-library/react-native';
-import { ServiceCard } from '../ServiceCard';
+import { ServiceCard } from '../cards/ServiceCard';
 
 // Mock dependencies
 jest.mock('react-native/Libraries/Utilities/useColorScheme', () => ({

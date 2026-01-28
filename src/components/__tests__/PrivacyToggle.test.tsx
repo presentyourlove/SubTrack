@@ -1,6 +1,6 @@
 import React from 'react';
 import { render, fireEvent } from '@testing-library/react-native';
-import PrivacyToggle from '../PrivacyToggle';
+import PrivacyToggle from '../ui/PrivacyToggle';
 
 // Mock dependencies
 const mockUpdateSettings = jest.fn();

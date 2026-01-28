@@ -1,13 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, Modal, TouchableOpacity, ScrollView, Alert } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
-import { useTheme } from '../context/ThemeContext';
-import { Member, Subscription } from '../types';
-import * as MemberService from '../services/db/members';
-import { SQLiteDatabase } from '../services/database';
-import { useDatabase } from '../context/DatabaseContext';
-import { formatCurrency } from '../utils/currencyHelper';
-import i18n from '../i18n';
+import { useTheme } from '../../context/ThemeContext';
+import { Member, Subscription } from '../../types';
+import * as MemberService from '../../services/db/members';
+import { SQLiteDatabase } from '../../services/database';
+import { useDatabase } from '../../context/DatabaseContext';
+import { formatCurrency } from '../../utils/currencyHelper';
+import i18n from '../../i18n';
 
 type SplitBillModalProps = {
   visible: boolean;

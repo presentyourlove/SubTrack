@@ -1,7 +1,7 @@
 import React from 'react';
 import { render } from '@testing-library/react-native';
 import { SkiaPieChart } from '../SkiaPieChart';
-import { ThemeProvider } from '../../../context/ThemeContext';
+import { ThemeProvider } from '../../../../context/ThemeContext';
 
 // Mock Skia Canvas since it relies on native code or specific setup not fully present in minimal partial mocks
 // But we want to test that REANIMATED loads fine.

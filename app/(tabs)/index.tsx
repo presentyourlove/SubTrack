@@ -6,15 +6,18 @@ import { Ionicons } from '@expo/vector-icons';
 import { useDatabase } from '../../src/context/DatabaseContext';
 import { useTheme } from '../../src/context/ThemeContext';
 import { Subscription, SubscriptionCategory } from '../../src/types';
-import SummaryCard from '../../src/components/SummaryCard';
-import SubscriptionCard from '../../src/components/SubscriptionCard';
-import AddSubscriptionModal from '../../src/components/AddSubscriptionModal';
-import CategoryTabs from '../../src/components/CategoryTabs';
-import AlertCard from '../../src/components/AlertCard';
+import {
+  SummaryCard,
+  SubscriptionCard,
+  AddSubscriptionModal,
+  CategoryTabs,
+  AlertCard,
+  PrivacyToggle,
+  OptimizedList,
+} from '../../src/components';
 import WorkspaceSwitcher from '../../src/components/WorkspaceSwitcher';
-import { PrivacyToggle, OptimizedList } from '../../src/components';
 import { useTypedTranslation } from '../../src/hooks/useTypedTranslation';
-import TagChip from '../../src/components/TagChip';
+import { TagChip } from '../../src/components/ui/TagChip';
 import { hapticFeedback } from '../../src/utils/haptics';
 
 export default function SubscriptionsScreen() {
