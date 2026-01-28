@@ -17,7 +17,8 @@
       "supportsTablet": true,
       "bundleIdentifier": "com.subtrack.app",
       "infoPlist": {
-        "NSFaceIDUsageDescription": "SubTrack 需要生物辨識權限以保護您的財務資料。"
+        "NSFaceIDUsageDescription": "SubTrack 需要生物辨識權限以保護您的財務資料。",
+        "ITSAppUsesNonExemptEncryption": false
       }
     },
     "android": {
@@ -65,6 +66,10 @@
           "shortcut_search": "search",
           "shortcut_summary": "chart.bar"
         }
+      },
+      "router": {},
+      "eas": {
+        "projectId": "d8ff7a86-b311-4091-bc77-557ef02ebde4"
       }
     },
     "jsEngine": "hermes",

@@ -243,10 +243,11 @@ maestro test --continuous .maestro/flows/
 
 - **iOS (SideStore IPA)**
   - **實機 (Development Build)**:
-    1. 打包開發版: `eas build --profile development --platform ios`
-    2. 透過 SideStore / AltStore 安裝 .ipa。
-    3. 執行 `npx expo start --dev-client` 產生 QR Code。
-    4. 開發版 App 開啟後，掃描或選擇連線。
+    1. 註冊測試裝置: `npx eas device:create`
+    2. 打包開發版: `eas build --profile development --platform ios`
+    3. 透過 SideStore / AltStore 安裝 .ipa。
+    4. 執行 `npx expo start --dev-client` 產生 QR Code。
+    5. 開發版 App 開啟後，掃描或選擇連線。
   - **模擬器 (Mac Only)**: 執行 `npm run ios`。
 
 - **Web (PWA)**
@@ -281,6 +282,16 @@ eas build -p ios --profile preview
 ```bash
 npx expo export -p web
 ```
+
+### 4. GitHub Pages (Deploy)
+
+一鍵部署至 GitHub Pages：
+
+```bash
+npm run deploy
+```
+
+這會自動執行 `expo export` 並將 `dist/` 目錄推送到 `gh-pages` 分支。
 
 ---
 
