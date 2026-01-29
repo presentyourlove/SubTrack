@@ -25,6 +25,15 @@ try {
     );
   }
 
+  // Fix for SPA Routing on GitHub Pages: Copy index.html to 404.html
+  // This allows routes like /budget to be handled by the app instead of returning 404
+  const indexHtml = path.join(distDir, 'index.html');
+  const notFoundHtml = path.join(distDir, '404.html');
+  if (fs.existsSync(indexHtml)) {
+    console.log('Creating 404.html for SPA routing...');
+    fs.copyFileSync(indexHtml, notFoundHtml);
+  }
+
   const exec = (cmd) => {
     console.log(`> ${cmd}`);
     execSync(cmd, { stdio: 'inherit', cwd: distDir });
