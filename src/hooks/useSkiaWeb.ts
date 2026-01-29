@@ -9,8 +9,16 @@ export const useSkiaWeb = () => {
   useEffect(() => {
     if (Platform.OS === 'web') {
       console.log('Initializing Skia Web...');
-      // Revert to default loading, expecting canvaskit.wasm to be available in the deployed root
-      LoadSkiaWeb()
+      // Use explicit path for GitHub Pages subdirectory deployment
+      LoadSkiaWeb({
+        locateFile: (file) => {
+          // The file is copied to 'dist/canvaskit.wasm' by deploy.js
+          // GitHub Pages serves 'dist' at '/SubTrack/'
+          const path = `/SubTrack/${file}`;
+          console.log(`Loading Skia Web with file: ${file} from ${path}`);
+          return path;
+        },
+      })
         .then(() => {
           console.log('Skia Web loaded successfully');
           setReady(true);
