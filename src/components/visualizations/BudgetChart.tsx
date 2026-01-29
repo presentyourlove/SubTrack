@@ -5,6 +5,7 @@ import { getStatsByCategory, getExpenseStatistics } from '../../utils/chartHelpe
 import i18n from '../../i18n';
 import { SkiaPieChart, SkiaChartData } from './charts/SkiaPieChart';
 import { SkiaBarChart, SkiaBarDataPoint } from './charts/SkiaBarChart';
+import { useSkiaWeb } from '../../hooks/useSkiaWeb';
 
 type BudgetChartProps = {
   subscriptions: Subscription[];
@@ -22,6 +23,28 @@ export default function BudgetChart({
   exchangeRates,
 }: BudgetChartProps) {
   const { colors } = useTheme();
+  // Ensure Skia is loaded before rendering charts to prevent crash on Web
+  const { ready: skiaReady, error: skiaError } = useSkiaWeb();
+
+  if (!skiaReady) {
+    return (
+      <View
+        style={[
+          styles.container,
+          {
+            backgroundColor: colors.card,
+            alignItems: 'center',
+            justifyContent: 'center',
+            height: 200,
+          },
+        ]}
+      >
+        <Text style={{ color: colors.text }}>
+          {skiaError ? 'Failed to load chart engine.' : 'Loading charts...'}
+        </Text>
+      </View>
+    );
+  }
 
   // 取得圖表資料
   const rawData =
