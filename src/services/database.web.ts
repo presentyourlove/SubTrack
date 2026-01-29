@@ -69,9 +69,7 @@ export async function initDatabase(): Promise<WebDatabase> {
         // SELECT t.* FROM tags t INNER JOIN subscription_tags st ON t.id = st.tagId WHERE st.subscriptionId = ?
         if (sql.includes('INNER JOIN subscription_tags')) {
           const subId = params[0];
-          const subTags = JSON.parse(
-            localStorage.getItem(STORAGE_KEYS.SUBSCRIPTION_TAGS) || '[]',
-          );
+          const subTags = JSON.parse(localStorage.getItem(STORAGE_KEYS.SUBSCRIPTION_TAGS) || '[]');
           const tagIds = subTags
             // eslint-disable-next-line @typescript-eslint/no-explicit-any
             .filter((st: any) => st.subscriptionId === subId)
