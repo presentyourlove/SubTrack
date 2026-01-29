@@ -12,6 +12,19 @@ try {
     throw new Error('dist directory not found. Please run "npm run predeploy" first.');
   }
 
+  // Copy canvaskit.wasm to dist root to fix 404s
+  const wasmSource = path.resolve(__dirname, '../node_modules/canvaskit-wasm/bin/canvaskit.wasm');
+  const wasmDest = path.join(distDir, 'canvaskit.wasm');
+
+  if (fs.existsSync(wasmSource)) {
+    console.log(`Copying canvaskit.wasm from ${wasmSource} to ${wasmDest}...`);
+    fs.copyFileSync(wasmSource, wasmDest);
+  } else {
+    console.warn(
+      `Warning: canvaskit.wasm not found at ${wasmSource}. Skia Web might fail to load.`,
+    );
+  }
+
   const exec = (cmd) => {
     console.log(`> ${cmd}`);
     execSync(cmd, { stdio: 'inherit', cwd: distDir });

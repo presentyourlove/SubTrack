@@ -9,15 +9,8 @@ export const useSkiaWeb = () => {
   useEffect(() => {
     if (Platform.OS === 'web') {
       console.log('Initializing Skia Web...');
-      // Explicitly load from CDN to avoid 404s on GitHub Pages subpaths
-      // We found version 0.40.0 installed in node_modules
-      LoadSkiaWeb({
-        locateFile: (file) => {
-          const url = `https://unpkg.com/canvaskit-wasm@0.40.0/bin/${file}`;
-          console.log(`Loading Skia Web with file: ${file} from ${url}`);
-          return url;
-        },
-      })
+      // Revert to default loading, expecting canvaskit.wasm to be available in the deployed root
+      LoadSkiaWeb()
         .then(() => {
           console.log('Skia Web loaded successfully');
           setReady(true);
