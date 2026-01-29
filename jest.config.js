@@ -3,7 +3,7 @@ module.exports = {
   testEnvironment: 'node',
   setupFilesAfterEnv: ['./jest.setup.js'],
   transformIgnorePatterns: [
-    'node_modules/(?!((jest-)?react-native|@react-native(-community)?)|expo(nent)?|@expo(nent)?/.*|@expo-google-fonts/.*|react-navigation|@react-navigation/.*|@unimodules/.*|unimodules|sentry-expo|native-base|react-native-svg|firebase|@firebase|expo-.*|react-native-reanimated|react-native-worklets)',
+    'node_modules/(?!((jest-)?react-native|@react-native(-community)?)|expo(nent)?|@expo(nent)?/.*|@expo-google-fonts/.*|react-navigation|@react-navigation/.*|@unimodules/.*|unimodules|sentry-expo|native-base|react-native-svg|firebase|@firebase|expo-.*|react-native-reanimated|react-native-worklets|@shopify/react-native-skia)',
   ],
   moduleNameMapper: {
     '^expo$': '<rootDir>/__mocks__/expo.js',
