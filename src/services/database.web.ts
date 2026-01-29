@@ -76,7 +76,9 @@ export async function initDatabase(): Promise<WebDatabase> {
             // eslint-disable-next-line @typescript-eslint/no-explicit-any
             .map((st: any) => st.tagId);
           // eslint-disable-next-line @typescript-eslint/no-explicit-any
-          return tags.filter((t: any) => tagIds.includes(t.id)).sort((a: any, b: any) => a.name.localeCompare(b.name)) as T[];
+          return tags
+            .filter((t: any) => tagIds.includes(t.id))
+            .sort((a: any, b: any) => a.name.localeCompare(b.name)) as T[];
         }
       }
       return tags as T[];
@@ -87,7 +89,14 @@ export async function initDatabase(): Promise<WebDatabase> {
       const workspaces = JSON.parse(localStorage.getItem(STORAGE_KEYS.WORKSPACES) || '[]');
       // Fix: Ensure default workspace exists if empty
       if (workspaces.length === 0) {
-        const defaultWorkspace = { id: 1, name: 'Personal', icon: 'person', isDefault: 1, createdAt: new Date().toISOString(), updatedAt: new Date().toISOString() };
+        const defaultWorkspace = {
+          id: 1,
+          name: 'Personal',
+          icon: 'person',
+          isDefault: 1,
+          createdAt: new Date().toISOString(),
+          updatedAt: new Date().toISOString(),
+        };
         workspaces.push(defaultWorkspace);
         localStorage.setItem(STORAGE_KEYS.WORKSPACES, JSON.stringify(workspaces));
       }
@@ -107,7 +116,10 @@ export async function initDatabase(): Promise<WebDatabase> {
     return [];
   };
 
-  const getFirstAsync = async <T>(sql: string, params: (string | number)[] = []): Promise<T | null> => {
+  const getFirstAsync = async <T>(
+    sql: string,
+    params: (string | number)[] = [],
+  ): Promise<T | null> => {
     // Basic implementation for "SELECT * FROM ... WHERE id = ?"
     const list = await getAllAsync<T>(sql.replace('WHERE id = ?', ''), []);
     if (list.length > 0 && params.length > 0) {
@@ -118,7 +130,10 @@ export async function initDatabase(): Promise<WebDatabase> {
     return list[0] || null;
   };
 
-  const runAsync = async (sql: string, params: (string | number)[] = []): Promise<{ lastInsertRowId: number; changes: number }> => {
+  const runAsync = async (
+    sql: string,
+    params: (string | number)[] = [],
+  ): Promise<{ lastInsertRowId: number; changes: number }> => {
     const now = new Date().toISOString();
     const getNextIdLocal = () => {
       const id = parseInt(localStorage.getItem(STORAGE_KEYS.NEXT_ID) || '1', 10);
@@ -188,7 +203,14 @@ export async function initDatabase(): Promise<WebDatabase> {
     if (sql.includes('INSERT INTO workspaces')) {
       const workspaces = JSON.parse(localStorage.getItem(STORAGE_KEYS.WORKSPACES) || '[]');
       const id = getNextIdLocal();
-      const newWorkspace = { id, name: params[0], icon: params[1], isDefault: 0, createdAt: now, updatedAt: now };
+      const newWorkspace = {
+        id,
+        name: params[0],
+        icon: params[1],
+        isDefault: 0,
+        createdAt: now,
+        updatedAt: now,
+      };
       workspaces.push(newWorkspace);
       localStorage.setItem(STORAGE_KEYS.WORKSPACES, JSON.stringify(workspaces));
       return { lastInsertRowId: id, changes: 1 };
@@ -430,7 +452,7 @@ export async function deleteReport(_db: WebDatabase, _id: number): Promise<void>
 
 // 清除所有資料
 export function clearAllData(): void {
-  localStorage.removeItem(STORAGE_KEYS.SUBSCRIPTIONS);
-  localStorage.removeItem(STORAGE_KEYS.USER_SETTINGS);
-  localStorage.removeItem(STORAGE_KEYS.NEXT_ID);
+  Object.values(STORAGE_KEYS).forEach((key) => {
+    localStorage.removeItem(key);
+  });
 }
