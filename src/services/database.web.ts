@@ -1,4 +1,4 @@
-import { Subscription, UserSettings } from '../types';
+import { Subscription, UserSettings, Tag } from '../types';
 import { DEFAULT_EXCHANGE_RATES } from '../constants/AppConfig';
 
 const STORAGE_KEYS = {
@@ -63,25 +63,27 @@ export async function initDatabase(): Promise<WebDatabase> {
   const getAllAsync = async <T>(sql: string, params: (string | number)[] = []): Promise<T[]> => {
     // TAGS
     if (sql.includes('FROM tags')) {
-      const tags = JSON.parse(localStorage.getItem(STORAGE_KEYS.TAGS) || '[]');
+      const tags = JSON.parse(localStorage.getItem(STORAGE_KEYS.TAGS) || '[]') as Tag[];
       if (sql.includes('subscription_tags')) {
         // Handle JOIN query for subscription tags
         // SELECT t.* FROM tags t INNER JOIN subscription_tags st ON t.id = st.tagId WHERE st.subscriptionId = ?
         if (sql.includes('INNER JOIN subscription_tags')) {
           const subId = params[0];
-          const subTags = JSON.parse(localStorage.getItem(STORAGE_KEYS.SUBSCRIPTION_TAGS) || '[]');
+          const subTags = JSON.parse(
+            localStorage.getItem(STORAGE_KEYS.SUBSCRIPTION_TAGS) || '[]',
+          );
           const tagIds = subTags
             // eslint-disable-next-line @typescript-eslint/no-explicit-any
             .filter((st: any) => st.subscriptionId === subId)
             // eslint-disable-next-line @typescript-eslint/no-explicit-any
             .map((st: any) => st.tagId);
-          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+
           return tags
-            .filter((t: any) => tagIds.includes(t.id))
-            .sort((a: any, b: any) => a.name.localeCompare(b.name)) as T[];
+            .filter((t) => tagIds.includes(t.id))
+            .sort((a, b) => a.name.localeCompare(b.name)) as unknown as T[];
         }
       }
-      return tags as T[];
+      return tags as unknown as T[];
     }
 
     // WORKSPACES
