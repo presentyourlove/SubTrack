@@ -3,7 +3,7 @@ import { useEffect } from 'react';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { Stack, useRouter } from 'expo-router';
 import { useQuickActionCallback } from 'expo-quick-actions/hooks';
-import { ActivityIndicator, View, Text } from 'react-native';
+import { ActivityIndicator, View } from 'react-native';
 import * as Sentry from '@sentry/react-native';
 import { ThemeProvider } from '../src/context/ThemeContext';
 import { AuthProvider } from '../src/context/AuthContext';
@@ -89,7 +89,14 @@ function RootLayout() {
 
   if (!skiaReady) {
     return (
-      <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: '#1a1a1a' }}>
+      <View
+        style={{
+          flex: 1,
+          justifyContent: 'center',
+          alignItems: 'center',
+          backgroundColor: '#1a1a1a',
+        }}
+      >
         <ActivityIndicator size="large" color="#ffffff" />
       </View>
     );
