@@ -124,6 +124,9 @@ npm run ios
   - **100% Type Check**: 消除所有 `no-implicit-any` 與型別錯誤。
   - **Test Stability**: 修復 Jest 環境 (ESM/require) 與所有 Flaky Tests。
   - **A11y**: 引入 `eslint-plugin-react-native-a11y` 並修復核心組件無障礙問題。
+- **2026-01-29**: Deployment Stability:
+  - **Script**: 新增 `scripts/deploy.js` 手動部署腳本，解決 `gh-pages` 環境問題。
+  - **Skia Web**: 修復 GitHub Pages 子目錄路徑解析錯誤與 WASM 載入問題 (同源部署策略)。
 - **Linting**: ESLint, Prettier
 - **Build**: EAS (Expo Application Services)
 
