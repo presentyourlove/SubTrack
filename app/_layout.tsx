@@ -3,6 +3,7 @@ import { useEffect } from 'react';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { Stack, useRouter } from 'expo-router';
 import { useQuickActionCallback } from 'expo-quick-actions/hooks';
+import { ActivityIndicator, View, Text } from 'react-native';
 import * as Sentry from '@sentry/react-native';
 import { ThemeProvider } from '../src/context/ThemeContext';
 import { AuthProvider } from '../src/context/AuthContext';
@@ -24,7 +25,7 @@ import { useSkiaWeb } from '../src/hooks/useSkiaWeb';
 
 function RootLayout() {
   const router = useRouter();
-  const skiaReady = useSkiaWeb();
+  const { ready: skiaReady, error: skiaError } = useSkiaWeb();
 
   // Load fonts
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -87,7 +88,16 @@ function RootLayout() {
   }
 
   if (!skiaReady) {
-    return null; // Or a loading spinner
+    return (
+      <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: '#1a1a1a' }}>
+        <ActivityIndicator size="large" color="#ffffff" />
+      </View>
+    );
+  }
+
+  if (skiaError) {
+    console.warn('Skia Web init failed, running in degraded mode:', skiaError);
+    // 可選擇是否要顯示錯誤給使用者，目前選擇 Log 後繼續執行，避免白畫面完全卡死
   }
 
   return (
