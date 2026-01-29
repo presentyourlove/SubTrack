@@ -9,7 +9,7 @@ export const useSkiaWeb = () => {
     if (Platform.OS === 'web') {
       LoadSkiaWeb({
         locateFile: (file) =>
-          `https://cdnjs.cloudflare.com/ajax/libs/canvaskit-wasm/0.39.1/${file}`,
+          `https://cdnjs.cloudflare.com/ajax/libs/canvaskit-wasm/0.40.0/${file}`,
       })
         .then(() => setReady(true))
         .catch((e) => console.error('Failed to load Skia Web:', e));
