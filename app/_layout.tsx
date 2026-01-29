@@ -20,8 +20,11 @@ initSentry();
 
 const queryClient = new QueryClient();
 
+import { useSkiaWeb } from '../src/hooks/useSkiaWeb';
+
 function RootLayout() {
   const router = useRouter();
+  const skiaReady = useSkiaWeb();
 
   // Load fonts
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -83,9 +86,9 @@ function RootLayout() {
     }
   }
 
-  // if (!loaded) {
-  //   return null;
-  // }
+  if (!skiaReady) {
+    return null; // Or a loading spinner
+  }
 
   return (
     <QueryClientProvider client={queryClient}>
