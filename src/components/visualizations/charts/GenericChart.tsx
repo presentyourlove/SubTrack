@@ -4,6 +4,7 @@ import { useTheme } from '../../../context/ThemeContext';
 import { ChartData } from '../../../services/db/reports';
 import { SkiaPieChart, SkiaChartData } from './SkiaPieChart';
 import { SkiaBarChart, SkiaBarDataPoint } from './SkiaBarChart';
+import { useSkiaWeb } from '../../../hooks/useSkiaWeb';
 
 type GenericChartProps = {
   data: ChartData[];
@@ -14,6 +15,23 @@ type GenericChartProps = {
 
 export default function GenericChart({ data, type, title, height = 200 }: GenericChartProps) {
   const { colors } = useTheme();
+  // Ensure Skia is loaded before rendering charts to prevent crash on Web
+  const { ready: skiaReady, error: skiaError } = useSkiaWeb();
+
+  if (!skiaReady) {
+    return (
+      <View
+        style={[
+          styles.container,
+          { backgroundColor: colors.card, height, alignItems: 'center', justifyContent: 'center' },
+        ]}
+      >
+        <Text style={{ color: colors.text }}>
+          {skiaError ? 'Failed to load chart engine.' : 'Loading charts...'}
+        </Text>
+      </View>
+    );
+  }
 
   if (!data || data.length === 0) {
     return (
