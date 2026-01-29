@@ -125,6 +125,7 @@ export default {
     emptyList: '尚無訂閱',
     emptyCategory: '此分類尚無訂閱',
     addFirst: '新增第一筆訂閱',
+    familyPlan: '家庭方案',
   },
   // 通知
   notification: {
