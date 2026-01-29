@@ -7,12 +7,27 @@ export const useSkiaWeb = () => {
 
   useEffect(() => {
     if (Platform.OS === 'web') {
+      console.log('Initializing Skia Web...');
       LoadSkiaWeb({
-        locateFile: (file) =>
-          `https://cdnjs.cloudflare.com/ajax/libs/canvaskit-wasm/0.40.0/${file}`,
+        locateFile: (file) => {
+          const url = `https://unpkg.com/canvaskit-wasm@0.40.0/bin/${file}`;
+          console.log(`Loading Skia Web with file: ${file} from ${url}`);
+          return url;
+        },
       })
-        .then(() => setReady(true))
-        .catch((e) => console.error('Failed to load Skia Web:', e));
+        .then(() => {
+          console.log('Skia Web loaded successfully');
+          setReady(true);
+        })
+        .catch((e) => {
+          console.error('Failed to load Skia Web:', e);
+          // Log more details if available
+          if (e instanceof Error) {
+            console.error('Error details:', e.message, e.stack);
+          } else {
+            console.error('Error object:', JSON.stringify(e));
+          }
+        });
     }
   }, []);
 
