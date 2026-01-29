@@ -105,6 +105,7 @@ export default {
     emptyList: 'No subscriptions yet',
     emptyCategory: 'No subscriptions in this category',
     addFirst: 'Add your first subscription',
+    familyPlan: 'Family Plan',
   },
   // Calendar
   calendar: {
