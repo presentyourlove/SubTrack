@@ -1,5 +1,4 @@
 import { Platform } from 'react-native';
-// @ts-expect-error - Skia web module might not be fully typed in all versions
 import { LoadSkiaWeb } from '@shopify/react-native-skia/lib/module/web';
 import { useEffect, useState } from 'react';
 
