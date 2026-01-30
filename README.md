@@ -123,14 +123,25 @@ npm test
 
 適用於 AltStore / SideStore 自簽安裝。
 
-1. **配置 EAS**: 確保 `eas.json` 中配置了 `ios.simulator` 或 Adhoc profile。
-2. **建置 IPA**:
+> **注意**：此步驟必須在 **macOS** 環境下執行，並已安裝 Xcode。
+
+1. **準備環境**:
+   - 確保 Mac 已安裝 [Xcode](https://developer.apple.com/xcode/)。
+   - 登入 Expo 帳號:
+
+     ```bash
+     eas login
+     ```
+
+2. **執行本地建置**:
+   使用 `--local` 參數讓 EAS 在這台 Mac 上進行編譯，而非上傳至雲端。
 
    ```bash
-   eas build -p ios --profile preview
+   eas build -p ios --profile preview --local
    ```
 
-   _(注意：需要 Apple Developer Account 憑證)_
+3. **取得 IPA**:
+   建置完成後，終端機將顯示 IPA 檔案的路徑，您可以使用 AirDrop 或傳輸線將其安裝至 iPhone。
 
 ### Web App (GitHub Pages)
 
