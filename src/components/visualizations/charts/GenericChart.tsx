@@ -18,7 +18,7 @@ export default function GenericChart({ data, type, title, height = 200 }: Generi
   // Ensure Skia is loaded before rendering charts to prevent crash on Web
   const { ready: skiaReady, error: skiaError } = useSkiaWeb();
 
-  if (!skiaReady) {
+  if (!skiaReady || skiaError) {
     return (
       <View
         style={[

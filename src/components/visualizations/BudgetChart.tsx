@@ -26,7 +26,7 @@ export default function BudgetChart({
   // Ensure Skia is loaded before rendering charts to prevent crash on Web
   const { ready: skiaReady, error: skiaError } = useSkiaWeb();
 
-  if (!skiaReady) {
+  if (!skiaReady || skiaError) {
     return (
       <View
         style={[
