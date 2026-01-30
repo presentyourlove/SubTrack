@@ -4,7 +4,7 @@ export const navigationIntegration = Sentry.reactNavigationIntegration();
 
 export const initSentry = () => {
   if (!process.env.EXPO_PUBLIC_SENTRY_DSN) {
-    console.warn('Sentry DSN is missing, skipping initialization');
+    // console.warn('Sentry DSN is missing, skipping initialization');
     return;
   }
 
