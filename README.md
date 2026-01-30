@@ -1,336 +1,187 @@
-﻿# SubTrack - 智慧訂閱管理助手 📱💰
+﻿# SubTrack - 跨平台訂閱管理系統
 
-[![React Native](https://img.shields.io/badge/React_Native-Expo-blue.svg)](https://reactnative.dev)
-[![TypeScript](https://img.shields.io/badge/Language-TypeScript-007ACC.svg)](https://www.typescriptlang.org/)
-[![License](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
-[![i18n](https://img.shields.io/badge/i18n-Traditional_Chinese-red.svg)](src/i18n)
+> 您的終極訂閱追蹤助手，掌握每一分支出，讓財務管理變得輕鬆、智慧且優雅。
 
-**SubTrack** 是一款專為現代人設計的跨平台訂閱管理應用程式。幫助您輕鬆追蹤 Netflix, Spotify, AWS 等各式週期性支出，掌握財務狀況，拒絕不明扣款！
+SubTrack 是一款基於 React Native (Expo) 開發的現代化訂閱管理應用程式。它不僅協助您追蹤週期性支出，更透過直觀的圖表與數據分析，幫助您優化財務健康。支援 Web、iOS 與 Android 三大平台，採用離線優先策略，並可透過 Firebase 進行雲端同步。
 
----
+## ✨ 專案亮點 (Project Highlights)
 
-## ✨ 專案亮點 (Highlights)
-
-- **跨平台支援**：單一程式碼庫同時支援 iOS、Android 與 Web。
-- **離線優先 (Offline-First)**：主要資料儲存於本地 (Op-SQLite / LocalStorage)，無網路也能順暢使用。
-- **雲端同步 (Cloud Sync)**：整合 Firebase，支援多裝置間資料即時同步。
-- **隱私專注**：您的資料您作主，支援隱私模式與生物辨識鎖定。
-- **極致效能**：導入 JSI、FlashList 與 New Architecture，打造 60 FPS 流暢體驗。
-
----
+- **跨平台體驗**：一套程式碼，完美運行於 Web、iOS 與 Android。
+- **優雅的 UI/UX**：採用現代化設計語言，支援深色模式 (Dark Mode) 與流暢的微互動動畫。
+- **離線優先 (Offline First)**：無網路也能完整使用，資料存於本地 SQLite/LocalStorage，連線後自動同步。
+- **高性能圖表**：整合 Skia 圖形引擎，呈現絲滑流暢的數據視覺化報表。
+- **隱私至上**：支援隱私模式 (數值遮罩) 與生物辨識鎖定 (FaceID/TouchID)。
 
 ## 🚀 功能特色 (Features)
 
-- **📊 視覺化儀表板**：直觀的圖表分析每月/每年支出趨勢與分類佔比。
-- **🔔 智慧提醒**：透過本地推播通知 (Local Notifications) 在扣款前提醒您，不再錯過繳費日。
-- **🌍 多幣別支援**：支援 TWD, USD, JPY, EUR 等多種貨幣，自動換算匯率。
-- **🌓 深色/淺色模式**：自動跟隨系統或手動切換主題，保護您的眼睛。
-- **📅 日曆整合**：雙向同步 Google Calendar，隨時掌握與管理扣款排程。
-- **🔐 安全驗證**：支援生物辨識 (FaceID/TouchID) 與隱私模式，隱藏敏感金額。
-- **🏷️ 標籤與群組**：支援多重標籤過濾與家庭方案分帳成員管理。
-- **🔍 搜尋與報表**：內建服務目錄快速訂閱、全局搜尋查找，以及自訂報表分析。
-- **⚡ 捷徑操作**：支援 iOS/Android 主畫面 Quick Actions 長按捷徑。
-- **📂 資料匯出入**：完整支援 CSV/PDF 匯出與 Excel 資料匯入 (背景多執行緒處理)。
+- **訂閱管理**：輕鬆新增、編輯、刪除訂閱項目，支援自訂週期與類別。
+- **視覺化報表**：
+  - **預算分析**：圓餅圖查看各類別支出佔比。
+  - **趨勢追蹤**：長條圖分析每月/每季支出變化。
+- **多幣別支援**：即時匯率轉換，統一結算不同幣別的訂閱費用。
+- **智慧通知**：自訂續訂提醒，再也不會錯過取消試用期。
+- **雲端同步**：透過 Firebase 帳號登入，在多個裝置間無縫同步資料。
+- **個人化設定**：自訂主題色、預設幣別、排序偏好等。
 
----
+## 🛡️ 程式碼品質 (Code Quality)
 
-## 💎 程式碼品質 (Code Quality)
+本專案嚴格遵循業界標準與最佳實踐：
 
-本專案嚴格遵循業界標準與 `.agent` 規範，確保高可維護性與穩定性：
-
-- **TypeScript Strict Mode**：全面啟用嚴格型別檢查 (no implicit any)，減少運行時錯誤。
-- **ESLint + Prettier**：自動化代碼風格檢查與格式化 (LF Line Endings)，保持代碼整潔一致。
-- **i18n 國際化**：所有 UI 字串提取至資源檔 (`src/i18n`)，無 Hardcoded 字串。
-- **Architecture**：採用 Feature-First 分層架構，服務層 (Service) 與 UI 層分離。
-- **Quality Assurance**：
-  - **Zod Validation**：啟動時強制驗證環境變數 (`src/config/env.ts`)，避免 Config 缺失。
-  - **Accessibility (A11y)**：符合 WCAG 標準，支援完整的螢幕閱讀器與動態字體體驗。
-  - **Sentry**：整合 Sentry 進行即時錯誤追蹤與效能監控。
-- **Performance**：
-  - **JSI Binding**：資料庫直接調用 C++ 層，避開 JS Bridge。
-  - **FlashList**：列表渲染效能優化。
-  - **Hermes Static**：啟用靜態分析優化啟動速度。
-
----
-
-## 🏁 快速開始 (Quick Start)
-
-### 前置需求 (Prerequisites)
-
-- Node.js (LTS version recommended)
-- npm or yarn
-
-### 安裝依賴 (Installation)
-
-```bash
-git clone https://github.com/Presentyourlove/SubTrack.git
-cd SubTrack
-npm install
-```
-
-### 啟動開發伺服器 (Development)
-
-```bash
-# 啟動 Expo Go (通用)
-npm start
-
-# 啟動 Web 版
-npm run web
-
-# 啟動 Android 模擬器 (需安裝 Android Studio)
-npm run android
-
-# 啟動 iOS 模擬器 (需安裝 Xcode, Mac Only)
-npm run ios
-```
-
----
+- **TypeScript**: 全面啟用嚴格模式 (Strict Mode)，確保型別安全。
+- **Linting & Formatting**: 整合 ESLint 與 Prettier，統一程式碼風格。
+- **Clean Architecture**: 採用分層架構 (Components, Services, Utils, Context)，職責分離清晰。
+- **Unit Testing**: 使用 Jest 進行單元測試，確保核心邏輯穩定性。
+- **CI/CD Friendly**: 包含自動化部署腳本，並支援 Conventional Commits 規範。
 
 ## 📱 支援平台 (Supported Platforms)
 
-| 平台        | 版本需求        | 支援狀態 | 備註                                     |
-| :---------- | :-------------- | :------: | :--------------------------------------- |
-| **Android** | Android 6.0+    |    ✅    | 完整支援 (APK)                           |
-| **iOS**     | iOS 13.0+       |    ✅    | 完整支援 (IPA / SideStore)               |
-| **Web**     | Modern Browsers |    ✅    | PWA 支援 (部分原生功能如 Haptics 會降級) |
-
----
+| 平台        | 支援版本        | 技術實現                         |
+| :---------- | :-------------- | :------------------------------- |
+| **Android** | Android 8.0+    | React Native (Hermes Engine)     |
+| **iOS**     | iOS 13.0+       | React Native (Hermes Engine)     |
+| **Web**     | Modern Browsers | React Native for Web (React DOM) |
 
 ## 🛠️ 技術堆疊 (Tech Stack)
 
-### Client Side
-
-- **Framework**: [React Native](https://reactnative.dev/) / [Expo](https://expo.dev/) (SDK 54)
-- **Architecture**: New Architecture enabled (Fabric & TurboModules)
-- **Language**: [TypeScript](https://www.typescriptlang.org/)
-- **Navigation**: [Expo Router](https://docs.expo.dev/router/introduction/) (v3)
-- **State Management**: React Context API & Hooks
-- **Styling**: StyleSheet (Native)
-
-### Backend & Service
-
-- **Auth**: Firebase Authentication
-- **Database (Cloud)**: Cloud Firestore
-- **Database (Local)**:
-  - Mobile: `@op-engineering/op-sqlite` (JSI/WAL Mode Enabled)
-  - Web: `localStorage` (Adapter Pattern)
-- **Sync**: Custom Bi-directional Sync Logic
-
-### Tools
-
-- **2026-01-20**: Comprehensive linting and type error fixes across test suite (29 files).
-- **2026-01-26**: 架構優化完成：MMKV 儲存層、Platform Resolution、Context 渲染優化。
-- **2026-01-28**: 品質工程里程碑：
-  - **100% Type Check**: 消除所有 `no-implicit-any` 與型別錯誤。
-  - **Test Stability**: 修復 Jest 環境 (ESM/require) 與所有 Flaky Tests。
-  - **A11y**: 引入 `eslint-plugin-react-native-a11y` 並修復核心組件無障礙問題。
-- **2026-01-29**: Deployment Stability:
-  - **Script**: 新增 `scripts/deploy.js` 手動部署腳本，解決 `gh-pages` 環境問題。
-  - **Skia Web**: 修復 GitHub Pages 子目錄路徑解析錯誤與 WASM 載入問題 (同源部署策略)。
-- **Linting**: ESLint, Prettier
-- **Build**: EAS (Expo Application Services)
-
----
+- **核心框架**: [React Native](https://reactnative.dev/), [Expo](https://expo.dev/) (SDK 50+)
+- **語言**: [TypeScript](https://www.typescriptlang.org/)
+- **路由**: [Expo Router](https://docs.expo.dev/router/introduction/) (基於檔案系統的路由)
+- **狀態管理**: React Context API, [TanStack Query](https://tanstack.com/query/latest) (非同步狀態)
+- **UI 元件庫**: React Native Paper (部分), 自訂元件系統
+- **圖形引擎**: [React Native Skia](https://shopify.github.io/react-native-skia/)
+- **資料庫**:
+  - App: `expo-sqlite` (SQLite)
+  - Web: `localStorage` (JSON)
+- **後端服務**: [Firebase](https://firebase.google.com/) (Auth, Firestore)
 
 ## 📂 專案結構 (Project Structure)
 
 ```text
 SubTrack/
-├── app/                      # Expo Router 頁面路由 (File-based Routing)
-│   ├── (tabs)/               # 底部導航頁面 (Home, Reports, Settings)
-│   └── _layout.tsx           # 根導航配置與 Provider 注入
+├── app/                      # 應用程式路由 (Expo Router)
+│   ├── (tabs)/              # 主分頁 (首頁, 預算, 設定)
+│   └── _layout.tsx          # 應用程式根佈局
 ├── src/
-│   ├── components/           # UI 元件庫 (Cards, Modals, Visualizations, UI)
-│   │   ├── cards/            # 資訊卡片 (SubscriptionCard, ServiceCard)
-│   │   ├── modals/           # 彈出視窗 (AddSubscription, SplitBill)
-│   │   ├── visualizations/   # 圖表與數據呈現 (Charts, Breakdowns)
-│   │   └── ui/               # 共用 UI 元件 (Buttons, Chips, Toggles)
-│   │   ├── common/           # 通用原子元件 (OptimizedList, CachedImage)
-│   │   ├── settings/         # 設定頁面組件
-│   │   └── subscription/     # 訂閱卡片與表單
-│   ├── context/              # 全域狀態 (Theme, Auth, Database, Security)
-│   ├── services/             # 業務邏輯層
-│   │   ├── db/               # JSI SQLite 資料庫操作 (DAO)
-│   │   ├── workerService.ts  # 多執行緒處理
-│   │   └── ...
-│   ├── hooks/                # Custom Hooks (useSync, useBiometrics)
-│   ├── types/                # TypeScript 型別定義
-│   ├── utils/                # 工具函式 (Date, Currency, Haptics)
-│   └── i18n/                 # 語言資源檔 (zh.ts, en.ts)
-├── .maestro/                 # E2E 測試流程腳本
-├── scripts/                  # 自動化工具
+│   ├── components/          # UI 元件 (Atomic Design)
+│   │   ├── cards/           # 卡片元件
+│   │   ├── visualizations/  # 圖表元件
+│   │   └── ui/              # 基礎 UI 元件
+│   ├── context/             # 全域狀態 (Theme, Auth, Database)
+│   ├── hooks/               # 自訂 React Hooks
+│   ├── services/            # 商業邏輯與 API 服務
+│   ├── utils/               # 工具函式庫
+│   └── types/               # TypeScript 型別定義
+├── scripts/                  # 自動化腳本
 └── docs/                     # 專案文件
 ```
 
----
+## 📖 開發指南 (Development Guide)
 
-## 🤝 開發指南 (Development Guide)
+### 環境需求
 
-1. **提交規範 (Commits)**: 請嚴格遵循 Conventional Commits：
-   - `feat`: 新增功能
-   - `fix`: 修復錯誤
-   - `docs`: 文件變更
-   - `perf`: 效能優化
-   - `chore`: 建構工具或依賴更新
+- Node.js (LTS 版本)
+- npm 或 yarn
+- Expo Go App (用於實機測試)
 
-2. **分支策略 (Branching)**:
-   - `main`: 穩定發布分支
-   - `develop`: 主要開發分支
-   - `feature/name`: 功能開發分支
-
-3. **代碼檢查**: 提交前請確保通過 `npm run lint` 與 `npm run type-check`。
-
----
-
-## 🧪 測試 (Testing)
-
-### 1. 單元與整合測試 (Unit & Integration)
-
-使用 Jest 進行邏輯測試，目前全專案覆蓋率已達 >80%：
+### 安裝依賴
 
 ```bash
-# 執行所有測試
+npm install
+```
+
+### 啟動開發伺服器
+
+```bash
+npm start
+```
+
+按 `a` 啟動 Android 模擬器，按 `i` 啟動 iOS 模擬器，或按 `w` 啟動 Web 預覽。
+
+### 執行測試
+
+```bash
 npm test
-# 生成覆蓋率報告
-npm test -- --coverage
-
-# 監聽模式
-npm test -- --watch
 ```
 
-### 2. E2E 自動化測試 (End-to-End)
+## 📦 打包發布 (Build & Deploy)
 
-使用 Maestro 進行完整流程驗證：
+### Android (APK)
 
-```bash
-# 安裝 Maestro CLI (macOS/Linux)
-curl -Ls "https://get.maestro.mobile.dev" | bash
+適用於 Android 裝置安裝。
 
-# Windows 使用者需先安裝 WSL
-# wsl --install (需系統管理員權限並重啟)
-# 然後在 WSL 中執行上述 curl 指令
+1. **安裝 EAS CLI**: `npm install -g eas-cli`
+2. **登入 Expo**: `eas login`
+3. **建置 APK**:
 
-# 執行所有 E2E 測試
-maestro test .maestro/flows/
+   ```bash
+   eas build -p android --profile preview
+   ```
 
-# 執行單一測試流程
-maestro test .maestro/flows/add_subscription.yaml
+4. 下載生成的 `.apk` 檔案安裝至手機。
 
-# 持續監控模式 (開發用)
-maestro test --continuous .maestro/flows/
-```
+### iOS (IPA)
 
-**可用測試流程：**
+適用於 AltStore / SideStore 自簽安裝。
 
-| 流程                    | 說明               |
-| ----------------------- | ------------------ |
-| `init.yaml`             | App 初始化與載入   |
-| `home.yaml`             | 首頁導航與頁面切換 |
-| `add_subscription.yaml` | 新增訂閱完整流程   |
-| `search.yaml`           | 搜尋功能與結果驗證 |
-| `settings.yaml`         | 設定頁面與主題切換 |
+1. **配置 EAS**: 確保 `eas.json` 中配置了 `ios.simulator` 或 Adhoc profile。
+2. **建置 IPA**:
 
-### 3. 各平台測試指南 (Cross-Platform Testing Guide)
+   ```bash
+   eas build -p ios --profile preview
+   ```
 
-> [!IMPORTANT]
-> 本專案使用 **`op-sqlite`** (Native JSI Module)，**不支援** App Store / Play Store 下載的標準版 **Expo Go**。
-> 您必須使用 **Development Build (開發版用戶端)** 才能掃瞄 QR Code 進行實機測試。
+   _(注意：需要 Apple Developer Account 憑證)_
 
-- **Android (APK)**
-  - **模擬器**: 執行 `npm run android`。
-  - **實機 (Development Build)**:
-    1. 打包開發版: `eas build --profile development --platform android`
-    2. 安裝 .apk 到手機。
-    3. 執行 `npx expo start --dev-client` 產生 QR Code。
-    4. 開發版 App 開啟後，掃描終端機的 QR Code 連線。
+### Web App (GitHub Pages)
 
-- **iOS (SideStore IPA)**
-  - **實機 (Development Build)**:
-    1. 註冊測試裝置: `npx eas device:create`
-    2. 打包開發版: `eas build --profile development --platform ios`
-    3. 透過 SideStore / AltStore 安裝 .ipa。
-    4. 執行 `npx expo start --dev-client` 產生 QR Code。
-    5. 開發版 App 開啟後，掃描或選擇連線。
-  - **模擬器 (Mac Only)**: 執行 `npm run ios`。
+適用於瀏覽器存取。
 
-- **Web (PWA)**
-  - 執行 `npm run web` (Op-SQLite 自動降級為 LocalStorage)。
+本專案包含自動化部署腳本，解決了 SPA 路由 (404) 與 Skia WASM 載入問題。
 
----
+1. **執行部署指令**:
 
-## 📦 打包與發布 (Build & Release)
+   ```bash
+   npm run deploy
+   ```
 
-本專案使用 **EAS Build** 進行雲端打包。
+2. 腳本會自動執行：
+   - 建置 Web 版本 (`expo export`)
+   - 修復 `canvaskit.wasm` 路徑
+   - 生成 `404.html` (SPA 路由支援)
+   - 推送至 `gh-pages` 分支
 
-### 1. Android APK (Release)
+## 📚 API 文件與測試
 
-適用於直接安裝或上架 Play Store：
+### API 架構
 
-```bash
-eas build -p android --profile preview
-```
+由於本專案主要採用 **Local-First** 架構，主要的資料操作發生在客戶端：
 
-### 2. SideStore / AltStore IPA (iOS)
+- **DatabaseService**: 封裝了 SQLite/LocalStorage 的 CRUD 操作。
+- **AuthService**: 封裝了 Firebase Authentication 流程。
+- **SyncService**: 負責將本地變更同步至 Firebase Firestore。
 
-適用於側載 (Sideloading) 的 IPA 檔案：
+詳細介面定義請參考 `src/services/` 目錄下的 `.ts` 檔案。
 
-```bash
-eas build -p ios --profile preview
-```
+### 測試策略
 
-### 3. Web App (Production)
+- 專案使用 **Jest** 進行單元測試。
+- 涵蓋範圍：Utility Functions, Hooks, 以及關鍵 UI Components。
+- 執行 `npm run coverage` 可查看測試覆蓋率報告。
 
-輸出靜態網站檔案至 `dist/` 目錄：
+## 👥 作者 (Author)
 
-```bash
-npx expo export -p web
-```
+- **SubTrack Team**
+- GitHub: [Presentyourlove](https://github.com/Presentyourlove)
 
-### 4. GitHub Pages (Deploy)
+## 🙏 致謝 (Acknowledgements)
 
-一鍵部署至 GitHub Pages：
+感謝以下開源專案的貢獻：
 
-```bash
-npm run deploy
-```
+- Expo
+- React Native Community
+- Shopify (React Native Skia)
+- TanStack Query
 
-這會自動執行 `expo export` 並將 `dist/` 目錄推送到 `gh-pages` 分支。
+## 📄 授權 (License)
 
----
-
-## 📚 API 文件 (Internal Services)
-
-由於採用 Serverless 架構，主要的服務介面位於 `src/services/`：
-
-- **AuthService**: 處理 Firebase 登入/註冊/登出。
-- **DatabaseService (Adapters)**:
-  - Mobile: 透過 `src/services/db/*.ts` 封裝 SQL 指令。
-  - Web: 透過 `src/services/database.web.ts` 模擬 SQL 操作。
-- **SyncService**: 處理 Local SQLite 與 Firestore 的差異比對與同步。
-- **WorkerService**: 在背景線程處理大型 Excel 匯入。
-
----
-
-## 👤 作者 (Author)
-
-Presentyourlove
-
----
-
-## 📝 致謝 (Acknowledgments)
-
-- 感謝 [Expo](https://expo.dev) 生態系統。
-- 圖示來源：[Ionicons](https://ionic.io/ionicons)。
-- 資料庫引擎：[op-sqlite](https://github.com/OP-Engineering/op-sqlite)。
-
----
-
-## 🔮 後繼優化建議 (Future Roadmap)
-
-### 🤖 V3.0 智慧化與創新 (AI & Smart Features)
-
-- [ ] **🧩 桌面小工具 (Widgets)**: 在 iOS/Android 主畫面直接查看即將扣款項目 (基於 Expo Widget API)。
-
----
-
-**Copyright © 2026 SubTrack. All rights reserved.**
+本專案採用 MIT License 授權。
