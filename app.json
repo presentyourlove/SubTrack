@@ -31,10 +31,16 @@
       "bundler": "metro",
       "output": "single"
     },
-    "plugins": ["expo-router", "expo-localization"],
+    "plugins": ["expo-router", "expo-localization", "expo-font"],
     "experiments": {
       "typedRoutes": true,
       "baseUrl": "/SubTrack/"
+    },
+    "extra": {
+      "router": {},
+      "eas": {
+        "projectId": "d8ff7a86-b311-4091-bc77-557ef02ebde4"
+      }
     }
   }
 }
