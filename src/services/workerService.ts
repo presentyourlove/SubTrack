@@ -1,6 +1,6 @@
 // @ts-expect-error: react-native-multithreading might not have type definitions
-import { spawnThread } from 'react-native-multithreading';
-import { Platform } from 'react-native';
+// import { spawnThread } from 'react-native-multithreading';
+// import { Platform } from 'react-native';
 
 /**
  * 多執行緒運算服務 (Worker Service)
@@ -13,9 +13,27 @@ import { Platform } from 'react-native';
  * @returns 任務執行結果
  */
 export async function runOnWorker<T>(task: () => T): Promise<T> {
+  // 暫時移除 react-native-multithreading，因为它在 RN 0.74+ / Expo 51+ 兼容性不佳
+  // 改為使用非同步 Promise，讓 UI Loop 有機會喘息
+  return new Promise((resolve, reject) => {
+    try {
+      // 使用 setTimeout (MacroTask) 將任務排程到下一個 Event Loop tick
+      // 這不能真正的平行運算，但能避免長任務完全卡死 UI
+      setTimeout(() => {
+        try {
+          resolve(task());
+        } catch (e) {
+          reject(e);
+        }
+      }, 0);
+    } catch (error) {
+      reject(error);
+    }
+  });
+
+  // TODO: 未來可考慮遷移至 react-native-worklets-core 或 react-native-reanimated worklets
+  /*
   if (Platform.OS === 'web') {
-    // Web 端回退至 Promise 或 Web Workers (若有必要)
-    // 目前先簡單使用非同步執行，後續可擴充為專用的 Web Worker
     return new Promise((resolve, reject) => {
       try {
         resolve(task());
@@ -25,7 +43,6 @@ export async function runOnWorker<T>(task: () => T): Promise<T> {
     });
   }
 
-  // Native 端使用 JSI Multithreading
   try {
     return await spawnThread(() => {
       'worklet';
@@ -33,9 +50,9 @@ export async function runOnWorker<T>(task: () => T): Promise<T> {
     });
   } catch (error) {
     console.error('Worker thread error:', error);
-    // 降級處理：若執行緒失敗，回退至主執行緒執行
     return task();
   }
+  */
 }
 
 /**
