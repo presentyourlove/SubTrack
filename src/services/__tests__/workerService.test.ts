@@ -49,24 +49,11 @@ describe('workerService', () => {
 
   describe('processInChunks', () => {
     it('should process items in chunks', async () => {
+      jest.useRealTimers();
       const items = Array.from({ length: 250 }, (_, i) => i);
       const processItem = (i: number) => i * 2;
 
-      const promise = processInChunks(items, processItem);
-
-      // Need to advance timers multiple times for chunks
-      // Since it's recursive/loop based with await, we might need a loop or runAllTimersAsync if available,
-      // but runAllTimers usually works if the chain is simple.
-      // However, processInChunks awaits runOnWorker in a loop.
-
-      // We'll advance timers enough times to cover all chunks
-      // 250 items / 100 chunk size = 3 chunks.
-      for (let i = 0; i < 3; i++) {
-        await Promise.resolve(); // Let the microtask queue drain
-        jest.runAllTimers(); // Trigger the setTimeout in runOnWorker
-      }
-
-      const results = await promise;
+      const results = await processInChunks(items, processItem);
 
       expect(results).toHaveLength(250);
       expect(results[0]).toBe(0);
