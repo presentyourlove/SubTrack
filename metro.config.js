@@ -27,6 +27,11 @@ config.serializer = {
 config.resolver = {
   ...config.resolver,
   sourceExts: [...config.resolver.sourceExts, 'mjs'],
+  extraNodeModules: {
+    ...config.resolver.extraNodeModules,
+    fs: require.resolve('expo-file-system'), // 或使用空的 mock，視情況而定
+    path: require.resolve('path-browserify'),
+  },
 };
 
 module.exports = config;
