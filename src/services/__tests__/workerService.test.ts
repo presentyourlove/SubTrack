@@ -1,41 +1,49 @@
+/* eslint-disable @typescript-eslint/ban-ts-comment */
+// @ts-nocheck
+import { describe, it, expect, jest, beforeEach, afterEach } from '@jest/globals';
 import { Platform } from 'react-native';
 import { runOnWorker, processInChunks } from '../workerService';
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore
-import { spawnThread } from 'react-native-multithreading';
-
-jest.mock('react-native-multithreading', () => ({
-  spawnThread: jest.fn(),
-}));
 
 describe('workerService', () => {
   beforeEach(() => {
     jest.clearAllMocks();
-    Platform.OS = 'ios';
+    jest.useFakeTimers();
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    (Platform as any).OS = 'ios';
+  });
+
+  afterEach(() => {
+    jest.useRealTimers();
   });
 
   describe('runOnWorker', () => {
-    it('should run synchronously on web', async () => {
-      Platform.OS = 'web';
+    it('should run asynchronously using setTimeout', async () => {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      (Platform as any).OS = 'web';
       const task = jest.fn().mockReturnValue('result');
-      const result = await runOnWorker(task);
+
+      const promise = runOnWorker(task);
+
+      // Fast-forward time to trigger setTimeout
+      jest.runAllTimers();
+
+      const result = await promise;
+
       expect(result).toBe('result');
       expect(task).toHaveBeenCalled();
     });
 
-    it('should run via spawnThread on native', async () => {
-      (spawnThread as jest.Mock).mockImplementation((fn) => fn());
-      const task = jest.fn().mockReturnValue('result');
-      const result = await runOnWorker(task);
-      expect(result).toBe('result');
-      expect(spawnThread).toHaveBeenCalled();
-    });
+    it('should handle errors correctly', async () => {
+      const error = new Error('Task failed');
+      const task = jest.fn().mockImplementation(() => {
+        throw error;
+      });
 
-    it('should fallback to main thread on error', async () => {
-      (spawnThread as jest.Mock).mockRejectedValue(new Error('Thread error'));
-      const task = jest.fn().mockReturnValue('fallback result');
-      const result = await runOnWorker(task);
-      expect(result).toBe('fallback result');
+      const promise = runOnWorker(task);
+
+      jest.runAllTimers();
+
+      await expect(promise).rejects.toThrow('Task failed');
     });
   });
 
@@ -44,16 +52,25 @@ describe('workerService', () => {
       const items = Array.from({ length: 250 }, (_, i) => i);
       const processItem = (i: number) => i * 2;
 
-      // Mock runOnWorker to verify chunking
-      (spawnThread as jest.Mock).mockImplementation((fn) => fn());
+      const promise = processInChunks(items, processItem);
 
-      const results = await processInChunks(items, processItem);
+      // Need to advance timers multiple times for chunks
+      // Since it's recursive/loop based with await, we might need a loop or runAllTimersAsync if available,
+      // but runAllTimers usually works if the chain is simple.
+      // However, processInChunks awaits runOnWorker in a loop.
+
+      // We'll advance timers enough times to cover all chunks
+      // 250 items / 100 chunk size = 3 chunks.
+      for (let i = 0; i < 3; i++) {
+        await Promise.resolve(); // Let the microtask queue drain
+        jest.runAllTimers(); // Trigger the setTimeout in runOnWorker
+      }
+
+      const results = await promise;
 
       expect(results).toHaveLength(250);
       expect(results[0]).toBe(0);
       expect(results[249]).toBe(498);
-      // 250 items, chunk size 100 -> 3 calls (100, 100, 50)
-      expect(spawnThread).toHaveBeenCalledTimes(3);
     });
   });
 });

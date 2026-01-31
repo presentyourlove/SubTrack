@@ -1,4 +1,3 @@
-// @ts-expect-error: react-native-multithreading might not have type definitions
 // import { spawnThread } from 'react-native-multithreading';
 // import { Platform } from 'react-native';
 

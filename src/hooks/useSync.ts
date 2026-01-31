@@ -57,7 +57,7 @@ export function useSync(
     // Debounce sync for 5 seconds
     dailySyncIntervalRef.current = setTimeout(() => {
       if (autoSyncRef.current) autoSyncRef.current();
-    }, 5000);
+    }, 5000) as unknown as NodeJS.Timeout;
   }, []);
 
   const syncFromCloud = useCallback(async () => {

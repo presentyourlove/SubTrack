@@ -1,0 +1,1 @@
+﻿src/config/__tests__/env.test.ts(19,17): error TS2540: Cannot assign to 'NODE_ENV' because it is a read-only property.
